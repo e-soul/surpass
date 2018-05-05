@@ -1,0 +1,50 @@
+#!/bin/sh
+
+. `dirname $0`/localenv
+
+echo -n "Surpass build started..."
+
+JAVAC=javac
+JAVA=java
+JAR=jar
+JLINK=jlink
+
+CLASSES=build-output/classes
+JARS=build-output/jars
+TEST_JARS=build-output/test-jars
+DIST=build-output/dist
+LOG=build-output/log.txt
+
+MODS=mods
+
+rm -rf $CLASSES $JARS $TEST_JARS $DIST
+rm -f $LOG
+mkdir -p $CLASSES $JARS $TEST_JARS $DIST
+
+$JAVAC --module-path $JUNIT_DEPS --module-source-path $MODS -d $CLASSES `find $MODS -name "*.java"` >> $LOG 2>&1 || {
+    echo "compilation failed"
+    exit 1
+}
+
+$JAR --create --file=$JARS/surpass.api.jar -C $CLASSES/surpass.api .
+$JAR --create --file=$JARS/surpass.core.jar -C $CLASSES/surpass.core .
+$JAR --create --file=$JARS/surpass.persist.jar -C $CLASSES/surpass.persist .
+$JAR --create --file=$JARS/surpass.gui.jar --main-class=org.esoul.surpass.gui.Main -C $CLASSES/surpass.gui .
+
+$JAR --create --file=$TEST_JARS/surpass.core.test.jar -C $CLASSES/surpass.core.test .
+$JAR --create --file=$TEST_JARS/surpass.persist.test.jar -C $CLASSES/surpass.persist.test .
+
+$JAVA --class-path $JARS/surpass.api.jar:$JARS/surpass.core.jar:$JARS/surpass.persist.jar:$TEST_JARS/surpass.core.test.jar:$TEST_JARS/surpass.persist.test.jar:$JUNIT_DEPS org.junit.runner.JUnitCore \
+      org.esoul.surpass.core.test.DataTableTest \
+      org.esoul.surpass.core.test.SimpleCipherTest \
+      org.esoul.surpass.persist.test.LocalFileSystemPersistenceServiceTest >> $LOG 2>&1 || {
+    echo "tests failed"
+    exit 2
+}
+
+$JLINK --module-path $JARS:$JAVA_HOME/jmods --add-modules surpass.api,surpass.core,surpass.persist,surpass.gui --output $DIST/surpass --launcher surpass=surpass.gui/org.esoul.surpass.gui.Main >> $LOG 2>&1 || {
+    echo "jlink failed"
+    exit 3
+}
+
+echo done

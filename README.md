@@ -1,0 +1,11 @@
+# Surpass
+
+This is a simple, secure and easy to use password manager.
+
+### Main features
+ - Password-based encryption with **HMAC-SHA-512** and **AES-128** via Java Cryptography Architecture ([JCA](https://docs.oracle.com/javase/9/security/java-cryptography-architecture-jca-reference-guide.htm))
+ - Modular implementation via [jigsaw](http://openjdk.java.net/projects/jigsaw/). This allows creating an optimized image with [jlink](https://docs.oracle.com/javase/9/tools/jlink.htm). Such an image contains just enough of the Java runtime to execute the application and nothing more. The entire executable image is *73 megabytes* which makes it easy to carry on any USB stick or SD card. This makes it similar to a hardware password manager.
+ - There is are hard limits to the number and length of passwords, the intention is to maintain a constant-size data file. This slightly mitigates some attacks.
+ - Very simple and clean graphical user interface.
+ - Very small code-base with focus on simplicity. Everyone should be able to review the code and see exactly how it works. Key classes: `org.esoul.surpass.core.SimpleCipher` and `org.esoul.surpass.core.DataTable`
+ 
