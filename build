@@ -1,8 +1,10 @@
 #!/bin/sh
 
-. `dirname $0`/localenv
-
 echo -n "Surpass build started..."
+
+SCRIPT_DIR=`dirname $0`
+
+. $SCRIPT_DIR/localenv
 
 JAVAC=javac
 JAVA=java

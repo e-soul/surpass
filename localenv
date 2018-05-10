@@ -1,3 +1,16 @@
 #!/bin/sh
 
-JUNIT_DEPS=junit.jar:org.hamcrest.core_1.3.0.jar
+BUILD_LIB=$SCRIPT_DIR/build-lib
+mkdir -p $BUILD_LIB
+
+if [ `uname -s` = "FreeBSD" ]
+then
+    fetch="fetch -q -o"
+else
+    fetch="wget -q -O"
+fi
+
+$fetch $BUILD_LIB/junit.jar http://central.maven.org/maven2/junit/junit/4.12/junit-4.12.jar
+$fetch $BUILD_LIB/hamcrest-core.jar http://central.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar
+
+JUNIT_DEPS=$BUILD_LIB/junit.jar:$BUILD_LIB/hamcrest-core.jar
