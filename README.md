@@ -8,4 +8,6 @@ This is a simple, secure and easy to use password manager.
  - There is are hard limits to the number and length of passwords, the intention is to maintain a constant-size data file. This slightly mitigates some attacks.
  - Very simple and clean graphical user interface.
  - Very small code-base with focus on simplicity. Everyone should be able to review the code and see exactly how it works. Key classes: `org.esoul.surpass.core.SimpleCipher` and `org.esoul.surpass.core.DataTable`
- 
+
+###### Downloads:
+ - [Windows 7-10](https://bitbucket.org/e-soul/surpass/downloads/surpass-0.1.zip)
