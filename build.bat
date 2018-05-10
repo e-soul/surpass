@@ -1,10 +1,10 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-call %~dp0localenv.bat
-
 rem The following is a trick to output a message without a new line.
 set <NUL /p=Surpass build started...
+
+call %~dp0localenv.bat
 
 set JAVAC=javac
 set JAVA=java
