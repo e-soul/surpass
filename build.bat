@@ -44,11 +44,12 @@ for /f %%i in ('dir /b /s %MODS%\*.java') do set SRC=!SRC! %%i
       org.esoul.surpass.persist.test.LocalFileSystemPersistenceServiceTest >> %LOG% 2>&1 || (
     echo tests failed
     goto :eof
- )
+)
 
-%JLINK% --module-path "%JARS%;%JAVA_HOME%\jmods" --add-modules surpass.api,surpass.core,surpass.persist,surpass.gui --output %DIST%\surpass --launcher surpass=surpass.gui/org.esoul.surpass.gui.Main >> %LOG% 2>&1 || (
+%JLINK% --module-path "%JARS%;%JAVA_HOME%\jmods" --add-modules surpass.api,surpass.core,surpass.persist,surpass.gui --output %DIST%\surpass --launcher surpass=surpass.gui/org.esoul.surpass.gui.Main ^
+      --strip-debug --compress 2 --no-header-files --no-man-pages >> %LOG% 2>&1 || (
     echo jlink failed
     goto :eof
- )
+)
 
 echo done

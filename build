@@ -44,7 +44,8 @@ $JAVA --class-path $JARS/surpass.api.jar:$JARS/surpass.core.jar:$JARS/surpass.pe
     exit 2
 }
 
-$JLINK --module-path $JARS:$JAVA_HOME/jmods --add-modules surpass.api,surpass.core,surpass.persist,surpass.gui --output $DIST/surpass --launcher surpass=surpass.gui/org.esoul.surpass.gui.Main >> $LOG 2>&1 || {
+$JLINK --module-path $JARS:$JAVA_HOME/jmods --add-modules surpass.api,surpass.core,surpass.persist,surpass.gui --output $DIST/surpass --launcher surpass=surpass.gui/org.esoul.surpass.gui.Main \
+      --strip-debug --compress 2 --no-header-files --no-man-pages >> $LOG 2>&1 || {
     echo "jlink failed"
     exit 3
 }
