@@ -29,15 +29,17 @@ import java.awt.event.WindowEvent;
 public class WindowClosingHandler extends WindowAdapter {
 
     private DataState state = null;
+    private Components components = null;
 
-    public WindowClosingHandler(DataState state) {
+    public WindowClosingHandler(DataState state, Components components) {
         this.state = state;
+        this.components = components;
     }
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
         super.windowClosing(windowEvent);
         Window window = windowEvent.getWindow();
-        new ExitProgrammeHandler(window, state).actionPerformed(new ActionEvent(window, ActionEvent.ACTION_PERFORMED, "Exit"));
+        new ExitProgrammeHandler(window, state, components).actionPerformed(new ActionEvent(window, ActionEvent.ACTION_PERFORMED, "Exit"));
     }
 }

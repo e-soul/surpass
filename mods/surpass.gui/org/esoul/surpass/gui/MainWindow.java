@@ -1,3 +1,24 @@
+/*
+   Copyright 2017-2018 e-soul.org
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification, are permitted
+   provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of conditions
+      and the following disclaimer.
+   2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions
+      and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+   THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND ANY EXPRESS OR IMPLIED
+   WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+   FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+   BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package org.esoul.surpass.gui;
 
 import java.awt.Dimension;
@@ -81,7 +102,7 @@ public final class MainWindow {
         components.frame = new JFrame("Surpass");
         components.frame.setLayout(new BoxLayout(components.frame.getContentPane(), BoxLayout.PAGE_AXIS));
         components.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        components.frame.addWindowListener(new WindowClosingHandler(state));
+        components.frame.addWindowListener(new WindowClosingHandler(state, components));
     }
 
     private void createMenuBar() {
@@ -92,7 +113,7 @@ public final class MainWindow {
         storeMenuItem.addActionListener(this::storeData);
 
         JMenuItem menuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        menuItem.addActionListener(new ExitProgrammeHandler(components.frame, state));
+        menuItem.addActionListener(new ExitProgrammeHandler(components.frame, state, components));
 
         JMenu menu = new JMenu("Programme");
         menu.setMnemonic(KeyEvent.VK_P);
@@ -183,18 +204,18 @@ public final class MainWindow {
     private void addRow(ActionEvent event) {
         if (state.dataFileExist && !state.dataFileLoaded) {
             loadData(event);
-        }
-        try {
-            if (state.dataFileExist && !state.dataFileLoaded) {
+            if (!state.dataFileLoaded) {
+                // If data file is still not loaded then something went wrong in loadData(). This method should return here.
                 return;
             }
+        }
+        try {
             dataTable.createRow(components.secretPasswordField.getPassword(), components.identifierTextField.getText().toCharArray(),
                     components.noteTextArea.getText().toCharArray());
-
+            state.unsavedDataExist = true;
             components.identifierTextField.setText("");
             components.noteTextArea.setText("");
             tableModel.fireTableDataChanged();
-            state.unsavedDataExist = true;
         } catch (MaxSizeExceededException | EmptySequenceException e) {
             logger.log(Level.ERROR, () -> "Create row error!", e);
             JOptionPane.showMessageDialog(components.frame, e.getMessage(), "Input error", JOptionPane.ERROR_MESSAGE);
@@ -246,6 +267,23 @@ public final class MainWindow {
     }
 
     private void storeData(ActionEvent actionEvent) {
+        if (state.dataFileExist && !state.dataFileLoaded) {
+            JOptionPane.showMessageDialog(components.frame, "Data file exists but is not loaded. Load the data file before you can store new changes.",
+                    "Store warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!state.unsavedDataExist) {
+            JOptionPane.showMessageDialog(components.frame, "There is no unsaved data!", "Store notice", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (components.isFormDirty()) {
+            int selectedOption = JOptionPane.showConfirmDialog(components.frame,
+                    "There's new data in the form, are you sure you want to store the current table before the new data is added?",
+                    "Store despite existing new data?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (JOptionPane.YES_OPTION != selectedOption) {
+                return;
+            }
+        }
         consumePeristenceService(persistenceService -> {
             try {
                 char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");

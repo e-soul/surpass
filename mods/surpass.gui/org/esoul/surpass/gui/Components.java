@@ -41,4 +41,8 @@ final class Components {
     JButton addRowButton = null;
 
     JTable table = null;
+
+    boolean isFormDirty() {
+        return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();
+    }
 }
