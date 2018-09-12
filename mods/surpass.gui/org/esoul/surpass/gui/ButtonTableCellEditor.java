@@ -27,6 +27,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -39,6 +42,8 @@ import org.esoul.surpass.core.DataTable;
 public class ButtonTableCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     private static final long serialVersionUID = 1L;
+
+    private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 30L;
 
     private DataTable dataTable = null;
 
@@ -69,6 +74,13 @@ public class ButtonTableCellEditor extends AbstractCellEditor implements TableCe
         String secretStr = new String(dataTable.readSecret(currentRow), StandardCharsets.UTF_8);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(secretStr), null);
+        setupClipboardExpire(clipboard);
         JOptionPane.showMessageDialog(button, secretStr, "Secret copied to clipboard", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void setupClipboardExpire(Clipboard clipboard) {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> clipboard.setContents(new StringSelection(""), null), DEFAULT_CLIPBOARD_EXPIRE_DELAY, TimeUnit.SECONDS);
+        executor.shutdown();
     }
 }
