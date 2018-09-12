@@ -29,6 +29,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
@@ -246,22 +247,22 @@ public final class MainWindow {
 
     private void loadData(ActionEvent actionEvent) {
         consumePeristenceService(persistenceService -> {
-            try {
-                byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
-                char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
-                if (null != password) {
-                    byte[] clearText = simpleCipher.decrypt(password, cipherText);
+            char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
+            if (null != password) {
+                try {
+                    byte[] clearText = readCipherTextAndDecrypt(persistenceService, password);
                     dataTable.load(clearText);
                     state.dataFileLoaded = true;
                     tableModel.fireTableDataChanged();
                     components.addRowButton.setText("Add");
+                } catch (IOException e) {
+                    logger.log(Level.ERROR, () -> "Load secrets error!", e);
+                    JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
+                } catch (GeneralSecurityException e) {
+                    logger.log(Level.ERROR, () -> "Decrypt secrets error!", e);
+                    JOptionPane.showMessageDialog(components.frame, "Secrets cannot be decrypted! " + e.getMessage(), "Decrypt error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (IOException e) {
-                logger.log(Level.ERROR, () -> "Load secrets error!", e);
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
-            } catch (GeneralSecurityException e) {
-                logger.log(Level.ERROR, () -> "Decrypt secrets error!", e);
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be decrypted! " + e.getMessage(), "Decrypt error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
@@ -285,22 +286,45 @@ public final class MainWindow {
             }
         }
         consumePeristenceService(persistenceService -> {
-            try {
-                char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
-                if (null != password) {
+            char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
+            if (null != password) {
+                try {
+                    checkPasswordCanDecrypt(persistenceService, password);
                     byte[] clearText = dataTable.toOneDimension();
                     byte[] cipherText = simpleCipher.encrypt(password, clearText);
                     persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
                     state.unsavedDataExist = false;
+                } catch (IOException e) {
+                    logger.log(Level.ERROR, () -> "Store secrets error!", e);
+                    JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
+                } catch (GeneralSecurityException e) {
+                    logger.log(Level.ERROR, () -> "Encrypt secrets error!", e);
+                    JOptionPane.showMessageDialog(components.frame, "Secrets cannot be encrypted! " + e.getMessage(), "Encrypt error",
+                            JOptionPane.ERROR_MESSAGE);
+                } catch (InvalidPasswordException e) {
+                    logger.log(Level.ERROR, () -> "Invalid password error!", e);
+                    JOptionPane.showMessageDialog(components.frame,
+                            "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!", "Invalid password",
+                            JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (IOException e) {
-                logger.log(Level.ERROR, () -> "Store secrets error!", e);
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
-            } catch (GeneralSecurityException e) {
-                logger.log(Level.ERROR, () -> "Encrypt secrets error!", e);
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be encrypted! " + e.getMessage(), "Encrypt error", JOptionPane.ERROR_MESSAGE);
             }
         });
+    }
+
+    private void checkPasswordCanDecrypt(PersistenceService persistenceService, char[] password) throws IOException, InvalidPasswordException {
+        try {
+            readCipherTextAndDecrypt(persistenceService, password);
+        } catch (GeneralSecurityException e) {
+            throw new InvalidPasswordException(e);
+        } catch (NoSuchFileException e) {
+            logger.log(Level.TRACE, () -> "Checking password on a nonexistent data file.", e);
+        }
+    }
+
+    private byte[] readCipherTextAndDecrypt(PersistenceService persistenceService, char[] password)
+            throws IOException, NoSuchFileException, GeneralSecurityException {
+        byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
+        return simpleCipher.decrypt(password, cipherText);
     }
 
     private void consumePeristenceService(Consumer<PersistenceService> consumer) {
