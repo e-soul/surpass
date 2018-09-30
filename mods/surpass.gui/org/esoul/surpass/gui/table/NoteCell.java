@@ -19,22 +19,29 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.table;
 
-import java.awt.Component;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
-
-public class ButtonTableCellRenderer implements TableCellRenderer {
-
-    private JButton button = new JButton();
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        button.setText(value.toString());
-        button.setToolTipText("Click to show secret.");
-        return button;
+final class NoteCell {
+    
+    private NoteCell() {
+        // no instances
+    }
+    
+    static JTextArea createTextArea() {
+        JTextArea textArea = new JTextArea(2, 20);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setCaretPosition(0);
+        return textArea;
+    }
+    
+    static JScrollPane createBorderlessScrollPane(JTextArea textArea) {
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        return scrollPane;
     }
 }

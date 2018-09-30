@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
@@ -56,6 +57,11 @@ import org.esoul.surpass.core.DataTable;
 import org.esoul.surpass.core.EmptySequenceException;
 import org.esoul.surpass.core.MaxSizeExceededException;
 import org.esoul.surpass.core.SimpleCipher;
+import org.esoul.surpass.gui.table.ButtonTableCellEditor;
+import org.esoul.surpass.gui.table.ButtonTableCellRenderer;
+import org.esoul.surpass.gui.table.SimpleTableModel;
+import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
+import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
 
@@ -230,14 +236,29 @@ public final class MainWindow {
         components.table = new JTable(tableModel);
         components.table.setPreferredScrollableViewportSize(new Dimension(500, 300));
         components.table.setFillsViewportHeight(true);
+        components.table.setRowHeight(40);
+        components.table.setCellSelectionEnabled(true);
+        components.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        TableColumn secretColumn = components.table.getColumn(SimpleTableModel.COLUMN_NAMES[SimpleTableModel.SECRET_COLUMN_INDEX]);
-        secretColumn.setCellRenderer(new ButtonTableCellRenderer());
-        secretColumn.setCellEditor(new ButtonTableCellEditor(dataTable));
+        setupSecretColumn();
+        setupNoteColumn();
 
         JScrollPane scrollPane = new JScrollPane(components.table);
         scrollPane.setBorder(new EmptyBorder(0, 10, 10, 10));
         components.frame.add(scrollPane);
+    }
+    
+    private void setupSecretColumn() {
+        TableColumn secretColumn = components.table.getColumn(SimpleTableModel.COLUMN_NAMES[SimpleTableModel.SECRET_COLUMN_INDEX]);
+        secretColumn.setCellRenderer(new ButtonTableCellRenderer());
+        secretColumn.setCellEditor(new ButtonTableCellEditor(dataTable));
+    }
+    
+    private void setupNoteColumn() {
+        TableColumn noteColumn = components.table.getColumn(SimpleTableModel.COLUMN_NAMES[SimpleTableModel.NOTE_COLUMN_INDEX]);
+        noteColumn.setCellRenderer(new TextAreaTableCellRenderer());
+        noteColumn.setCellEditor(new TextAreaTableCellEditor());
+        noteColumn.setPreferredWidth(200);
     }
 
     private void show() {

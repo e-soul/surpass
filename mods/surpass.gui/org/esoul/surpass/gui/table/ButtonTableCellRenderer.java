@@ -19,56 +19,22 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.table;
 
-import javax.swing.table.AbstractTableModel;
+import java.awt.Component;
 
-import org.esoul.surpass.core.DataTable;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.TableCellRenderer;
 
-public class SimpleTableModel extends AbstractTableModel {
+public class ButtonTableCellRenderer implements TableCellRenderer {
 
-    private static final long serialVersionUID = 1L;
-
-    public static final int SECRET_COLUMN_INDEX = 1;
-
-    public static final String[] COLUMN_NAMES = new String[] { "Identifier", "Secret", "Note" };
-
-    private DataTable dataTable = null;
-
-    public SimpleTableModel(DataTable dataTable) {
-        this.dataTable = dataTable;
-    }
+    private JButton button = new JButton();
 
     @Override
-    public Object getValueAt(int row, int col) {
-        if (0 == col) {
-            return new String(dataTable.readIdentifier(row));
-        } else if (1 == col) {
-            return "***";
-        } else if (2 == col) {
-            return new String(dataTable.readNote(row));
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    @Override
-    public int getRowCount() {
-        return dataTable.getRowNumber();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return COLUMN_NAMES.length;
-    }
-
-    @Override
-    public String getColumnName(int column) {
-        return COLUMN_NAMES[column];
-    }
-
-    @Override
-    public boolean isCellEditable(int row, int column) {
-        return SECRET_COLUMN_INDEX == column;
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        button.setText(value.toString());
+        button.setToolTipText("Click to show secret.");
+        return button;
     }
 }
