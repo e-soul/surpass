@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -19,22 +19,21 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui.table;
+package org.esoul.surpass.table.api;
 
-import java.awt.Component;
+/**
+ * Thrown when some input is empty while it's not supposed to.
+ *
+ * @author mgp
+ */
+public class EmptySequenceException extends Exception {
 
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
+    private static final long serialVersionUID = 1L;
 
-public class ButtonTableCellRenderer implements TableCellRenderer {
-
-    private JButton button = new JButton();
-
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        button.setText(value.toString());
-        button.setToolTipText("Click to show secret.");
-        return button;
+    /**
+     * @param msg The message explaining what sequence was empty.
+     */
+    public EmptySequenceException(String msg) {
+        super(msg);
     }
 }

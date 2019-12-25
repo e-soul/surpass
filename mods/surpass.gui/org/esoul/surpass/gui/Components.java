@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,7 +27,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.AbstractTableModel;
 
+/**
+ * Holds references to JFC components and operations only on them.
+ * 
+ * @author mgp
+ *
+ */
 final class Components {
 
     JFrame frame = null;
@@ -41,8 +48,22 @@ final class Components {
     JButton addRowButton = null;
 
     JTable table = null;
+    
+    AbstractTableModel tableModel = null;
+
+    JButton showSecretButton = null;
+
+    JButton editRowButton = null;
+
+    JButton removeRowButton = null;
 
     boolean isFormDirty() {
         return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();
+    }
+
+    void setEnabledTableButtons(boolean enabled) {
+        showSecretButton.setEnabled(enabled);
+        editRowButton.setEnabled(enabled);
+        removeRowButton.setEnabled(enabled);
     }
 }

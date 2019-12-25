@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -19,21 +19,35 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.core;
+package org.esoul.surpass.crypto.api;
+
+import java.security.GeneralSecurityException;
 
 /**
- * Thrown when some input is empty while it's not supposed to.
- *
+ * Encrypt or decrypt arbitrary data.
+ * 
  * @author mgp
+ *
  */
-public class EmptySequenceException extends Exception {
-
-    private static final long serialVersionUID = 1L;
+public interface CryptoService {
 
     /**
-     * @param msg The message explaining what sequence was empty.
+     * Encrypts data.
+     *
+     * @param key  The key used for encryption.
+     * @param data The data for encryption.
+     * @return The cipher text + salt, iv and format version.
+     * @throws GeneralSecurityException
      */
-    public EmptySequenceException(String msg) {
-        super(msg);
-    }
+    byte[] encrypt(char[] key, byte[] data) throws GeneralSecurityException;
+
+    /**
+     * Decrypts data.
+     *
+     * @param key         The key used for decryption.
+     * @param cipherInput The cipher text + salt, iv and format version.
+     * @return The decrypted data.
+     * @throws GeneralSecurityException
+     */
+    byte[] decrypt(char[] key, byte[] cipherInput) throws GeneralSecurityException;
 }

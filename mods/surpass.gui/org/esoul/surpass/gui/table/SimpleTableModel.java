@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -23,32 +23,30 @@ package org.esoul.surpass.gui.table;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.esoul.surpass.core.DataTable;
+import org.esoul.surpass.table.api.SecretTable;
 
 public class SimpleTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
 
-    public static final int SECRET_COLUMN_INDEX = 1;
+    public static final int IDENTIFIER_COLUMN_INDEX = 0;
 
-    public static final int NOTE_COLUMN_INDEX = 2;
+    public static final int NOTE_COLUMN_INDEX = 1;
 
-    public static final String[] COLUMN_NAMES = new String[] { "Identifier", "Secret", "Note" };
+    public static final String[] COLUMN_NAMES = new String[] { "Identifier", "Note" };
 
-    private DataTable dataTable = null;
+    private SecretTable secretTable = null;
 
-    public SimpleTableModel(DataTable dataTable) {
-        this.dataTable = dataTable;
+    public SimpleTableModel(SecretTable secretTable) {
+        this.secretTable = secretTable;
     }
 
     @Override
     public Object getValueAt(int row, int col) {
-        if (0 == col) {
-            return new String(dataTable.readIdentifier(row));
-        } else if (1 == col) {
-            return "***";
-        } else if (2 == col) {
-            return new String(dataTable.readNote(row));
+        if (IDENTIFIER_COLUMN_INDEX == col) {
+            return new String(secretTable.readIdentifier(row));
+        } else if (NOTE_COLUMN_INDEX == col) {
+            return new String(secretTable.readNote(row));
         } else {
             throw new IllegalStateException();
         }
@@ -56,7 +54,7 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return dataTable.getRowNumber();
+        return secretTable.getRowNumber();
     }
 
     @Override
@@ -71,6 +69,6 @@ public class SimpleTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return SECRET_COLUMN_INDEX == column || NOTE_COLUMN_INDEX == column;
+        return NOTE_COLUMN_INDEX == column;
     }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -25,25 +25,29 @@ import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import org.esoul.surpass.table.api.EmptySequenceException;
+import org.esoul.surpass.table.api.MaxSizeExceededException;
+import org.esoul.surpass.table.api.SecretTable;
 
 /**
- * This class implements a table backed by a square matrix. The idea is that the
- * size of the data remains constant regardless of the number and length of
- * stored secrets. Of course this implies a hard limit on the number (and
- * length) of secrets that can be stored. Storage scheme:
+ * This {@link SecretTable} implementation is backed by a square matrix. The idea is that the size of the data remains constant regardless of the number and length of stored
+ * secrets. Of course this implies a hard limit on the number (and length) of secrets that can be stored. Storage scheme:
  * 
  * <pre>
  * [secret length - 1 byte][secret - up to 63 bytes][identifier length - 1 byte][identifier - up to 63 bytes][note length - 1 byte][note - up to 127 bytes]
  * </pre>
  * 
- * Unused positions are automatically filled with random bytes. The last row
- * contains service data such as the number of used rows and the version of the
- * format or storage scheme. The focus is on simplicity at the expense of
- * flexibility.
+ * Unused positions are automatically filled with random bytes. The last row contains service data such as the number of used rows and the version of the format or storage scheme.
+ * The focus is on simplicity at the expense of flexibility.
+ * 
+ * This class is thread-safe.
  *
  * @author mgp
  */
-public class DataTable {
+public class SquareMatrix implements SecretTable {
 
     private static class Column {
 
@@ -91,10 +95,12 @@ public class DataTable {
 
     private final SecureRandom secureRandom = new SecureRandom();
 
+    private final Lock lock = new ReentrantLock();
+
     /**
      * Fills the table with random bytes except for the service row.
      */
-    public DataTable() {
+    public SquareMatrix() {
         fillWithRandomBytesExceptForTheServiceRow();
     }
 
@@ -105,7 +111,7 @@ public class DataTable {
     }
 
     /**
-     * For testing purposes.
+     * For testing purposes. Not lock-protected.
      *
      * @return A direct reference to the current table.
      */
@@ -113,18 +119,7 @@ public class DataTable {
         return table;
     }
 
-    /**
-     * Creates a row in this table. All input is cleared immediately.
-     *
-     * @param secret The secret. Usually a password or some sort of
-     *            cryptographic key.
-     * @param identifier The identifier used with the secret. Usually a
-     *            username, email address or some sort of cryptographic key.
-     * @param note A short note. Optional.
-     * @throws MaxSizeExceededException In case the maximum size of any of the
-     *             input is exceeded.
-     * @throws EmptySequenceException
-     */
+    @Override
     public void createRow(char[] secret, char[] identifier, char[] note) throws MaxSizeExceededException, EmptySequenceException {
         byte[] secretBytes = encodeAndClear(secret);
         validateSecret(secretBytes);
@@ -132,14 +127,49 @@ public class DataTable {
         validateIdentifier(identifierBytes);
         byte[] noteBytes = encodeAndClear(note);
         validateNote(noteBytes);
+        lock.lock();
+        try {
+            int row = nextRow();
+            writeSecretLength(row, secretBytes);
+            writeSecret(row, secretBytes);
+            writeIdentifierLength(row, identifierBytes);
+            writeIdentifier(row, identifierBytes);
+            writeNoteLength(row, noteBytes);
+            writeNote(row, noteBytes);
+        } finally {
+            lock.unlock();
+        }
+    }
 
-        int row = nextRow();
-        writeSecretLength(row, secretBytes);
-        writeSecret(row, secretBytes);
-        writeIdentifierLength(row, identifierBytes);
-        writeIdentifier(row, identifierBytes);
-        writeNoteLength(row, noteBytes);
-        writeNote(row, noteBytes);
+    @Override
+    public void updateRow(int row, char[] secret, char[] identifier, char[] note) throws MaxSizeExceededException, EmptySequenceException {
+        lock.lock();
+        try {
+            if (row >= getRowNumber()) {
+                throw new IllegalArgumentException("Nonexistent row " + row);
+            }
+
+            byte[] secretBytes = null;
+            if (null != secret) {
+                secretBytes = encodeAndClear(secret);
+                validateSecret(secretBytes);
+            }
+            byte[] identifierBytes = encodeAndClear(identifier);
+            validateIdentifier(identifierBytes);
+            byte[] noteBytes = encodeAndClear(note);
+            validateNote(noteBytes);
+
+            if (null != secretBytes) {
+                writeSecretLength(row, secretBytes);
+                writeSecret(row, secretBytes);
+            }
+            writeIdentifierLength(row, identifierBytes);
+            writeIdentifier(row, identifierBytes);
+            writeNoteLength(row, noteBytes);
+            writeNote(row, noteBytes);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private byte[] encodeAndClear(char[] input) {
@@ -219,41 +249,42 @@ public class DataTable {
         return (byte) secureRandom.nextInt(256);
     }
 
-    /**
-     * Converts the table to a one dimensional array.
-     *
-     * @return A one dimensional array.
-     */
+    @Override
     public byte[] toOneDimension() {
         byte[] sequence = new byte[(MAX_ROW + 1) * (MAX_COL + 1)];
         int i = 0;
-        for (byte[] row : table) {
-            for (byte symbol : row) {
-                sequence[i++] = symbol;
+        lock.lock();
+        try {
+            for (byte[] row : table) {
+                for (byte symbol : row) {
+                    sequence[i++] = symbol;
+                }
             }
+        } finally {
+            lock.unlock();
         }
         return sequence;
     }
 
-    /**
-     * Clears the current table and loads a one dimensional array into the
-     * table.
-     *
-     * @param sequence A one dimensional array.
-     */
+    @Override
     public void load(byte[] sequence) {
         if (sequence.length != ((MAX_ROW + 1) * (MAX_COL + 1))) {
             throw new IllegalArgumentException("Invalid sequence size!");
         }
-        clear();
-        for (int i = 0, row = 0, col = 0; i < sequence.length; i++) {
-            table[row][col] = sequence[i];
-            if (col < MAX_COL) {
-                col++;
-            } else {
-                row++;
-                col = 0;
+        lock.lock();
+        try {
+            clear();
+            for (int i = 0, row = 0, col = 0; i < sequence.length; i++) {
+                table[row][col] = sequence[i];
+                if (col < MAX_COL) {
+                    col++;
+                } else {
+                    row++;
+                    col = 0;
+                }
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -263,38 +294,63 @@ public class DataTable {
         }
     }
 
-    /**
-     * Returns the number of allocated/used rows.
-     * 
-     * @return The number of allocated/used rows.
-     */
+    @Override
     public int getRowNumber() {
-        return table[SERVICE_ROW][SERVICE_COL_NEXT_ROW];
+        lock.lock();
+        try {
+            return table[SERVICE_ROW][SERVICE_COL_NEXT_ROW];
+        } finally {
+            lock.unlock();
+        }
     }
 
+    @Override
     public byte[] readSecret(int row) {
-        return Arrays.copyOfRange(table[row], SECRET.startIndex, SECRET.startIndex + table[row][SECRET_LEN.startIndex]);
+        lock.lock();
+        try {
+            return Arrays.copyOfRange(table[row], SECRET.startIndex, SECRET.startIndex + table[row][SECRET_LEN.startIndex]);
+        } finally {
+            lock.unlock();
+        }
     }
 
+    @Override
     public byte[] readIdentifier(int row) {
-        return Arrays.copyOfRange(table[row], IDENTIFIER.startIndex, IDENTIFIER.startIndex + table[row][IDENTIFIER_LEN.startIndex]);
+        lock.lock();
+        try {
+            return Arrays.copyOfRange(table[row], IDENTIFIER.startIndex, IDENTIFIER.startIndex + table[row][IDENTIFIER_LEN.startIndex]);
+        } finally {
+            lock.unlock();
+        }
     }
 
+    @Override
     public byte[] readNote(int row) {
-        return Arrays.copyOfRange(table[row], NOTE.startIndex, NOTE.startIndex + table[row][NOTE_LEN.startIndex]);
+        lock.lock();
+        try {
+            return Arrays.copyOfRange(table[row], NOTE.startIndex, NOTE.startIndex + table[row][NOTE_LEN.startIndex]);
+        } finally {
+            lock.unlock();
+        }
     }
 
+    @Override
     public void removeRow(int row) {
-        if (row >= getRowNumber()) {
-            throw new IllegalArgumentException("Nonexistent row " + row);
-        }
+        lock.lock();
+        try {
+            if (row >= getRowNumber()) {
+                throw new IllegalArgumentException("Nonexistent row " + row);
+            }
 
-        int lastRowIndex = table[SERVICE_ROW][SERVICE_COL_NEXT_ROW] - (byte) 1;
-        for (int i = row; i < lastRowIndex; i++) {
-            swapRows(i, i + 1);
-        }
+            int lastRowIndex = table[SERVICE_ROW][SERVICE_COL_NEXT_ROW] - (byte) 1;
+            for (int i = row; i < lastRowIndex; i++) {
+                swapRows(i, i + 1);
+            }
 
-        table[SERVICE_ROW][SERVICE_COL_NEXT_ROW] = (byte) lastRowIndex;
+            table[SERVICE_ROW][SERVICE_COL_NEXT_ROW] = (byte) lastRowIndex;
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void swapRows(int fromIndex, int toIndex) {

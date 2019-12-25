@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -24,15 +24,15 @@ package org.esoul.surpass.gui.table;
 import java.awt.Component;
 
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
 public class TextAreaTableCellRenderer implements TableCellRenderer {
+    
+    private NoteCell noteCell = new NoteCell();
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        JTextArea textArea = NoteCell.createTextArea();
-        textArea.setText(value.toString());
-        return NoteCell.createBorderlessScrollPane(textArea);
+        noteCell.textArea.setText(value.toString());
+        return noteCell.scrollPane;
     }
 }

@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -21,27 +21,22 @@
 */
 package org.esoul.surpass.gui.table;
 
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 
-final class NoteCell {
-    
-    private NoteCell() {
-        // no instances
-    }
-    
-    static JTextArea createTextArea() {
-        JTextArea textArea = new JTextArea(2, 20);
+class NoteCell {
+
+    JScrollPane scrollPane = null;
+
+    JTextArea textArea = null;
+
+    NoteCell() {
+        textArea = new JTextArea(2, 20);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setCaretPosition(0);
-        return textArea;
-    }
-    
-    static JScrollPane createBorderlessScrollPane(JTextArea textArea) {
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        return scrollPane;
+        scrollPane = new JScrollPane(textArea);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
     }
 }

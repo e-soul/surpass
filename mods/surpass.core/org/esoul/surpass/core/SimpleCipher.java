@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -31,13 +31,14 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
+import org.esoul.surpass.crypto.api.CryptoService;
+
 /**
- * Uses a {@link Cipher} with configurable parameters for password-based
- * encryption (PBE).
+ * Uses a {@link Cipher} with configurable parameters for password-based encryption (PBE).
  *
  * @author mgp
  */
-public class SimpleCipher {
+public class SimpleCipher implements CryptoService {
 
     private static final String PBE_ALGO = System.getProperty(ConfigurationProperties.PBE_ALGO, "PBEWithHmacSHA512AndAES_128");
 
@@ -53,14 +54,7 @@ public class SimpleCipher {
 
     private SecureRandom secureRandom = new SecureRandom();
 
-    /**
-     * Encrypts data.
-     *
-     * @param key The password used for encryption.
-     * @param data The data for encryption.
-     * @return The cipher text + salt, iv and format version.
-     * @throws GeneralSecurityException
-     */
+    @Override
     public byte[] encrypt(char[] key, byte[] data) throws GeneralSecurityException {
         byte[] salt = new byte[SALT_LEN];
         secureRandom.nextBytes(salt);
@@ -73,14 +67,7 @@ public class SimpleCipher {
         return addParameters(salt, iv, ciphertext);
     }
 
-    /**
-     * Decrypts data.
-     *
-     * @param key The password used for decryption.
-     * @param cipherInput The cipher text + salt, iv and format version.
-     * @return The decrypted data.
-     * @throws GeneralSecurityException
-     */
+    @Override
     public byte[] decrypt(char[] key, byte[] cipherInput) throws GeneralSecurityException {
         byte[] salt = Arrays.copyOfRange(cipherInput, VERSION_LEN, VERSION_LEN + SALT_LEN);
         byte[] iv = Arrays.copyOfRange(cipherInput, VERSION_LEN + SALT_LEN, VERSION_LEN + SALT_LEN + IV_LEN);

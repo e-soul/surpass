@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2018 e-soul.org
+   Copyright 2017-2019 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -20,6 +20,11 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 module surpass.core {
+    
+    requires surpass.api;
 
     exports org.esoul.surpass.core;
+    
+    provides org.esoul.surpass.crypto.api.CryptoService with org.esoul.surpass.core.SimpleCipher;
+    provides org.esoul.surpass.table.api.SecretTable with org.esoul.surpass.core.SquareMatrix;
 }
