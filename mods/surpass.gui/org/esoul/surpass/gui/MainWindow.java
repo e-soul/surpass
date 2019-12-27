@@ -216,7 +216,7 @@ public final class MainWindow {
         constraints.weightx = 0.;
         constraints.gridx = 1;
         constraints.gridy = 3;
-        components.addRowButton = new JButton("Load existing secrets then add");
+        components.addRowButton = new JButton(state.dataFileExist ? "Load existing secrets then add" : BTN_LBL_ADD);
         components.addRowButton.addActionListener(this::addRow);
         inputPanel.add(components.addRowButton, constraints);
 
