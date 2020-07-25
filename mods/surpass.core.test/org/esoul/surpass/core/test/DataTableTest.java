@@ -11,10 +11,6 @@ import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.junit.Assert;
 import org.junit.Before;
 
-/**
- *
- * @author mgp
- */
 public class DataTableTest {
 
     private byte[][] bytes;

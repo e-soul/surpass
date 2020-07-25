@@ -9,10 +9,6 @@ import org.esoul.surpass.core.SimpleCipher;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- * @author mgp
- */
 public class SimpleCipherTest {
 
     private static final byte[] DATA = "AAAA".getBytes(StandardCharsets.UTF_8);

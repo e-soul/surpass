@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2019 e-soul.org
+   Copyright 2017-2020 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -55,9 +55,7 @@ public class LocalFileSystemPersistenceService implements PersistenceService {
         } else {
             path = PersistenceDefaults.getSecrets();
         }
-
         Files.createDirectories(path.getParent());
-
         return path;
     }
 }

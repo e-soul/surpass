@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2019 e-soul.org
+   Copyright 2017-2020 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -34,7 +34,7 @@ public interface CryptoService {
     /**
      * Encrypts data.
      *
-     * @param key  The key used for encryption.
+     * @param key The key used for encryption.
      * @param data The data for encryption.
      * @return The cipher text + salt, iv and format version.
      * @throws GeneralSecurityException
@@ -44,7 +44,7 @@ public interface CryptoService {
     /**
      * Decrypts data.
      *
-     * @param key         The key used for decryption.
+     * @param key The key used for decryption.
      * @param cipherInput The cipher text + salt, iv and format version.
      * @return The decrypted data.
      * @throws GeneralSecurityException

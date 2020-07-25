@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2019 e-soul.org
+   Copyright 2017-2020 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -22,7 +22,7 @@
 package org.esoul.surpass.table.api;
 
 /**
- * Thrown when the maximum size of any of some input is exceeded.
+ * Thrown when the maximum size of some input is exceeded.
  *
  * @author mgp
  */
