@@ -19,14 +19,24 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.app;
 
-public class InvalidPasswordException extends Exception {
+/**
+ * Obtain collaborator services.
+ * 
+ * @author mgp
+ *
+ */
+@FunctionalInterface
+public interface CollaboratorFactory {
 
-    public InvalidPasswordException(Exception e) {
-        super(e);
-    }
-
-    private static final long serialVersionUID = 1L;
-
+    /**
+     * Create or obtain an existing instance of a service.
+     * 
+     * @param <T> The type of the service.
+     * @param clazz The {@link Class} instance of the service.
+     * 
+     * @return The service instance.
+     */
+    <T> T create(Class<T> clazz) throws ServiceUnavailableException;
 }

@@ -19,15 +19,15 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-module surpass.gui {
+package org.esoul.surpass.app;
 
-    requires surpass.core;
-    requires surpass.api;
-    requires surpass.app;
+import java.util.ServiceLoader;
 
-    uses org.esoul.surpass.crypto.api.CryptoService;
-    uses org.esoul.surpass.persist.api.PersistenceService;
-    uses org.esoul.surpass.table.api.SecretTable;
+public class DefaultCollaboratorFactory implements CollaboratorFactory {
 
-    requires java.desktop;
+    @Override
+    public <T> T create(Class<T> clazz) throws ServiceUnavailableException {
+        return ServiceLoader.load(clazz).findFirst().orElseThrow(() -> new ServiceUnavailableException(clazz));
+    }
+
 }

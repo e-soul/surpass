@@ -19,15 +19,17 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-module surpass.gui {
+package org.esoul.surpass.app;
 
-    requires surpass.core;
-    requires surpass.api;
-    requires surpass.app;
+public class InvalidPasswordException extends Exception {
 
-    uses org.esoul.surpass.crypto.api.CryptoService;
-    uses org.esoul.surpass.persist.api.PersistenceService;
-    uses org.esoul.surpass.table.api.SecretTable;
+    private static final long serialVersionUID = 1L;
 
-    requires java.desktop;
+    public InvalidPasswordException(Exception e) {
+        super(e);
+    }
+
+    public InvalidPasswordException(String message) {
+        super(message);
+    }
 }

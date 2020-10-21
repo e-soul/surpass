@@ -25,14 +25,15 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.function.BooleanSupplier;
 
 public class WindowClosingHandler extends WindowAdapter {
 
-    private DataState state = null;
+    private BooleanSupplier unsavedDataExistSupplier = null;
     private Components components = null;
 
-    public WindowClosingHandler(DataState state, Components components) {
-        this.state = state;
+    public WindowClosingHandler(BooleanSupplier unsavedDataExistSupplier, Components components) {
+        this.unsavedDataExistSupplier = unsavedDataExistSupplier;
         this.components = components;
     }
 
@@ -40,6 +41,6 @@ public class WindowClosingHandler extends WindowAdapter {
     public void windowClosing(WindowEvent windowEvent) {
         super.windowClosing(windowEvent);
         Window window = windowEvent.getWindow();
-        new ExitProgrammeHandler(window, state, components).actionPerformed(new ActionEvent(window, ActionEvent.ACTION_PERFORMED, "Exit"));
+        new ExitProgrammeHandler(window, unsavedDataExistSupplier, components).actionPerformed(new ActionEvent(window, ActionEvent.ACTION_PERFORMED, "Exit"));
     }
 }

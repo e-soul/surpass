@@ -24,6 +24,7 @@ package org.esoul.surpass.gui;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.function.BooleanSupplier;
 
 import javax.swing.JOptionPane;
 
@@ -31,26 +32,25 @@ public class ExitProgrammeHandler implements ActionListener {
 
     private Window window = null;
 
-    private DataState state = null;
+    private BooleanSupplier unsavedDataExistSupplier = null;
 
     private Components components = null;
 
-    public ExitProgrammeHandler(Window window, DataState state, Components components) {
+    public ExitProgrammeHandler(Window window, BooleanSupplier unsavedDataExistSupplier, Components components) {
         this.window = window;
-        this.state = state;
+        this.unsavedDataExistSupplier = unsavedDataExistSupplier;
         this.components = components;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         int selectedOption;
-        if (state.unsavedDataExist) {
+        if (unsavedDataExistSupplier.getAsBoolean()) {
             selectedOption = JOptionPane.showConfirmDialog(window, "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?",
                     "Exit despite unsaved data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else if (components.isFormDirty()) {
-            selectedOption = JOptionPane.showConfirmDialog(window,
-                    "There's new data in the form. Exiting will result in DATA LOSS! Are you sure you want to exit?", "Exit despite existing new data?",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            selectedOption = JOptionPane.showConfirmDialog(window, "There's new data in the form. Exiting will result in DATA LOSS! Are you sure you want to exit?",
+                    "Exit despite existing new data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
             selectedOption = JOptionPane.showConfirmDialog(window, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
         }
