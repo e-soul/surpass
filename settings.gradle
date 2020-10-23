@@ -1,0 +1,11 @@
+rootProject.name = "surpass"
+
+include "surpass.api",
+        "surpass.test",
+        "surpass.core",
+        "surpass.core.test",
+        "surpass.persist",
+        "surpass.persist.test",
+        "surpass.app",
+        "surpass.app.test",
+        "surpass.gui"

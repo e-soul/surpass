@@ -1,3 +1,5 @@
+.gradle
 build-lib
 build-output
-mods/*/bin
+surpass.*/bin
+surpass.*/build

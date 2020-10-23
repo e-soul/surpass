@@ -1,0 +1,26 @@
+plugins {
+    id "java"
+}
+
+java {
+    modularity.inferModulePath = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation project(":surpass.api")
+    testImplementation project(":surpass.app")
+    testImplementation project(":surpass.test")
+    testRuntimeOnly project(":surpass.core")
+    testRuntimeOnly project(":surpass.persist")
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:latest.release"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:latest.release"
+}
+
+test {
+    useJUnitPlatform()
+}

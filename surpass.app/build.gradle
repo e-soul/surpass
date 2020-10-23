@@ -1,0 +1,11 @@
+plugins {
+    id "java"
+}
+
+java {
+    modularity.inferModulePath = true
+}
+
+dependencies {
+    implementation project(":surpass.api")
+}
