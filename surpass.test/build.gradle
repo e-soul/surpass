@@ -2,10 +2,6 @@ plugins {
     id "java-library"
 }
 
-java {
-    modularity.inferModulePath = true
-}
-
 repositories {
     mavenCentral()
 }
