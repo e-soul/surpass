@@ -21,7 +21,7 @@
 */
 package org.esoul.surpass.gui;
 
-import java.awt.Window;
+import java.awt.SystemTray;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.function.BooleanSupplier;
@@ -30,14 +30,11 @@ import javax.swing.JOptionPane;
 
 public class ExitProgrammeHandler implements ActionListener {
 
-    private Window window = null;
-
     private BooleanSupplier unsavedDataExistSupplier = null;
 
     private Components components = null;
 
-    public ExitProgrammeHandler(Window window, BooleanSupplier unsavedDataExistSupplier, Components components) {
-        this.window = window;
+    public ExitProgrammeHandler(BooleanSupplier unsavedDataExistSupplier, Components components) {
         this.unsavedDataExistSupplier = unsavedDataExistSupplier;
         this.components = components;
     }
@@ -46,16 +43,19 @@ public class ExitProgrammeHandler implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         int selectedOption;
         if (unsavedDataExistSupplier.getAsBoolean()) {
-            selectedOption = JOptionPane.showConfirmDialog(window, "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?",
+            selectedOption = JOptionPane.showConfirmDialog(components.frame, "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?",
                     "Exit despite unsaved data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else if (components.isFormDirty()) {
-            selectedOption = JOptionPane.showConfirmDialog(window, "There's new data in the form. Exiting will result in DATA LOSS! Are you sure you want to exit?",
+            selectedOption = JOptionPane.showConfirmDialog(components.frame, "There's new data in the form. Exiting will result in DATA LOSS! Are you sure you want to exit?",
                     "Exit despite existing new data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
-            selectedOption = JOptionPane.showConfirmDialog(window, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+            selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
         }
         if (JOptionPane.YES_OPTION == selectedOption) {
-            window.dispose();
+            if (SystemTray.isSupported()) {
+                SystemTray.getSystemTray().remove(components.trayIcon);
+            }
+            components.frame.dispose();
         }
     }
 }

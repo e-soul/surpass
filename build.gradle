@@ -12,7 +12,7 @@ task generateAppImage(type: Exec) {
     }
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
     def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
-    def modulePath = surpassMods.collect { new File(project(it).buildDir, "classes/java/main") }.join(System.getProperty("path.separator"))
+    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.getProperty("path.separator"))
     commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
                 "--output", "surpass-$version", "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
                 "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"

@@ -21,11 +21,17 @@
 */
 package org.esoul.surpass.gui;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -42,6 +48,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -86,6 +93,12 @@ public final class MainWindow {
 
     private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 30L;
 
+    private static final String MENU_ITEM_LBL_LOAD = "Load secrets";
+
+    private static final String MENU_ITEM_LBL_STORE = "Store secrets";
+
+    private static final String MENU_ITEM_LBL_EXIT = "Exit";
+
     private static final String BTN_LBL_ADD = "Add";
 
     private Session session = null;
@@ -112,31 +125,30 @@ public final class MainWindow {
         mainWindow.createInputPanel();
         mainWindow.createTable();
         mainWindow.createCommandPanel();
+        mainWindow.createWindowAndTrayIcon();
         mainWindow.show();
     }
 
     private void createFrame() {
         components.frame = new JFrame("Surpass");
         components.frame.setLayout(new BoxLayout(components.frame.getContentPane(), BoxLayout.PAGE_AXIS));
-        components.frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        components.frame.addWindowListener(new WindowClosingHandler(session::unsavedDataExists, components));
     }
 
     private void createMenuBar() {
-        JMenuItem loadMenuItem = new JMenuItem("Load secrets", KeyEvent.VK_L);
+        JMenuItem loadMenuItem = new JMenuItem(MENU_ITEM_LBL_LOAD, KeyEvent.VK_L);
         loadMenuItem.addActionListener(this::loadData);
 
-        JMenuItem storeMenuItem = new JMenuItem("Store secrets", KeyEvent.VK_S);
+        JMenuItem storeMenuItem = new JMenuItem(MENU_ITEM_LBL_STORE, KeyEvent.VK_S);
         storeMenuItem.addActionListener(this::storeData);
 
-        JMenuItem menuItem = new JMenuItem("Exit", KeyEvent.VK_X);
-        menuItem.addActionListener(new ExitProgrammeHandler(components.frame, session::unsavedDataExists, components));
+        JMenuItem exitMenuItem = new JMenuItem(MENU_ITEM_LBL_EXIT, KeyEvent.VK_X);
+        exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
 
         JMenu menu = new JMenu("Programme");
         menu.setMnemonic(KeyEvent.VK_P);
         menu.add(loadMenuItem);
         menu.add(storeMenuItem);
-        menu.add(menuItem);
+        menu.add(exitMenuItem);
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(menu);
@@ -340,9 +352,44 @@ public final class MainWindow {
         }
     }
 
+    private void createWindowAndTrayIcon() {
+        Image iconImage = new ImageIcon(getClass().getResource("/icon.png")).getImage();
+
+        components.frame.setIconImage(iconImage);
+
+        if (SystemTray.isSupported()) {
+            try {
+                components.trayIcon = new TrayIcon(iconImage);
+                components.trayIcon.setImageAutoSize(true);
+
+                MenuItem loadMenuItem = new MenuItem(MENU_ITEM_LBL_LOAD);
+                loadMenuItem.addActionListener(this::loadData);
+
+                MenuItem storeMenuItem = new MenuItem(MENU_ITEM_LBL_STORE);
+                storeMenuItem.addActionListener(this::storeData);
+
+                MenuItem exitMenuItem = new MenuItem(MENU_ITEM_LBL_EXIT);
+                exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
+
+                PopupMenu popupMenu = new PopupMenu("Surpass");
+                popupMenu.add(loadMenuItem);
+                popupMenu.add(storeMenuItem);
+                popupMenu.add(exitMenuItem);
+
+                components.trayIcon.setPopupMenu(popupMenu);
+                components.trayIcon.addActionListener(actionEvent -> show());
+                components.trayIcon.addMouseListener(new TrayMouseHandler(this::show));
+                SystemTray.getSystemTray().add(components.trayIcon);
+            } catch (AWTException e) {
+                // do nothing
+            }
+        }
+    }
+
     private void show() {
         components.frame.pack();
         components.frame.setVisible(true);
+        components.frame.setState(JFrame.NORMAL);
     }
 
     private void loadData(ActionEvent event) {

@@ -21,6 +21,8 @@
 */
 package org.esoul.surpass.gui;
 
+import java.awt.TrayIcon;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
@@ -48,7 +50,7 @@ final class Components {
     JButton addRowButton = null;
 
     JTable table = null;
-    
+
     AbstractTableModel tableModel = null;
 
     JButton showSecretButton = null;
@@ -56,6 +58,8 @@ final class Components {
     JButton editRowButton = null;
 
     JButton removeRowButton = null;
+
+    TrayIcon trayIcon = null;
 
     boolean isFormDirty() {
         return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();
