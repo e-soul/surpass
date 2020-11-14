@@ -36,6 +36,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
@@ -63,11 +64,14 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
@@ -247,7 +251,32 @@ public final class MainWindow {
 
     private void createTable() {
         components.tableModel = new SimpleTableModel(session.getSecretTable());
+        components.tableModel.addTableModelListener(e -> components.secretCountLabel.setText(components.tableModel.getRowCount() + " secrets"));
+        TableRowSorter<AbstractTableModel> tableRowSorter = new TableRowSorter<>(components.tableModel);
+
+        JTextField filterTextField = new JTextField(50);
+        filterTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                tableRowSorter.setRowFilter(RowFilter.regexFilter(".*" + filterTextField.getText() + ".*"));
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+        });
+        JPanel filterPanel = createPanelWithBoxLayout();
+        filterPanel.add(new JLabel("Filter: "));
+        filterPanel.add(Box.createHorizontalGlue());
+        filterPanel.add(filterTextField);
+        components.frame.add(filterPanel);
+
         components.table = new JTable(components.tableModel);
+        components.table.setRowSorter(tableRowSorter);
         components.table.setPreferredScrollableViewportSize(new Dimension(500, 300));
         components.table.setFillsViewportHeight(true);
         components.table.setRowHeight(40);
@@ -284,6 +313,13 @@ public final class MainWindow {
         components.frame.add(scrollPane);
     }
 
+    private JPanel createPanelWithBoxLayout() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        return panel;
+    }
+
     private void tableSelectionChanged(ListSelectionEvent listSelectionEvent) {
         if (components.table.getSelectedColumn() == SimpleTableModel.IDENTIFIER_COLUMN_INDEX) {
             components.setEnabledTableButtons(true);
@@ -300,9 +336,9 @@ public final class MainWindow {
     }
 
     private void createCommandPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        JPanel panel = createPanelWithBoxLayout();
+        components.secretCountLabel = new JLabel();
+        panel.add(components.secretCountLabel);
         panel.add(Box.createHorizontalGlue());
         components.showSecretButton = new JButton("Show secret");
         components.showSecretButton.setEnabled(false);

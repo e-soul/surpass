@@ -25,6 +25,7 @@ import java.awt.TrayIcon;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -60,6 +61,8 @@ final class Components {
     JButton removeRowButton = null;
 
     TrayIcon trayIcon = null;
+
+    JLabel secretCountLabel = null;
 
     boolean isFormDirty() {
         return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();

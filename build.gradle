@@ -6,14 +6,43 @@ subprojects {
     }
 }
 
+def osName = System.properties["os.name"].toLowerCase().replaceAll("\\s+", "")
+def osArch = System.properties["os.arch"]
+def distDir = "${projectDir}/dist"
+def outputImage = "${distDir}/surpass"
+def distArchive = "${distDir}/surpass-${osName}-${osArch}-${version}.zip"
+
 task generateAppImage(type: Exec) {
     doFirst {
-        delete "surpass-$version"
+        delete distDir
     }
+
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
     def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
-    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.getProperty("path.separator"))
+    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.properties["path.separator"])
     commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
-                "--output", "surpass-$version", "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
+                "--output", outputImage, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
                 "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
 }
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+generateAppImage.doLast {
+    delete "${outputImage}/bin/surpass.bat"
+    delete "${outputImage}/bin/surpass"
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        copy {
+            from files("${projectDir}/bin/surpass.bat", "${projectDir}/bin/surpass.exe")
+            into outputImage
+        }
+    } else {
+        copy {
+            from "${projectDir}/bin/surpass"
+            into outputImage
+        }
+    }
+
+    ant.zip(basedir: distDir, destfile: distArchive)
+}
+
