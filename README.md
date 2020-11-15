@@ -10,5 +10,5 @@ This is a simple, secure and easy to use password manager.
  - Very small code-base with focus on simplicity. People with minimal programming experience should be able to review the code and understand how it works.
 
 ###### Downloads:
- - [Windows 7-10](https://bitbucket.org/e-soul/surpass/downloads/surpass-windows-0.6.zip)
- - [Linux](https://bitbucket.org/e-soul/surpass/downloads/surpass-linux-0.6.zip)
+ - [Windows 7-10](https://bitbucket.org/e-soul/surpass/downloads/surpass-windows10-amd64-0.7.zip)
+ - [Linux](https://bitbucket.org/e-soul/surpass/downloads/surpass-linux-amd64-0.7.zip)
