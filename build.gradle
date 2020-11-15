@@ -37,6 +37,7 @@ generateAppImage.doLast {
             into outputImage
         }
     } else {
+        ant.chmod(file: "${projectDir}/bin/surpass", perm: "+x")
         copy {
             from "${projectDir}/bin/surpass"
             into outputImage
