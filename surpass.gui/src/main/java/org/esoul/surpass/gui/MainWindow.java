@@ -262,7 +262,7 @@ public final class MainWindow {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                tableRowSorter.setRowFilter(RowFilter.regexFilter(".*" + filterTextField.getText() + ".*"));
+                tableRowSorter.setRowFilter(RowFilter.regexFilter("(?iu:.*" + filterTextField.getText() + ".*)"));
             }
 
             @Override
