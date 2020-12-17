@@ -360,7 +360,7 @@ public final class MainWindow {
 
     private void showSecret(ActionEvent actionEvent) {
         // This String object will not be added to the string pool.
-        String secretStr = new String(session.getSecretTable().readSecret(components.table.getSelectedRow()), StandardCharsets.UTF_8);
+        String secretStr = new String(session.getSecretTable().readSecret(getSelected()), StandardCharsets.UTF_8);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(secretStr), null);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -370,7 +370,7 @@ public final class MainWindow {
     }
 
     private void loadRowInFormForEdit(ActionEvent actionEvent) {
-        int row = components.table.getSelectedRow();
+        int row = getSelected();
         session.setEditMode(row);
         components.identifierTextField.setText(new String(session.getSecretTable().readIdentifier(row)));
         components.noteTextArea.setText(new String(session.getSecretTable().readNote(row)));
@@ -381,11 +381,15 @@ public final class MainWindow {
         int selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to remove this entry?", "Remove?", JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE);
         if (JOptionPane.YES_OPTION == selectedOption) {
-            int row = components.table.getSelectedRow();
+            int row = getSelected();
             session.remove(row);
             components.tableModel.fireTableRowsDeleted(row, row);
             components.setEnabledTableButtons(false);
         }
+    }
+
+    private int getSelected() {
+       return components.table.convertRowIndexToModel(components.table.getSelectedRow());
     }
 
     private void createWindowAndTrayIcon() {
