@@ -3,25 +3,25 @@ body {
 }
 
 #content {
-    max-width: 800px;
-    margin: auto;
-    border: 1px solid White ;
-    color: White ;
-    padding: 50px;
+	max-width: 75%;
+	margin: auto;
+    padding: 20px;
     font-family: "Lucida Console", Monaco, monospace;
 }
 
 #logo-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 65%;
-    height: 65%;
+	display: block;
+	float: left;
+	padding: 10px;
+    width: 20%;
 }
 
 #descr-short {
     text-align: center;
-    font-size: 190%;
+	text-shadow: 5px 5px 4px SteelBlue;
+	margin-top: 8%;
+	margin-bottom: 8%;
+    font-size: 200%;
 }
 
 #descr-full {
@@ -29,12 +29,10 @@ body {
     font-size: 120%;
 }
 
-#screenshots {
-    margin: auto;
-    text-align: center;
+.col > div {
+    background-color: LightSteelBlue;
 }
 
-#screenshot-img {
-    width: 35%;
-    height: 35%;
+.card-img-top > img {
+    width: 20%;
 }

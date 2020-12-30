@@ -1,35 +1,126 @@
 <!DOCTYPE html>
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<html lang="en"><head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
     <meta name="description" content="Surpass home page">
     <meta name="keywords" content="surpass,password manager">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="styles/default.css">
+    <link rel="stylesheet" type="text/css" href="styles/grid.css">
     <link rel="icon" type="image/png" href="img/icon-32x32.png" sizes="32x32">
     <title>Surpass</title>
 </head>
-
 <body>
-    <br><br>
-    <section id="content">
+<div id="content" class="grid-container">
+    <div class="header">
         <img id="logo-img" src="img/logo.png" alt="Surpass logo">
-        <br><br>
         <article id="descr-short">Simple, secure and easy to use password manager.</article>
-        <br><br>
+    </div>
+    <div class="menu">
+        <p>
+            Latest release: 0.8
+            <div class="dropdown">
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-download fa-lg"></i> Downloads
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="https://bitbucket.org/e-soul/surpass/downloads/surpass-windows10-amd64-0.8.zip"><i class="fab fa-windows"></i> Windows 7-10 x86_64</a></li>
+                    <li><a class="dropdown-item" href="https://bitbucket.org/e-soul/surpass/downloads/surpass-linux-amd64-0.8.zip"><i class="fab fa-linux"></i> Linux x86_64</a></li>
+                </ul>
+            </div>
+            <br>
+            <a class="btn btn-secondary" href="https://github.com/e-soul/surpass" role="button"><i class="fab fa-github fa-lg"></i> Sources</a>
+        </p>
+    </div>
+    <div class="main">
         <article id="descr-full">Surpass is a multi-platform graphical password manager with focus on simplicity. The source code is free (as in "liberty") and is designed to be concise and simple.</article>
         <br><br>
-        <p>
-            Downloads: <br>
-            <a href="https://bitbucket.org/e-soul/surpass/downloads/surpass-windows10-amd64-0.8.zip">Windows 7-10 x86_64</a><br>
-            <a href="https://bitbucket.org/e-soul/surpass/downloads/surpass-linux-amd64-0.8.zip">Linux x86_64</a>
-        </p>
+        <article>
+            <ul>
+                <li><i class="fas fa-lock"></i> Securely store any secret e.g. passwords, pass phrases, pin codes, etc.</li>
+                <li><i class="fas fa-compress-alt"></i> Small footprint, less than 40MB. Can fit on any memory device. Does not need installation or any third party library, completely self-contained.</li>
+                <li><i class="fas fa-comment-alt"></i> System tray support.</li>
+                <li><i class="far fa-clipboard"></i> Clipboard support. If a secret is copied to clipboard it's automatically cleared after 30 seconds.</li>
+            </ul>
+        </article>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div class="col">
+                <div class="card p-2 border border-white">
+                    <img src="img/gui-empty.png" class="card-img-top" alt="gui empty">
+                    <div class="card-body">
+                        <h5 class="card-title">Empty</h5>
+                        <p class="card-text">Starting Surpass for the first time.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-2 border border-white">
+                    <img src="img/load-secrets.png" class="card-img-top" alt="load secrets">
+                    <div class="card-body">
+                        <h5 class="card-title">Load secrets</h5>
+                        <p class="card-text">Loading secrets, if any exist.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-2 border border-white">
+                    <img src="img/enter-master-pass.png" class="card-img-top" alt="enter master password">
+                    <div class="card-body">
+                        <h5 class="card-title">Master password</h5>
+                        <p class="card-text">Enter master password to decrypt existing secrets.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card p-2 border border-white">
+                    <img src="img/loaded.png" class="card-img-top" alt="loaded secrets">
+                    <div class="card-body">
+                        <h5 class="card-title">Secrets</h5>
+                        <p class="card-text">The full list of existing secrets.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br><br>
-        <section id="screenshots">
-            <a href="img/gui-empty.png" target="_blank"><img id="screenshot-img" src="img/gui-empty.png" alt="gui empty"></a>
-            <a href="img/load-secrets.png" target="_blank"><img id="screenshot-img" src="img/load-secrets.png" alt="load secrets"></a>
-            <a href="img/enter-master-pass.png" target="_blank"><img id="screenshot-img" src="img/enter-master-pass.png" alt="enter master password"></a>
-            <a href="img/loaded.png" target="_blank"><img id="screenshot-img" src="img/loaded.png" alt="loaded secrets"></a>
-        </section>
-    </section>
+        <table class="table caption-top">
+            <caption>Change log</caption>
+            <thead>
+                <tr>
+                    <th scope="col">version</th>
+                    <th scope="col">features</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0.9 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
+                    <td>Password generation.</td>
+                </tr>
+                <tr>
+                    <td>0.8 <span class="p-1 bg-success"><i class="fas fa-clipboard-check fa-lg"></i> latest release</span></td>
+                    <td>
+
+                        <ul>
+                            <li>Custom native windows launcher (.exe)</i>
+                            <li>Fix view-model translation</i>
+                        </ul>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>0.7</td>
+                    <td>
+                        <ul>
+                            <li>Add secret count</i>
+                            <li>Add tray icon</i>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">Copyright 2016-2021 <a href="http://e-soul.org">e-soul.org</a></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/3ea9a29bf6.js" crossorigin="anonymous"></script>
 </body></html>
