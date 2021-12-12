@@ -48,7 +48,7 @@ import org.esoul.surpass.secgen.api.CharClass;
  */
 public class SecretGenerationWindow {
 
-    private static final int MIN_SECRET_LEN = 3;
+    private static final int MIN_SECRET_LEN = 4;
 
     private static final int DEFAULT_SECRET_LEN = 12;
 
@@ -108,7 +108,7 @@ public class SecretGenerationWindow {
         components.lengthLabel = new JLabel(components.getLengthLabelValue());
         lengthPanel.add(components.lengthLabel);
         components.lengthSlider.addChangeListener(l -> components.updateLengthLabel());
-
+        secretGenerationDialog.getContentPane().add(lengthPanel);
     }
 
     private static void setupSecretPanel(JDialog secretGenerationDialog, SecretGenerationComponents components, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
