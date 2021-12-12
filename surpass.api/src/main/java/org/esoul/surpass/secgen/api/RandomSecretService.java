@@ -19,13 +19,23 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-module surpass.core {
-    
-    requires transitive surpass.api;
+package org.esoul.surpass.secgen.api;
 
-    exports org.esoul.surpass.core;
-    
-    provides org.esoul.surpass.crypto.api.CryptoService with org.esoul.surpass.core.SimpleCipher;
-    provides org.esoul.surpass.table.api.SecretTable with org.esoul.surpass.core.SquareMatrix;
-    provides org.esoul.surpass.secgen.api.RandomSecretService with org.esoul.surpass.core.SecretGenerator;
+import java.util.Collection;
+
+/**
+ * Generate a random secret.
+ *
+ * @author mgp
+ *
+ */
+public interface RandomSecretService {
+
+    /**
+     * Generate a random secret and write it in the input {@code char} array.
+     *
+     * @param secret The array to write the secret into.
+     * @param allowedCharClasses The character classes that are allowed in the generated secret.
+     */
+    void generateSecret(char[] secret, Collection<CharClass> allowedCharClasses);
 }

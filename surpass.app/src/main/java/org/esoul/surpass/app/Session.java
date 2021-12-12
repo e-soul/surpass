@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2020 e-soul.org
+   Copyright 2017-2022 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -26,10 +26,13 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 
 import org.esoul.surpass.crypto.api.CryptoService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
+import org.esoul.surpass.secgen.api.CharClass;
+import org.esoul.surpass.secgen.api.RandomSecretService;
 import org.esoul.surpass.table.api.EmptySequenceException;
 import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.esoul.surpass.table.api.SecretTable;
@@ -55,6 +58,8 @@ public class Session {
 
     private CryptoService cryptoService = null;
 
+    private RandomSecretService randomSecretService = null;
+
     private DataState state = new DataState();
 
     public Session(CollaboratorFactory collaboratorFactory) {
@@ -76,6 +81,7 @@ public class Session {
         cryptoService = collaboratorFactory.create(CryptoService.class);
         persistenceService = collaboratorFactory.create(PersistenceService.class);
         secretTable = collaboratorFactory.create(SecretTable.class);
+        randomSecretService = collaboratorFactory.create(RandomSecretService.class);
     }
 
     private void initState() throws IOException {
@@ -233,5 +239,15 @@ public class Session {
      */
     public boolean unsavedDataExists() {
         return state.unsavedDataExist;
+    }
+
+    /**
+     * Generates a random secret based on the allowed character classes.
+     * 
+     * @param secret The input array to write the generated secret into.
+     * @param allowedCharClasses The character classes allowed in the generated secret.
+     */
+    public void generateSecret(char[] secret, Collection<CharClass> allowedCharClasses) {
+        randomSecretService.generateSecret(secret, allowedCharClasses);
     }
 }

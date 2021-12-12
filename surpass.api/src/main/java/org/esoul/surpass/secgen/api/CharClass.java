@@ -19,13 +19,33 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-module surpass.core {
-    
-    requires transitive surpass.api;
+package org.esoul.surpass.secgen.api;
 
-    exports org.esoul.surpass.core;
-    
-    provides org.esoul.surpass.crypto.api.CryptoService with org.esoul.surpass.core.SimpleCipher;
-    provides org.esoul.surpass.table.api.SecretTable with org.esoul.surpass.core.SquareMatrix;
-    provides org.esoul.surpass.secgen.api.RandomSecretService with org.esoul.surpass.core.SecretGenerator;
+import java.util.function.IntPredicate;
+
+public enum CharClass {
+
+    DIGIT(c -> Character.isDigit((char) c)),
+    ALPHA_UPPER(c -> Character.isLetter((char) c) && Character.isUpperCase((char) c)),
+    ALPHA_LOWER(c -> Character.isLetter((char) c) && Character.isLowerCase((char) c)),
+    SPECIAL(c -> !Character.isLetter((char) c) && !Character.isDigit((char) c));
+
+    private IntPredicate isInClassPredicate = null;
+
+    private CharClass(IntPredicate inClassPredicate) {
+        this.isInClassPredicate = inClassPredicate;
+    }
+
+    public boolean isInClass(char c) {
+        return isInClassPredicate.test(c);
+    }
+
+    public static CharClass getCharClass(char c) {
+        for (CharClass charClass : values()) {
+            if (charClass.isInClass(c)) {
+                return charClass;
+            }
+        }
+        throw new IllegalArgumentException(String.valueOf(c));
+    }
 }

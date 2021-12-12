@@ -79,6 +79,7 @@ import org.esoul.surpass.app.NoUnsavedDataExistsException;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
+import org.esoul.surpass.gui.secgen.SecretGenerationWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
@@ -95,7 +96,7 @@ public final class MainWindow {
 
     private static final Logger logger = System.getLogger(MainWindow.class.getSimpleName());
 
-    private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 30L;
+    private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 45L;
 
     private static final String MENU_ITEM_LBL_LOAD = "Load secrets";
 
@@ -177,31 +178,50 @@ public final class MainWindow {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.weightx = 0.8;
+        constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 0;
-        components.identifierTextField = new JTextField(50);
+        components.identifierTextField = new JTextField(39);
         inputPanel.add(components.identifierTextField, constraints);
 
         JLabel secretLabel = new JLabel("Secret: ");
         constraints.fill = GridBagConstraints.NONE;
         constraints.anchor = GridBagConstraints.LINE_END;
         constraints.weightx = 0.2;
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
         constraints.gridy = 1;
         inputPanel.add(secretLabel, constraints);
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 0.8;
+        constraints.weightx = 0.7;
+        constraints.gridwidth = 1;
         constraints.gridx = 1;
         constraints.gridy = 1;
-        components.secretPasswordField = new JPasswordField(50);
+        components.secretPasswordField = new JPasswordField(39);
         inputPanel.add(components.secretPasswordField, constraints);
+
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.weightx = 0.1;
+        constraints.gridwidth = 1;
+        constraints.gridx = 2;
+        constraints.gridy = 1;
+        JButton generateSecretButton = new JButton("Generate secret");
+        generateSecretButton.addActionListener(l -> {
+            char[] secret = SecretGenerationWindow.createAndShow(components.frame, (scrt, chars) -> session.generateSecret(scrt, chars));
+            if (secret.length > 0) {
+                components.secretPasswordField.setText(new String(secret));
+            }
+        });
+        inputPanel.add(generateSecretButton, constraints);
 
         JLabel noteLabel = new JLabel("Note: ");
         constraints.fill = GridBagConstraints.NONE;
         constraints.anchor = GridBagConstraints.FIRST_LINE_END;
         constraints.weightx = 0.2;
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
         constraints.gridy = 2;
         inputPanel.add(noteLabel, constraints);
@@ -209,14 +229,16 @@ public final class MainWindow {
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.weightx = 0.8;
+        constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 2;
-        components.noteTextArea = new JTextArea(3, 50);
+        components.noteTextArea = new JTextArea(3, 39);
         inputPanel.add(new JScrollPane(components.noteTextArea), constraints);
 
         constraints.fill = GridBagConstraints.NONE;
         constraints.anchor = GridBagConstraints.LINE_END;
         constraints.weightx = 0.;
+        constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 3;
         components.addRowButton = new JButton(session.dataFileExist() ? "Load existing secrets then add" : BTN_LBL_ADD);
@@ -364,6 +386,7 @@ public final class MainWindow {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(secretStr), null);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        //TODO Clear the clipboard only if it contains the password
         executor.schedule(() -> clipboard.setContents(new StringSelection(""), null), DEFAULT_CLIPBOARD_EXPIRE_DELAY, TimeUnit.SECONDS);
         executor.shutdown();
         JOptionPane.showMessageDialog(components.frame, secretStr, "Secret copied to clipboard for " + DEFAULT_CLIPBOARD_EXPIRE_DELAY + "s.", JOptionPane.INFORMATION_MESSAGE);
@@ -389,7 +412,7 @@ public final class MainWindow {
     }
 
     private int getSelected() {
-       return components.table.convertRowIndexToModel(components.table.getSelectedRow());
+        return components.table.convertRowIndexToModel(components.table.getSelectedRow());
     }
 
     private void createWindowAndTrayIcon() {

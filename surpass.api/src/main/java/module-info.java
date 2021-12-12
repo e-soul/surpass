@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2020 e-soul.org
+   Copyright 2017-2022 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -23,4 +23,5 @@ module surpass.api {
     exports org.esoul.surpass.crypto.api;
     exports org.esoul.surpass.persist.api;
     exports org.esoul.surpass.table.api;
+    exports org.esoul.surpass.secgen.api;
 }
