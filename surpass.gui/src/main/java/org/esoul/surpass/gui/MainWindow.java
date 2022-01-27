@@ -33,7 +33,10 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -42,6 +45,9 @@ import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -295,6 +301,12 @@ public final class MainWindow {
         filterPanel.add(new JLabel("Filter: "));
         filterPanel.add(Box.createHorizontalGlue());
         filterPanel.add(filterTextField);
+        JButton clearButton = new JButton("Clear");
+        clearButton.addActionListener(l -> {
+            filterTextField.setText("");
+            tableRowSorter.setRowFilter(null);
+        });
+        filterPanel.add(clearButton);
         components.frame.add(filterPanel);
 
         components.table = new JTable(components.tableModel);
@@ -383,13 +395,39 @@ public final class MainWindow {
     private void showSecret(ActionEvent actionEvent) {
         // This String object will not be added to the string pool.
         String secretStr = new String(session.getSecretTable().readSecret(getSelected()), StandardCharsets.UTF_8);
+        byte[] secretHashValue = calculateHash(session.getSecretTable().readSecret(getSelected()));
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(secretStr), null);
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        //TODO Clear the clipboard only if it contains the password
-        executor.schedule(() -> clipboard.setContents(new StringSelection(""), null), DEFAULT_CLIPBOARD_EXPIRE_DELAY, TimeUnit.SECONDS);
+        executor.schedule(() -> clearClipboard(secretHashValue), DEFAULT_CLIPBOARD_EXPIRE_DELAY, TimeUnit.SECONDS);
         executor.shutdown();
         JOptionPane.showMessageDialog(components.frame, secretStr, "Secret copied to clipboard for " + DEFAULT_CLIPBOARD_EXPIRE_DELAY + "s.", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void clearClipboard(byte[] secretHashValue) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        try {
+            Object value = contents.getTransferData(DataFlavor.stringFlavor);
+            if (null != value && secretHashValue.length > 0) {
+                byte[] contentsHashValue = calculateHash(value.toString().getBytes(StandardCharsets.UTF_8));
+                if (!Arrays.equals(contentsHashValue, secretHashValue)) {
+                    // Don't clear the clipboard if the content is different than the secret. The user may have already put something else in the clipboard already.
+                    return;
+                }
+            }
+        } catch (UnsupportedFlavorException | IOException ex) {
+            // Cannot verify the clipboard content, clear it just in case.
+        }
+        clipboard.setContents(new StringSelection(""), null);
+    }
+
+    private byte[] calculateHash(byte[] input) {
+        try {
+            return MessageDigest.getInstance("SHA-256").digest(input);
+        } catch (NoSuchAlgorithmException e) {
+            return new byte[0];
+        }
     }
 
     private void loadRowInFormForEdit(ActionEvent actionEvent) {

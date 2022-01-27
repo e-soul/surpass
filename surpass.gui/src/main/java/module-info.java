@@ -30,4 +30,5 @@ module surpass.gui {
     uses org.esoul.surpass.table.api.SecretTable;
 
     requires java.desktop;
+    requires java.datatransfer;
 }
