@@ -76,6 +76,7 @@ public class SecretGenerationWindow {
         setupCommandPanel(secretGenerationDialog, components);
 
         secretGenerationDialog.pack();
+        secretGenerationDialog.setLocationRelativeTo(parentFrame);
         secretGenerationDialog.setVisible(true);
         secretGenerationDialog.dispose();
 

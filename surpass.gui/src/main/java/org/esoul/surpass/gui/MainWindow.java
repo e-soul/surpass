@@ -85,6 +85,7 @@ import org.esoul.surpass.app.NoUnsavedDataExistsException;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
+import org.esoul.surpass.gui.help.AboutWindow;
 import org.esoul.surpass.gui.secgen.SecretGenerationWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
@@ -163,8 +164,20 @@ public final class MainWindow {
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(menu);
+        menuBar.add(createHelpMenu());
 
         components.frame.setJMenuBar(menuBar);
+    }
+
+    private JMenu createHelpMenu() {
+
+        JMenuItem aboutItem = new JMenuItem("About", KeyEvent.VK_S);
+        aboutItem.addActionListener(l -> AboutWindow.createAndShow(components.frame));
+
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+        helpMenu.add(aboutItem);
+        return helpMenu;
     }
 
     private void createInputPanel() {
