@@ -20,14 +20,14 @@
     </div>
     <div class="menu">
         <p>
-            Latest release: 0.9
+            Latest release: 1.0
             <div class="dropdown">
                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-download fa-lg"></i> Downloads
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v0.9/surpass-0.9-win10-amd64.zip"><i class="fab fa-windows"></i> Windows 7-10 x86_64</a></li>
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v0.9/surpass-0.9-linux-amd64.zip"><i class="fab fa-linux"></i> Linux x86_64</a></li>
+                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.0/surpass-1.0-win10-amd64.zip"><i class="fab fa-windows"></i> Windows 7-10 x86_64</a></li>
+                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.0/surpass-1.0-linux-amd64.zip"><i class="fab fa-linux"></i> Linux x86_64</a></li>
                 </ul>
             </div>
             <br>
@@ -46,61 +46,67 @@
                 <li><i class="fas fa-dice"></i> Support for generating random secrets.</li>
             </ul>
         </article>
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/gui-empty-0.9.png" class="card-img-top" alt="gui empty">
-                    <div class="card-body">
-                        <h5 class="card-title">Empty</h5>
-                        <p class="card-text">Starting Surpass for the first time.</p>
+        <div id="screenshot-carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="img/gui-empty-1.0.png" class="mx-auto d-block" alt="gui empty">
+                    <div class="carousel-caption">
+                        <h5>Empty</h5>
+                        <p>Starting Surpass for the first time.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/load-secrets-1.0.png" class="mx-auto d-block" alt="load secrets">
+                    <div class="carousel-caption">
+                        <h5>Load secrets</h5>
+                        <p>Loading secrets, if any exist.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/enter-master-pass-1.0.png" class="mx-auto d-block" alt="enter master password">
+                    <div class="carousel-caption">
+                        <h5>Master password</h5>
+                        <p>Enter master password to decrypt existing secrets.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/loaded-1.0.png" class="mx-auto d-block" alt="loaded secrets">
+                    <div class="carousel-caption">
+                        <h5>Secrets</h5>
+                        <p>The full list of existing secrets.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/generate-secret-1.0.png" class="mx-auto d-block" alt="generate secrets">
+                    <div class="carousel-caption">
+                        <h5>Generate secrets</h5>
+                        <p>Generate a random secret based on parameters.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/data-loss-protection-1.0.png" class="mx-auto d-block" alt="data loss protection">
+                    <div class="carousel-caption">
+                        <h5>Data loss protection</h5>
+                        <p>Exiting while there exist unsaved data.</p>
                     </div>
                 </div>
             </div>
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/load-secrets-0.9.png" class="card-img-top" alt="load secrets">
-                    <div class="card-body">
-                        <h5 class="card-title">Load secrets</h5>
-                        <p class="card-text">Loading secrets, if any exist.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/enter-master-pass-0.9.png" class="card-img-top" alt="enter master password">
-                    <div class="card-body">
-                        <h5 class="card-title">Master password</h5>
-                        <p class="card-text">Enter master password to decrypt existing secrets.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/loaded-0.9.png" class="card-img-top" alt="loaded secrets">
-                    <div class="card-body">
-                        <h5 class="card-title">Secrets</h5>
-                        <p class="card-text">The full list of existing secrets.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/generate-secret-0.9.png" class="card-img-top" alt="generate secrets">
-                    <div class="card-body">
-                        <h5 class="card-title">Generate secrets</h5>
-                        <p class="card-text">Generate a random secret based on parameters.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card p-2 border border-white">
-                    <img src="img/data-loss-protection-0.9.png" class="card-img-top" alt="data loss protection">
-                    <div class="card-body">
-                        <h5 class="card-title">Data loss protection</h5>
-                        <p class="card-text">Exiting while there exist unsaved data.</p>
-                    </div>
-                </div>
-            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#screenshot-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#screenshot-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
         <br><br>
         <table class="table caption-top">
@@ -113,15 +119,25 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>1.0 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
+                    <td>1.1 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>0.9 <span class="p-1 bg-success"><i class="fas fa-clipboard-check fa-lg"></i> latest release</span></td>
+                    <td>1.0 <span class="p-1 bg-success"><i class="fas fa-clipboard-check fa-lg"></i> latest release</span></td>
                     <td>
                         <ul>
-                            <li>Add support to generate random secrets</i>
-                            <li>Update to Java 17</i>
+                            <li>Add "About" dialog</li>
+                            <li>Add "Clear" button for the "Filter" field</li>
+                            <li>The clipboard is auto-cleared only if the secret is still there</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>0.9</td>
+                    <td>
+                        <ul>
+                            <li>Add support to generate random secrets</li>
+                            <li>Update to Java 17</li>
                         </ul>
                     </td>
                 </tr>
@@ -130,8 +146,8 @@
                     <td>
 
                         <ul>
-                            <li>Custom native windows launcher (.exe)</i>
-                            <li>Fix view-model translation</i>
+                            <li>Custom native windows launcher (.exe)</li>
+                            <li>Fix view-model translation</li>
                         </ul>
 
                     </td>
@@ -140,8 +156,8 @@
                     <td>0.7</td>
                     <td>
                         <ul>
-                            <li>Add secret count</i>
-                            <li>Add tray icon</i>
+                            <li>Add secret count</li>
+                            <li>Add tray icon</li>
                         </ul>
                     </td>
                 </tr>

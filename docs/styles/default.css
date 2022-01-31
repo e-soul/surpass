@@ -3,24 +3,23 @@ body {
 }
 
 #content {
-	max-width: 75%;
-	margin: auto;
+    max-width: 75%;
+    margin: auto;
     padding: 20px;
     font-family: "Lucida Console", Monaco, monospace;
 }
 
 #logo-img {
-	display: block;
-	float: left;
-	padding: 10px;
+    display: block;
+    float: left;
+    padding: 10px;
     width: 20%;
 }
 
 #descr-short {
     text-align: center;
-	text-shadow: 5px 5px 4px SteelBlue;
-	margin-top: 8%;
-	margin-bottom: 8%;
+    margin-top: 8%;
+    margin-bottom: 8%;
     font-size: 200%;
 }
 
@@ -33,6 +32,8 @@ body {
     background-color: LightSteelBlue;
 }
 
-.card-img-top > img {
-    width: 20%;
+.carousel-caption {
+    position: relative;
+    left: 0;
+    top: 0;
 }
