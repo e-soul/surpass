@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.api">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.api-client/google-api-client/1.33.0/fe86fc26f8c140a691460660d684a33f17212d21/google-api-client-1.33.0.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.apis/google-api-services-drive/v3-rev20211107-1.32.1/6b9206b92ac182687503d5c588efadf04f7e3723/google-api-services-drive-v3-rev20211107-1.32.1.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client/1.41.0/6334215e876a7bda17072910e16b150868a7018b/google-http-client-1.41.0.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.9/8a432c1d6825781e21a02db2e2c33c5fde2833b9/gson-2.8.9.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.http-client/google-http-client-gson/1.41.0/1a754a5dd672218a2ac667d7ff2b28df7a5a240e/google-http-client-gson-1.41.0.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-jetty/1.32.1/5aef54fa0d7a2ec4d0526106fd6cc4d874fdb4f9/google-oauth-client-jetty-1.32.1.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-java6/1.32.1/40a5f5e77896fc6f588388624946341cdef73a1f/google-oauth-client-java6-1.32.1.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/com.google.oauth-client/google-oauth-client/1.32.1/58edd8b2fd2e10eef6fd194ebb9c933054c4a744/google-oauth-client-1.32.1.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

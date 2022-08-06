@@ -6,6 +6,8 @@ include "surpass.api",
         "surpass.core.test",
         "surpass.persist",
         "surpass.persist.test",
+        "surpass.google.drive",
+        "surpass.google.drive.test",
         "surpass.app",
         "surpass.app.test",
         "surpass.gui"

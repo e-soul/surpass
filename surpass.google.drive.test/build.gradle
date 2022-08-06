@@ -8,16 +8,17 @@ repositories {
 
 dependencies {
     testImplementation project(":surpass.api")
-    testImplementation project(":surpass.app")
-    testImplementation project(":surpass.test")
-    testRuntimeOnly project(":surpass.core")
-    testRuntimeOnly project(":surpass.persist")
-    testRuntimeOnly project(":surpass.google.drive")
+    testImplementation project(":surpass.google.drive")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:latest.release"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:latest.release"
+    
+    testImplementation "org.mockito:mockito-core:latest.release"
+    testRuntimeOnly "org.mockito:mockito-junit-jupiter:latest.release"
 }
 
 test {
     useJUnitPlatform()
+
+    systemProperty "org.esoul.interactive.test.env", project.getProperty("interactive.env")
 }

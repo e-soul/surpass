@@ -57,4 +57,18 @@ public interface PersistenceService {
      * @throws IOException In case of any IO error.
      */
     boolean exists(String name) throws IOException;
+
+    /**
+     * Returns the unique identifier of the implementation.
+     * 
+     * @return The unique identifier of the implementation.
+     */
+    String getId();
+
+    /**
+     * Returns the display name of the implementation.
+     * 
+     * @return The unique identifier of the implementation.
+     */
+    String getDisplayName();
 }

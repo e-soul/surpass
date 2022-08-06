@@ -11,17 +11,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.core">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.api">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.app">
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.persist">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -31,7 +21,22 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.persist">
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.app">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.api">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.core">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.google.drive">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

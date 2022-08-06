@@ -25,6 +25,7 @@ module surpass.app {
 
     uses org.esoul.surpass.crypto.api.CryptoService;
     uses org.esoul.surpass.persist.api.PersistenceService;
+    uses org.esoul.surpass.persist.api.PrimaryPersistenceService;
     uses org.esoul.surpass.table.api.SecretTable;
     uses org.esoul.surpass.secgen.api.RandomSecretService;
 

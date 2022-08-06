@@ -19,35 +19,19 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.app;
+module surpass.google.drive {
 
-import java.util.stream.Stream;
+    requires surpass.api;
 
-/**
- * Obtain collaborator services.
- * 
- * @author mgp
- *
- */
-public interface CollaboratorFactory {
+    requires google.api.client;
+    requires com.google.api.client;
+    requires com.google.api.client.json.gson;
+    requires com.google.api.services.drive;
+    requires com.google.api.client.extensions.jetty.auth;
+    requires com.google.api.client.extensions.java6.auth;
+    requires com.google.api.client.auth;
 
-    /**
-     * Obtains an existing instance of a service.
-     * 
-     * @param <T> The type of the service.
-     * @param clazz The {@link Class} instance of the service.
-     * 
-     * @return The service instance.
-     */
-    <T> T obtainOne(Class<T> clazz) throws ServiceUnavailableException;
+    exports org.esoul.surpass.google.drive;
 
-    /**
-     * Obtains all existing service instances.
-     * 
-     * @param <T> The type of the service.
-     * @param clazz The {@link Class} instance of the service.
-     * @return A {@link Stream} of service instances.
-     * @throws ServiceUnavailableException
-     */
-    <T> Stream<T> obtainAll(Class<T> clazz) throws ServiceUnavailableException;
+    provides org.esoul.surpass.persist.api.PersistenceService with org.esoul.surpass.google.drive.GooglePersistenceService;
 }

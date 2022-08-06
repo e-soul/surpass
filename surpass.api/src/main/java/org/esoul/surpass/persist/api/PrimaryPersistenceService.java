@@ -19,35 +19,14 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.app;
-
-import java.util.stream.Stream;
+package org.esoul.surpass.persist.api;
 
 /**
- * Obtain collaborator services.
+ * The primary persistence service is used for reading data.
  * 
  * @author mgp
  *
  */
-public interface CollaboratorFactory {
-
-    /**
-     * Obtains an existing instance of a service.
-     * 
-     * @param <T> The type of the service.
-     * @param clazz The {@link Class} instance of the service.
-     * 
-     * @return The service instance.
-     */
-    <T> T obtainOne(Class<T> clazz) throws ServiceUnavailableException;
-
-    /**
-     * Obtains all existing service instances.
-     * 
-     * @param <T> The type of the service.
-     * @param clazz The {@link Class} instance of the service.
-     * @return A {@link Stream} of service instances.
-     * @throws ServiceUnavailableException
-     */
-    <T> Stream<T> obtainAll(Class<T> clazz) throws ServiceUnavailableException;
+public interface PrimaryPersistenceService extends PersistenceService {
+    // This is a marker interface.
 }

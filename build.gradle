@@ -4,10 +4,10 @@ subprojects {
             modularity.inferModulePath = true
         }
         // Remove that once these issues are fixed https://github.com/junit-team/junit5/issues/2730 https://github.com/gradle/gradle/issues/18627
-		dependencies {
+        dependencies {
             testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
             testRuntimeOnly "org.apiguardian:apiguardian-api:latest.release"
-		}
+        }
     }
 }
 
@@ -23,8 +23,15 @@ task generateAppImage(type: Exec) {
     }
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
-    def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
+    def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist"/*, "surpass.google.drive"*/, "surpass.gui"]
     def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.properties["path.separator"])
+	println("module path " + modulePath)
+	def names = []
+	fileTree(new File(project("surpass.google.drive").buildDir, "libs")).visit { details ->
+        names << details.file.path
+	}
+	println("file tree " + names.collect {it}.join(System.properties["path.separator"]))
+	//modulePath = modulePath + System.properties["path.separator"] + names.collect {it}.join(System.properties["path.separator"])
     commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
                 "--output", outputImage, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
                 "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
@@ -50,5 +57,24 @@ generateAppImage.doLast {
     }
 
     ant.zip(basedir: distDir, destfile: distArchive)
+}
+
+task generateAppDist(type: Copy) {
+    doFirst {
+        delete distDir
+    }
+
+    def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
+    def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]
+    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
+	//println("wait what " + modulePath)
+	def names = []
+	fileTree(new File(project("surpass.google.drive").buildDir, "libs")).visit { details ->
+        modulePath << details.file.path
+	}
+	println("final " + modulePath)
+	//modulePath = modulePath + System.properties["path.separator"] + names.collect {it}.join(System.properties["path.separator"])
+	from modulePath
+	into "${distDir}/non-img-dist"
 }
 

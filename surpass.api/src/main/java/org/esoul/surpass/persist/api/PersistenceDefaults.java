@@ -33,9 +33,14 @@ import java.nio.file.Paths;
 public final class PersistenceDefaults {
 
     /**
-     * Full path to the "data" directory.
+     * Full path to the data directory on the local file system.
      */
     public static final String SYS_PROP_DATADIR = "org.esoul.surpass.persist.datadir";
+
+    /**
+     * Name of the data directory in Google Drive.
+     */
+    public static final String SYS_PROP_DRIVE_DATADIR = "org.esoul.surpass.persist.google.drive.datadir";
 
     /**
      * The name of the "secrets" file.
@@ -43,9 +48,14 @@ public final class PersistenceDefaults {
     public static final String SYS_PROP_SECRETS = "org.esoul.surpass.persist.secrets";
 
     /**
-     * The default name of the "data" directory.
+     * The default name of the data directory on the local file system..
      */
     public static final String DEFAULT_DATADIR = ".surpass";
+
+    /**
+     * The default name of the data directory in Google Drive.
+     */
+    public static final String DEFAULT_DRIVE_DATADIR = "Surpass";
 
     /**
      * The default name of the "secrets" file.
@@ -79,6 +89,10 @@ public final class PersistenceDefaults {
             return Paths.get(getUserHome(), DEFAULT_DATADIR);
         }
         return Paths.get(dataDir);
+    }
+
+    public static String getDriveDataDir() {
+        return System.getProperty(SYS_PROP_DRIVE_DATADIR, DEFAULT_DRIVE_DATADIR);
     }
 
     private static String getUserHome() {

@@ -48,6 +48,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -86,6 +87,7 @@ import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
 import org.esoul.surpass.gui.help.AboutWindow;
+import org.esoul.surpass.gui.loadstore.LoadStoreWindow;
 import org.esoul.surpass.gui.secgen.SecretGenerationWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
@@ -507,13 +509,23 @@ public final class MainWindow {
     }
 
     private void loadData(ActionEvent event) {
+        String serviceId;
+        try {
+            serviceId = LoadStoreWindow.showLoad(components.frame, session.getSupportedPersistenceServices());
+            if (null == serviceId) {
+                return;
+            }
+        } catch (ServiceUnavailableException e) {
+            JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
             try {
-                session.loadData(password);
+                session.loadData(password, serviceId);
                 components.tableModel.fireTableDataChanged();
                 components.addRowButton.setText(BTN_LBL_ADD);
-            } catch (IOException e) {
+            } catch (IOException | ServiceUnavailableException e) {
                 JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
             } catch (GeneralSecurityException e) {
                 JOptionPane.showMessageDialog(components.frame, "Secrets cannot be decrypted! " + e.getMessage(), "Decrypt error", JOptionPane.ERROR_MESSAGE);
@@ -532,15 +544,24 @@ public final class MainWindow {
                 return;
             }
         }
+        Collection<String> selectedServicesIds;
+        try {
+            selectedServicesIds = LoadStoreWindow.showStore(components.frame, session.getSupportedPersistenceServices());
+            if (null == selectedServicesIds || selectedServicesIds.isEmpty()) {
+                return;
+            }
+        } catch (ServiceUnavailableException e) {
+            logger.log(Level.ERROR, () -> "Cannot obtain supported persistence services!", e);
+            JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
             try {
-                session.storeData(password);
-            } catch (IOException e) {
-                logger.log(Level.ERROR, () -> "Store secrets error!", e);
+                session.storeData(password, selectedServicesIds);
+            } catch (IOException | ServiceUnavailableException e) {
                 JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
             } catch (GeneralSecurityException e) {
-                logger.log(Level.ERROR, () -> "Encrypt secrets error!", e);
                 JOptionPane.showMessageDialog(components.frame, "Secrets cannot be encrypted! " + e.getMessage(), "Encrypt error", JOptionPane.ERROR_MESSAGE);
             } catch (ExistingDataNotLoadedException e) {
                 JOptionPane.showMessageDialog(components.frame, "Data file exists but is not loaded. Load the data file before you can store new changes.", "Store warning",
@@ -550,6 +571,9 @@ public final class MainWindow {
             } catch (InvalidPasswordException e) {
                 JOptionPane.showMessageDialog(components.frame, "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!",
                         "Invalid password", JOptionPane.ERROR_MESSAGE);
+            } catch (Throwable e) {
+                logger.log(Level.ERROR, () -> "Runtime error!", e);
+                JOptionPane.showMessageDialog(components.frame, "Unexpected error! " + e.getMessage(), "Store notice", JOptionPane.ERROR_MESSAGE);
             }
         }
     }

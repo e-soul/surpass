@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Map;
 
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
@@ -43,7 +45,7 @@ public class SessionTest {
         Fs.setupDataDir(tmp);
         Session session = SessionFactory.create();
         session.start();
-        session.loadData("123".toCharArray());
+        session.loadData("123".toCharArray(), "org.esoul.surpass.persist.LocalFileSystemPersistenceService");
         SecretTable secretTable = session.getSecretTable();
         Assertions.assertEquals(1, secretTable.getRowNumber());
         Assertions.assertArrayEquals("pass1".getBytes(UTF8), secretTable.readSecret(0));
@@ -58,7 +60,11 @@ public class SessionTest {
         session.start();
         session.write("pass1".toCharArray(), "id1".toCharArray(), "note1".toCharArray());
         Assertions.assertFalse(Files.exists(PersistenceDefaults.getSecrets()));
-        session.storeData("123".toCharArray());
+        Map<String,String> supportedPersistenceServices = session.getSupportedPersistenceServices();
+        Assertions.assertEquals(2, supportedPersistenceServices.size());
+        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.google.drive.GooglePersistenceService"));
+        session.storeData("123".toCharArray(), Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
         Assertions.assertTrue(Files.exists(PersistenceDefaults.getSecrets()));
     }
 }

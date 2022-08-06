@@ -24,4 +24,5 @@ module surpass.persist {
     requires surpass.api;
     exports org.esoul.surpass.persist;
     provides org.esoul.surpass.persist.api.PersistenceService with org.esoul.surpass.persist.LocalFileSystemPersistenceService;
+    provides org.esoul.surpass.persist.api.PrimaryPersistenceService with org.esoul.surpass.persist.LocalFileSystemPersistenceService;
 }

@@ -27,10 +27,13 @@ import java.lang.System.Logger.Level;
 import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.esoul.surpass.crypto.api.CryptoService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
+import org.esoul.surpass.persist.api.PrimaryPersistenceService;
 import org.esoul.surpass.secgen.api.CharClass;
 import org.esoul.surpass.secgen.api.RandomSecretService;
 import org.esoul.surpass.table.api.EmptySequenceException;
@@ -41,7 +44,7 @@ import org.esoul.surpass.table.api.SecretTable;
  * Facilitates the interactions between various services to provide a high-level API for building user interfaces. Logging in response to errors is also done by this class, all
  * exceptions are re-thrown. A typical usage pattern would look like this: Obtain an instance of this class. When the application is loaded, call {@link #start()}. When the
  * application is ready to process user input, call {@link #loadData(char[])}. React to user input via {@link #write(char[], char[], char[])}, {@link #setEditMode(int)},
- * {@link #remove(int)}, etc. When the user wants to persist their changes, call {@link #storeData(char[])}.
+ * {@link #remove(int)}, etc. When the user wants to persist their changes, call {@link #storeData(char[], Collection)}.
  * 
  * @author mgp
  *
@@ -52,7 +55,7 @@ public class Session {
 
     private CollaboratorFactory collaboratorFactory = null;
 
-    private PersistenceService persistenceService = null;
+    private PrimaryPersistenceService primaryPersistenceService = null;
 
     private SecretTable secretTable = null;
 
@@ -78,15 +81,15 @@ public class Session {
     }
 
     private void createCollaborators() throws ServiceUnavailableException {
-        cryptoService = collaboratorFactory.create(CryptoService.class);
-        persistenceService = collaboratorFactory.create(PersistenceService.class);
-        secretTable = collaboratorFactory.create(SecretTable.class);
-        randomSecretService = collaboratorFactory.create(RandomSecretService.class);
+        cryptoService = collaboratorFactory.obtainOne(CryptoService.class);
+        primaryPersistenceService = collaboratorFactory.obtainOne(PrimaryPersistenceService.class);
+        secretTable = collaboratorFactory.obtainOne(SecretTable.class);
+        randomSecretService = collaboratorFactory.obtainOne(RandomSecretService.class);
     }
 
     private void initState() throws IOException {
         try {
-            state.dataFileExist = persistenceService.exists(PersistenceDefaults.DEFAULT_SECRETS);
+            state.dataFileExist = primaryPersistenceService.exists(PersistenceDefaults.DEFAULT_SECRETS);
         } catch (IOException e) {
             logger.log(Level.ERROR, () -> "Check secrets file exists error!", e);
             throw e;
@@ -97,16 +100,18 @@ public class Session {
      * Loads the data from the persistent state.
      * 
      * @param password The password needed to decrypt the data.
+     * @param serviceId The ID of the service to use for loading.
      * @throws IOException
      * @throws InvalidPasswordException
      * @throws GeneralSecurityException
+     * @throws ServiceUnavailableException
      */
-    public void loadData(char[] password) throws IOException, InvalidPasswordException, GeneralSecurityException {
+    public void loadData(char[] password, String serviceId) throws IOException, InvalidPasswordException, GeneralSecurityException, ServiceUnavailableException {
         if ((null == password) || (0 == password.length)) {
             throw new InvalidPasswordException("Password is null or empty!");
         }
         try {
-            byte[] clearText = readCipherTextAndDecrypt(password);
+            byte[] clearText = readCipherTextAndDecrypt(password, serviceId);
             secretTable.load(clearText);
             state.dataFileLoaded = true;
         } catch (IOException e) {
@@ -122,23 +127,32 @@ public class Session {
      * Stores the data to a persistent state.
      * 
      * @param password The password needed to encrypt the data.
+     * @param serviceIds The IDs of the services to use to store the data. Can be obtained from {@link #getSupportedPersistenceServices()}.
      * @throws ExistingDataNotLoadedException
      * @throws NoUnsavedDataExistsException
      * @throws IOException
      * @throws GeneralSecurityException
      * @throws InvalidPasswordException
+     * @throws ServiceUnavailableException
      */
-    public void storeData(char[] password) throws ExistingDataNotLoadedException, NoUnsavedDataExistsException, IOException, GeneralSecurityException, InvalidPasswordException {
+    public void storeData(char[] password, Collection<String> serviceIds)
+            throws ExistingDataNotLoadedException, NoUnsavedDataExistsException, IOException, GeneralSecurityException, InvalidPasswordException, ServiceUnavailableException {
         checkDataLoaded();
         if (!state.unsavedDataExist) {
             throw new NoUnsavedDataExistsException();
         }
         if (null != password) {
             try {
-                checkCanDecryptPassword(password);
+                for (var serviceId : serviceIds) {
+                    checkCanDecryptPassword(password, serviceId);
+                }
                 byte[] clearText = secretTable.toOneDimension();
                 byte[] cipherText = cryptoService.encrypt(password, clearText);
-                persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                for (PersistenceService persistenceService : collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toList())) {
+                    if (serviceIds.contains(persistenceService.getId())) {
+                        persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                    }
+                }
                 state.unsavedDataExist = false;
             } catch (IOException e) {
                 logger.log(Level.ERROR, () -> "Store secrets error!", e);
@@ -153,9 +167,9 @@ public class Session {
         }
     }
 
-    private void checkCanDecryptPassword(char[] password) throws IOException, InvalidPasswordException {
+    private void checkCanDecryptPassword(char[] password, String serviceId) throws IOException, InvalidPasswordException, ServiceUnavailableException {
         try {
-            readCipherTextAndDecrypt(password);
+            readCipherTextAndDecrypt(password, serviceId);
         } catch (GeneralSecurityException e) {
             throw new InvalidPasswordException(e);
         } catch (NoSuchFileException e) {
@@ -163,9 +177,23 @@ public class Session {
         }
     }
 
-    private byte[] readCipherTextAndDecrypt(char[] password) throws IOException, NoSuchFileException, GeneralSecurityException {
+    private byte[] readCipherTextAndDecrypt(char[] password, String serviceId) throws IOException, GeneralSecurityException, ServiceUnavailableException {
+        PersistenceService persistenceService = collaboratorFactory.obtainAll(PersistenceService.class).filter(s -> s.getId().equals(serviceId)).findAny().orElseThrow();
         byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
+        if (cipherText.length == 0) {
+            return cipherText;
+        }
         return cryptoService.decrypt(password, cipherText);
+    }
+
+    /**
+     * Returns supported persistence services. This is intended to give the user a choice.
+     * 
+     * @return A {@link Map} service ID - service display name. The Service IDs can be used with {@link #storeData(char[], Collection)}.
+     * @throws ServiceUnavailableException
+     */
+    public Map<String, String> getSupportedPersistenceServices() throws ServiceUnavailableException {
+        return collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toMap(PersistenceService::getId, PersistenceService::getDisplayName));
     }
 
     /**

@@ -26,9 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.esoul.surpass.persist.api.PersistenceDefaults;
-import org.esoul.surpass.persist.api.PersistenceService;
+import org.esoul.surpass.persist.api.PrimaryPersistenceService;
 
-public class LocalFileSystemPersistenceService implements PersistenceService {
+public class LocalFileSystemPersistenceService implements PrimaryPersistenceService {
 
     @Override
     public byte[] read(String name) throws IOException {
@@ -57,5 +57,15 @@ public class LocalFileSystemPersistenceService implements PersistenceService {
         }
         Files.createDirectories(path.getParent());
         return path;
+    }
+
+    @Override
+    public String getId() {
+        return getClass().getName();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Local File System";
     }
 }

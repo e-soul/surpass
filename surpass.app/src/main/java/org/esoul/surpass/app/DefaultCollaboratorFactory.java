@@ -22,12 +22,18 @@
 package org.esoul.surpass.app;
 
 import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.stream.Stream;
 
 public class DefaultCollaboratorFactory implements CollaboratorFactory {
 
     @Override
-    public <T> T create(Class<T> clazz) throws ServiceUnavailableException {
+    public <T> T obtainOne(Class<T> clazz) throws ServiceUnavailableException {
         return ServiceLoader.load(clazz).findFirst().orElseThrow(() -> new ServiceUnavailableException(clazz));
     }
 
+    @Override
+    public <T> Stream<T> obtainAll(Class<T> clazz) throws ServiceUnavailableException {
+        return ServiceLoader.load(clazz).stream().map(Provider::get);
+    }
 }
