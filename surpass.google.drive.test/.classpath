@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.api">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.12.7/e2a08a3fae74979ee76a8dd67cfd37958874e0fb/byte-buddy-1.12.7.jar">
+	<classpathentry combineaccessrules="false" kind="src" path="/surpass.google.drive">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -61,11 +66,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/4.3.1/b35c904ac218ca833935e5fccc0aaaaf38225de3/mockito-core-4.3.1.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/org.objenesis/objenesis/3.2/7fadf57620c8b8abdf7519533e5527367cb51f09/objenesis-3.2.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -86,12 +86,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.api">
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/org.mockito/mockito-core/4.6.1/545665913b140db2793a0c37e6a686affd9c08b5/mockito-core-4.6.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/surpass.google.drive">
+	<classpathentry kind="lib" path="C:/Users/glhf/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.12.10/f34127d93639fad8c6fb84b3ca30292697d6c55d/byte-buddy-1.12.10.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

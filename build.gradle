@@ -63,6 +63,8 @@ task generateAppDist(type: Copy) {
     doFirst {
         delete distDir
     }
+	
+	duplicatesStrategy = DuplicatesStrategy.WARN
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
     def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]

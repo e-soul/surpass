@@ -10,11 +10,11 @@ dependencies {
     testImplementation project(":surpass.api")
     testImplementation project(":surpass.google.drive")
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:latest.release"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:latest.release"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.9.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.0"
     
-    testImplementation "org.mockito:mockito-core:latest.release"
-    testRuntimeOnly "org.mockito:mockito-junit-jupiter:latest.release"
+    testImplementation "org.mockito:mockito-core:4.6.1"
+    testRuntimeOnly "org.mockito:mockito-junit-jupiter:4.6.1"
 }
 
 test {
