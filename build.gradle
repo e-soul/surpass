@@ -68,5 +68,13 @@ task generateNoJreAppDist(type: Copy) {
 
     from modulePath
     into "${distDir}/nojre"
+
+    doLast {
+        copy {
+            from files("${projectDir}/bin/surpass_nojre.bat", "${projectDir}/bin/surpass.exe")
+            into "${distDir}/nojre"
+            rename "surpass_nojre.bat", "surpass.bat"
+        }
+    }
 }
 
