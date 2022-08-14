@@ -3,11 +3,6 @@ subprojects {
         java {
             modularity.inferModulePath = true
         }
-        // Remove that once these issues are fixed https://github.com/junit-team/junit5/issues/2730 https://github.com/gradle/gradle/issues/18627
-        dependencies {
-            testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
-            testRuntimeOnly "org.apiguardian:apiguardian-api:latest.release"
-        }
     }
 }
 
