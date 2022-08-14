@@ -14,8 +14,8 @@ dependencies {
     testRuntimeOnly project(":surpass.persist")
     testRuntimeOnly project(":surpass.google.drive")
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:latest.release"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:latest.release"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
 
 test {
