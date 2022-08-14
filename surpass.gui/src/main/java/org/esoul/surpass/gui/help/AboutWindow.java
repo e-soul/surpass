@@ -61,7 +61,7 @@ public class AboutWindow {
         JLabel appName = createLabel("Surpass");
         appName.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
         panel.add(appName);
-        panel.add(createLabel("version 1.0"));
+        panel.add(createLabel("version 1.1"));
         JLabel homepage = createLabel("https://surpass.e-soul.org");
 
         Map<TextAttribute, Object> hyperlinkFontAttributes = Map.of(TextAttribute.FAMILY, Font.MONOSPACED, TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_GRAY);
