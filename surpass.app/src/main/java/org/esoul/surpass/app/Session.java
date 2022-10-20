@@ -129,18 +129,14 @@ public class Session {
      * @param password The password needed to encrypt the data.
      * @param serviceIds The IDs of the services to use to store the data. Can be obtained from {@link #getSupportedPersistenceServices()}.
      * @throws ExistingDataNotLoadedException
-     * @throws NoUnsavedDataExistsException
      * @throws IOException
      * @throws GeneralSecurityException
      * @throws InvalidPasswordException
      * @throws ServiceUnavailableException
      */
     public void storeData(char[] password, Collection<String> serviceIds)
-            throws ExistingDataNotLoadedException, NoUnsavedDataExistsException, IOException, GeneralSecurityException, InvalidPasswordException, ServiceUnavailableException {
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException, ServiceUnavailableException {
         checkDataLoaded();
-        if (!state.unsavedDataExist) {
-            throw new NoUnsavedDataExistsException();
-        }
         if (null != password) {
             try {
                 for (var serviceId : serviceIds) {

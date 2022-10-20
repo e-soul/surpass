@@ -82,7 +82,6 @@ import javax.swing.table.TableRowSorter;
 
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
-import org.esoul.surpass.app.NoUnsavedDataExistsException;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
@@ -566,8 +565,6 @@ public final class MainWindow {
             } catch (ExistingDataNotLoadedException e) {
                 JOptionPane.showMessageDialog(components.frame, "Data file exists but is not loaded. Load the data file before you can store new changes.", "Store warning",
                         JOptionPane.WARNING_MESSAGE);
-            } catch (NoUnsavedDataExistsException e) {
-                JOptionPane.showMessageDialog(components.frame, "There is no unsaved data!", "Store notice", JOptionPane.INFORMATION_MESSAGE);
             } catch (InvalidPasswordException e) {
                 JOptionPane.showMessageDialog(components.frame, "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!",
                         "Invalid password", JOptionPane.ERROR_MESSAGE);

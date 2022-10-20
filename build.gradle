@@ -9,8 +9,9 @@ subprojects {
 def osName = System.properties["os.name"].toLowerCase().replaceAll("\\s+", "")
 def osArch = System.properties["os.arch"]
 def distDir = "${projectDir}/dist"
-def outputImage = "${distDir}/surpass"
-def distArchive = "${distDir}/surpass-${osName}-${osArch}-${version}.zip"
+def output = "${distDir}/surpass"
+def jre = "${distDir}/jre"
+def distArchive = "${distDir}/surpass-${version}-${osName}-${osArch}.zip"
 
 task generateAppImage(type: Exec) {
     doFirst {
@@ -21,38 +22,50 @@ task generateAppImage(type: Exec) {
     def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
     def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.properties["path.separator"])
     commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
-                "--output", outputImage, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
+                "--output", output, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
                 "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
 generateAppImage.doLast {
-    delete "${outputImage}/bin/surpass.bat"
-    delete "${outputImage}/bin/surpass"
+    delete "${output}/bin/surpass.bat"
+    delete "${output}/bin/surpass"
 
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         copy {
-            from files("${projectDir}/bin/surpass.bat", "${projectDir}/bin/surpass.exe")
-            into outputImage
+            from files("${projectDir}/bin/surpass_image.bat", "${projectDir}/bin/surpass.exe")
+            into output
+			rename "surpass_image.bat", "surpass.bat"
         }
     } else {
         copy {
             from "${projectDir}/bin/surpass"
-            into outputImage
+            into output
         }
-        ant.chmod(file: "${outputImage}/surpass", perm: "+x")
+        ant.chmod(file: "${output}/surpass", perm: "+x")
     }
 
     ant.zip(basedir: distDir, destfile: distArchive)
 }
 
-task generateNoJreAppDist(type: Copy) {
+task generateJre(type: Exec) {
     doFirst {
-        delete distDir
+        delete jre
     }
 
-    dependsOn = [":surpass.google.drive:jar", ":surpass.gui:jar", ":surpass.persist:jar"]
+    def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
+    commandLine jlink, "--add-modules", "java.desktop,java.logging,jdk.httpserver", "--output", jre, 
+                "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
+}
+
+task generateAppDist(type: Copy) {
+    doFirst {
+        delete output
+		delete distArchive
+    }
+
+    dependsOn = [":surpass.google.drive:jar", ":surpass.gui:jar", ":surpass.persist:jar", ":generateJre"]
 
     def surpassMods = ["surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]
     def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
@@ -62,14 +75,18 @@ task generateNoJreAppDist(type: Copy) {
     }
 
     from modulePath
-    into "${distDir}/nojre"
+    into "${output}/mods"
 
     doLast {
         copy {
-            from files("${projectDir}/bin/surpass_nojre.bat", "${projectDir}/bin/surpass.exe")
-            into "${distDir}/nojre"
-            rename "surpass_nojre.bat", "surpass.bat"
+            from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
+            into output
+            rename "surpass_dist.bat", "surpass.bat"
         }
+		copy {
+		    from jre
+			into "${output}/jre"
+		}
+		ant.zip(basedir: output, destfile: distArchive)
     }
 }
-
