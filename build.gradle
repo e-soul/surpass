@@ -55,7 +55,7 @@ task generateJre(type: Exec) {
     }
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
-    commandLine jlink, "--add-modules", "java.desktop,java.logging,jdk.httpserver", "--output", jre, 
+    commandLine jlink, "--add-modules", "jdk.httpserver,java.desktop,java.logging,jdk.crypto.cryptoki", "--output", jre,
                 "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
 }
 
