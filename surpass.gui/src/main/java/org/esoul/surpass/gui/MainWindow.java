@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -66,6 +65,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -81,10 +81,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
-import org.esoul.surpass.app.InvalidPasswordException;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
+import org.esoul.surpass.gui.dialog.Dialogs;
+import org.esoul.surpass.gui.dialog.MessageDialog;
 import org.esoul.surpass.gui.help.AboutWindow;
 import org.esoul.surpass.gui.loadstore.LoadStoreWindow;
 import org.esoul.surpass.gui.secgen.SecretGenerationWindow;
@@ -105,14 +106,6 @@ public final class MainWindow {
     private static final Logger logger = System.getLogger(MainWindow.class.getSimpleName());
 
     private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 45L;
-
-    private static final String MENU_ITEM_LBL_LOAD = "Load secrets";
-
-    private static final String MENU_ITEM_LBL_STORE = "Store secrets";
-
-    private static final String MENU_ITEM_LBL_EXIT = "Exit";
-
-    private static final String BTN_LBL_ADD = "Add";
 
     private Session session = null;
 
@@ -148,13 +141,13 @@ public final class MainWindow {
     }
 
     private void createMenuBar() {
-        JMenuItem loadMenuItem = new JMenuItem(MENU_ITEM_LBL_LOAD, KeyEvent.VK_L);
+        JMenuItem loadMenuItem = new JMenuItem(Labels.MENU_ITEM_LOAD, KeyEvent.VK_L);
         loadMenuItem.addActionListener(this::loadData);
 
-        JMenuItem storeMenuItem = new JMenuItem(MENU_ITEM_LBL_STORE, KeyEvent.VK_S);
+        JMenuItem storeMenuItem = new JMenuItem(Labels.MENU_ITEM_STORE, KeyEvent.VK_S);
         storeMenuItem.addActionListener(this::storeData);
 
-        JMenuItem exitMenuItem = new JMenuItem(MENU_ITEM_LBL_EXIT, KeyEvent.VK_X);
+        JMenuItem exitMenuItem = new JMenuItem(Labels.MENU_ITEM_EXIT, KeyEvent.VK_X);
         exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
 
         JMenu menu = new JMenu("Programme");
@@ -261,7 +254,7 @@ public final class MainWindow {
         constraints.gridwidth = 2;
         constraints.gridx = 1;
         constraints.gridy = 3;
-        components.addRowButton = new JButton(session.dataFileExist() ? "Load existing secrets then add" : BTN_LBL_ADD);
+        components.addRowButton = new JButton(session.dataFileExist() ? "Load existing secrets then add" : Labels.BTN_ADD);
         components.addRowButton.addActionListener(this::addRow);
         inputPanel.add(components.addRowButton, constraints);
 
@@ -279,7 +272,7 @@ public final class MainWindow {
             components.identifierTextField.setText("");
             components.noteTextArea.setText("");
             components.tableModel.fireTableDataChanged();
-            components.addRowButton.setText(BTN_LBL_ADD);
+            components.addRowButton.setText(Labels.BTN_ADD);
         } catch (ExistingDataNotLoadedException e) {
             loadData(event);
             addRow(event);
@@ -388,6 +381,15 @@ public final class MainWindow {
         components.secretCountLabel = new JLabel();
         panel.add(components.secretCountLabel);
         panel.add(Box.createHorizontalGlue());
+        components.operationProgressBar = new JProgressBar();
+        components.operationProgressBar.setStringPainted(true);
+        components.operationProgressBar.setString("");
+        components.operationProgressBar.setIndeterminate(false);
+        components.operationProgressBar.setBorderPainted(false);
+        components.operationProgressBar.setMaximumSize(new Dimension(160, 26));
+        components.operationProgressBar.setPreferredSize(new Dimension(100, 26));
+        panel.add(components.operationProgressBar);
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
         components.showSecretButton = new JButton("Show secret");
         components.showSecretButton.setEnabled(false);
         components.showSecretButton.addActionListener(this::showSecret);
@@ -477,13 +479,13 @@ public final class MainWindow {
                 components.trayIcon = new TrayIcon(iconImage);
                 components.trayIcon.setImageAutoSize(true);
 
-                MenuItem loadMenuItem = new MenuItem(MENU_ITEM_LBL_LOAD);
+                MenuItem loadMenuItem = new MenuItem(Labels.MENU_ITEM_LOAD);
                 loadMenuItem.addActionListener(this::loadData);
 
-                MenuItem storeMenuItem = new MenuItem(MENU_ITEM_LBL_STORE);
+                MenuItem storeMenuItem = new MenuItem(Labels.MENU_ITEM_STORE);
                 storeMenuItem.addActionListener(this::storeData);
 
-                MenuItem exitMenuItem = new MenuItem(MENU_ITEM_LBL_EXIT);
+                MenuItem exitMenuItem = new MenuItem(Labels.MENU_ITEM_EXIT);
                 exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
 
                 PopupMenu popupMenu = new PopupMenu("Surpass");
@@ -508,29 +510,21 @@ public final class MainWindow {
     }
 
     private void loadData(ActionEvent event) {
-        String serviceId;
+    	String serviceId;
         try {
             serviceId = LoadStoreWindow.showLoad(components.frame, session.getSupportedPersistenceServices());
             if (null == serviceId) {
                 return;
             }
         } catch (ServiceUnavailableException e) {
-            JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
+            MessageDialog.LOAD_ERROR.show(components.frame, "Secrets cannot be loaded! " + e.getMessage());
             return;
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-            try {
-                session.loadData(password, serviceId);
-                components.tableModel.fireTableDataChanged();
-                components.addRowButton.setText(BTN_LBL_ADD);
-            } catch (IOException | ServiceUnavailableException e) {
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be loaded! " + e.getMessage(), "Load error", JOptionPane.ERROR_MESSAGE);
-            } catch (GeneralSecurityException e) {
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be decrypted! " + e.getMessage(), "Decrypt error", JOptionPane.ERROR_MESSAGE);
-            } catch (InvalidPasswordException e) {
-                JOptionPane.showMessageDialog(components.frame, "Password is empty! Provide password and try again.", "Empty password error", JOptionPane.ERROR_MESSAGE);
-            }
+        	components.operationProgressBar.setString("Loading...");
+            components.operationProgressBar.setIndeterminate(true);
+        	new LoadDataOperation(session, components, password, serviceId).execute();
         }
     }
 
@@ -556,22 +550,9 @@ public final class MainWindow {
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-            try {
-                session.storeData(password, selectedServicesIds);
-            } catch (IOException | ServiceUnavailableException e) {
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
-            } catch (GeneralSecurityException e) {
-                JOptionPane.showMessageDialog(components.frame, "Secrets cannot be encrypted! " + e.getMessage(), "Encrypt error", JOptionPane.ERROR_MESSAGE);
-            } catch (ExistingDataNotLoadedException e) {
-                JOptionPane.showMessageDialog(components.frame, "Data file exists but is not loaded. Load the data file before you can store new changes.", "Store warning",
-                        JOptionPane.WARNING_MESSAGE);
-            } catch (InvalidPasswordException e) {
-                JOptionPane.showMessageDialog(components.frame, "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!",
-                        "Invalid password", JOptionPane.ERROR_MESSAGE);
-            } catch (Throwable e) {
-                logger.log(Level.ERROR, () -> "Runtime error!", e);
-                JOptionPane.showMessageDialog(components.frame, "Unexpected error! " + e.getMessage(), "Store notice", JOptionPane.ERROR_MESSAGE);
-            }
+        	components.operationProgressBar.setString("Storing...");
+            components.operationProgressBar.setIndeterminate(true);
+            new StoreDataOperation(session, components, password, selectedServicesIds).execute();
         }
     }
 }

@@ -19,7 +19,7 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.dialog;
 
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
@@ -29,13 +29,13 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
-final class Dialogs {
+public final class Dialogs {
 
     private Dialogs() {
         // no instances
     }
 
-    static char[] showPasswordInputDialog(Component parentComponent, String title) {
+    public static char[] showPasswordInputDialog(Component parentComponent, String title) {
         JPasswordField passwordField = new JPasswordField();
         JOptionPane pane = new JOptionPane(passwordField, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
         JDialog dialog = pane.createDialog(parentComponent, title);

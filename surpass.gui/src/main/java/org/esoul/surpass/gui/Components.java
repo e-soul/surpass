@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -63,6 +64,8 @@ final class Components {
     TrayIcon trayIcon = null;
 
     JLabel secretCountLabel = null;
+
+    JProgressBar operationProgressBar = null;
 
     boolean isFormDirty() {
         return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();
