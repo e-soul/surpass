@@ -45,6 +45,7 @@ import org.esoul.surpass.table.api.SecretTable;
  * exceptions are re-thrown. A typical usage pattern would look like this: Obtain an instance of this class. When the application is loaded, call {@link #start()}. When the
  * application is ready to process user input, call {@link #loadData(char[])}. React to user input via {@link #write(char[], char[], char[])}, {@link #setEditMode(int)},
  * {@link #remove(int)}, etc. When the user wants to persist their changes, call {@link #storeData(char[], Collection)}.
+ * Note, this class is thread-safe if the {@link SecretTable} implementation is.
  * 
  * @author mgp
  *

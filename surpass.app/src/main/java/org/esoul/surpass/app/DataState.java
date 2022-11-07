@@ -29,11 +29,11 @@ package org.esoul.surpass.app;
  */
 final class DataState {
 
-    boolean dataFileExist = false;
+    volatile boolean dataFileExist = false;
 
-    boolean dataFileLoaded = false;
+    volatile boolean dataFileLoaded = false;
 
-    boolean unsavedDataExist = false;
-    
-    int currentlyEditedRow = -1;
+    volatile boolean unsavedDataExist = false;
+
+    volatile int currentlyEditedRow = -1;
 }
