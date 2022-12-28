@@ -1,5 +1,14 @@
 package org.esoul.surpass.google.drive.test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+
 import org.esoul.surpass.google.drive.DriveFacade;
 import org.esoul.surpass.google.drive.GooglePersistenceService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
@@ -37,6 +46,45 @@ public class GoogleDriveTest {
         Assertions.assertArrayEquals(ABC, onlineData, "Reading returned different data than what was written!");
         Assertions.assertTrue(persistenceService.exists(PersistenceDefaults.DEFAULT_SECRETS), "Secrets not found!");
         Assertions.assertFalse(persistenceService.exists(NON_EXISTENT_FILE));
+    }
+
+    @Test
+    public void testHandleInvalidRefreshTokenInteractive() throws Exception {
+    	assumeInteractiveEnv();
+    	Path testDir = Paths.get("google_drive_test_invalid_refresh_token_" + System.currentTimeMillis());
+    	setupInvalidRefreshToken(testDir);
+    	new GooglePersistenceService().write(PersistenceDefaults.DEFAULT_SECRETS, ABC);
+    	tearDownInvalidRefreshToken(testDir);
+    }
+
+    private void setupInvalidRefreshToken(Path testDir) throws IOException {
+    	Files.createDirectories(testDir);
+    	try (InputStream is = getClass().getResourceAsStream("/StoredCredential_invalid_refresh_token")) {
+    		Assertions.assertNotNull(is);
+    		Files.copy(is, testDir.resolve("StoredCredential"));
+    	}
+    	System.setProperty(PersistenceDefaults.SYS_PROP_DATADIR, testDir.toAbsolutePath().toString());
+    }
+
+    private void tearDownInvalidRefreshToken(Path testDir) throws IOException {
+    	System.clearProperty(PersistenceDefaults.SYS_PROP_DATADIR);
+    	Files.walkFileTree(testDir, new SimpleFileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+				if (null == e) {
+					Files.delete(dir);
+					return FileVisitResult.CONTINUE;
+				}
+				throw e;
+			}
+    	});
     }
 
     private void assumeInteractiveEnv() {

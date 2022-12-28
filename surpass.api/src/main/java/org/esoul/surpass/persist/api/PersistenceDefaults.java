@@ -91,8 +91,22 @@ public final class PersistenceDefaults {
         return Paths.get(dataDir);
     }
 
+    /**
+     * Returns the "data" directory in Google Drive.
+     * 
+     * @return The "data" directory in Google Drive.
+     */
     public static String getDriveDataDir() {
         return System.getProperty(SYS_PROP_DRIVE_DATADIR, DEFAULT_DRIVE_DATADIR);
+    }
+    
+    /**
+     * Returns the serialized Google Credential file.
+     * 
+     * @return The serialized Google Credential file.
+     */
+    public static Path getGoogleStoredCredential() {
+    	return getDataDir().resolve("StoredCredential");
     }
 
     private static String getUserHome() {

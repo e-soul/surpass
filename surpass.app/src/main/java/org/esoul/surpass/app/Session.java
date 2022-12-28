@@ -58,6 +58,8 @@ public class Session {
 
     private PrimaryPersistenceService primaryPersistenceService = null;
 
+    private Map<String, PersistenceService> persistenceServiceMap = null;
+
     private SecretTable secretTable = null;
 
     private CryptoService cryptoService = null;
@@ -84,6 +86,7 @@ public class Session {
     private void createCollaborators() throws ServiceUnavailableException {
         cryptoService = collaboratorFactory.obtainOne(CryptoService.class);
         primaryPersistenceService = collaboratorFactory.obtainOne(PrimaryPersistenceService.class);
+        persistenceServiceMap = collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toMap(PersistenceService::getId, s -> s));
         secretTable = collaboratorFactory.obtainOne(SecretTable.class);
         randomSecretService = collaboratorFactory.obtainOne(RandomSecretService.class);
     }
@@ -145,10 +148,8 @@ public class Session {
                 }
                 byte[] clearText = secretTable.toOneDimension();
                 byte[] cipherText = cryptoService.encrypt(password, clearText);
-                for (PersistenceService persistenceService : collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toList())) {
-                    if (serviceIds.contains(persistenceService.getId())) {
-                        persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
-                    }
+                for (String serviceId : serviceIds) {
+                    persistenceServiceMap.get(serviceId).write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
                 }
                 state.unsavedDataExist = false;
             } catch (IOException e) {
@@ -175,8 +176,7 @@ public class Session {
     }
 
     private byte[] readCipherTextAndDecrypt(char[] password, String serviceId) throws IOException, GeneralSecurityException, ServiceUnavailableException {
-        PersistenceService persistenceService = collaboratorFactory.obtainAll(PersistenceService.class).filter(s -> s.getId().equals(serviceId)).findAny().orElseThrow();
-        byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
+        byte[] cipherText = persistenceServiceMap.get(serviceId).read(PersistenceDefaults.DEFAULT_SECRETS);
         if (cipherText.length == 0) {
             return cipherText;
         }
@@ -190,7 +190,7 @@ public class Session {
      * @throws ServiceUnavailableException
      */
     public Map<String, String> getSupportedPersistenceServices() throws ServiceUnavailableException {
-        return collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toMap(PersistenceService::getId, PersistenceService::getDisplayName));
+        return persistenceServiceMap.values().stream().collect(Collectors.toMap(PersistenceService::getId, PersistenceService::getDisplayName));
     }
 
     /**
