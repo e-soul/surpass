@@ -21,4 +21,8 @@ test {
     useJUnitPlatform()
 
     systemProperty "org.esoul.interactive.test.env", project.getProperty("interactive.env")
+
+    // Don't run on the module path because test resources are not available via Class.getResource()
+    // See also Module.getResourceAsStream()
+    modularity.inferModulePath = false
 }
