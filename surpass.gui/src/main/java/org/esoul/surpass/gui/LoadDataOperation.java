@@ -14,7 +14,7 @@ class LoadDataOperation extends BaseDataOperationWorker {
 
 	private String serviceId;
 
-	LoadDataOperation(Session session, Components components, char[] password, String serviceId) {
+	LoadDataOperation(Session session, MainWindowComponents components, char[] password, String serviceId) {
 		super(session, components, password);
 		this.serviceId = serviceId;
 	}
@@ -36,6 +36,5 @@ class LoadDataOperation extends BaseDataOperationWorker {
 	@Override
 	protected void doneSuccess() {
 		components.tableModel.fireTableDataChanged();
-        components.addRowButton.setText(Labels.BTN_ADD);
 	}
 }

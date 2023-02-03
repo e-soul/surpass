@@ -26,11 +26,9 @@ import java.awt.TrayIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPasswordField;
+import javax.swing.JMenuItem;
 import javax.swing.JProgressBar;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -39,21 +37,19 @@ import javax.swing.table.AbstractTableModel;
  * @author mgp
  *
  */
-final class Components {
+final class MainWindowComponents {
 
     JFrame frame = null;
 
-    JTextField identifierTextField = null;
+    JMenuItem editSecretMenuItem = null;
 
-    JPasswordField secretPasswordField = null;
-
-    JTextArea noteTextArea = null;
-
-    JButton addRowButton = null;
+    JMenuItem removeSecretMenuItem = null;
 
     JTable table = null;
 
     AbstractTableModel tableModel = null;
+
+    JButton addRowButton = null;
 
     JButton showSecretButton = null;
 
@@ -67,11 +63,9 @@ final class Components {
 
     JProgressBar operationProgressBar = null;
 
-    boolean isFormDirty() {
-        return !identifierTextField.getText().isEmpty() || (secretPasswordField.getPassword().length > 0) || !noteTextArea.getText().isEmpty();
-    }
-
     void setEnabledTableButtons(boolean enabled) {
+    	editSecretMenuItem.setEnabled(enabled);
+    	removeSecretMenuItem.setEnabled(enabled);
         showSecretButton.setEnabled(enabled);
         editRowButton.setEnabled(enabled);
         removeRowButton.setEnabled(enabled);

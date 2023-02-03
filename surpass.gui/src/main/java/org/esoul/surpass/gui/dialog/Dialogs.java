@@ -22,6 +22,7 @@
 package org.esoul.surpass.gui.dialog;
 
 import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -54,5 +55,12 @@ public final class Dialogs {
             return passwordField.getPassword();
         }
         return null;
+    }
+    
+    public static void show(Window parentFrame, Window frame) {
+    	frame.pack();
+    	frame.setLocationRelativeTo(parentFrame);
+    	frame.setVisible(true);
+    	frame.dispose();
     }
 }

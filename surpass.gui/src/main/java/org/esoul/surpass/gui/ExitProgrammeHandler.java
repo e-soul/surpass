@@ -32,9 +32,9 @@ public class ExitProgrammeHandler implements ActionListener {
 
     private BooleanSupplier unsavedDataExistSupplier = null;
 
-    private Components components = null;
+    private MainWindowComponents components = null;
 
-    public ExitProgrammeHandler(BooleanSupplier unsavedDataExistSupplier, Components components) {
+    public ExitProgrammeHandler(BooleanSupplier unsavedDataExistSupplier, MainWindowComponents components) {
         this.unsavedDataExistSupplier = unsavedDataExistSupplier;
         this.components = components;
     }
@@ -45,9 +45,6 @@ public class ExitProgrammeHandler implements ActionListener {
         if (unsavedDataExistSupplier.getAsBoolean()) {
             selectedOption = JOptionPane.showConfirmDialog(components.frame, "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?",
                     "Exit despite unsaved data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        } else if (components.isFormDirty()) {
-            selectedOption = JOptionPane.showConfirmDialog(components.frame, "There's new data in the form. Exiting will result in DATA LOSS! Are you sure you want to exit?",
-                    "Exit despite existing new data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
             selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
         }

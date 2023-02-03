@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -14,6 +15,8 @@ import javax.swing.JTextField;
 import org.esoul.surpass.secgen.api.CharClass;
 
 final class SecretGenerationComponents {
+	
+	JDialog frame;
 
     JCheckBox alphaUpperCheckBox;
 

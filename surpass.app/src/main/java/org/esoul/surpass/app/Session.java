@@ -214,7 +214,7 @@ public class Session {
         state.unsavedDataExist = true;
     }
 
-    private void checkDataLoaded() throws ExistingDataNotLoadedException {
+    public void checkDataLoaded() throws ExistingDataNotLoadedException {
         if (state.dataFileExist && !state.dataFileLoaded) {
             throw new ExistingDataNotLoadedException();
         }

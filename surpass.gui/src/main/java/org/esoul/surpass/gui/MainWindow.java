@@ -23,9 +23,8 @@ package org.esoul.surpass.gui;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -63,12 +62,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
@@ -84,16 +80,14 @@ import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
+import org.esoul.surpass.gui.addupdatesec.AddUpdateSecretWindow;
 import org.esoul.surpass.gui.dialog.Dialogs;
 import org.esoul.surpass.gui.dialog.MessageDialog;
 import org.esoul.surpass.gui.help.AboutWindow;
 import org.esoul.surpass.gui.loadstore.LoadStoreWindow;
-import org.esoul.surpass.gui.secgen.SecretGenerationWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
-import org.esoul.surpass.table.api.EmptySequenceException;
-import org.esoul.surpass.table.api.MaxSizeExceededException;
 
 /**
  * All GUI component creation, setup and policies are encapsulated here. This is the ultimate detail. Literals are intentionally not externalized to help with readability.
@@ -109,7 +103,7 @@ public final class MainWindow {
 
     private Session session = null;
 
-    private Components components = new Components();
+    private MainWindowComponents components = new MainWindowComponents();
 
     private MainWindow() {
         // no instances except via createAndShow()
@@ -128,7 +122,6 @@ public final class MainWindow {
         mainWindow.session = session;
         mainWindow.createFrame();
         mainWindow.createMenuBar();
-        mainWindow.createInputPanel();
         mainWindow.createTable();
         mainWindow.createCommandPanel();
         mainWindow.createWindowAndTrayIcon();
@@ -141,7 +134,16 @@ public final class MainWindow {
     }
 
     private void createMenuBar() {
-        JMenuItem loadMenuItem = new JMenuItem(Labels.MENU_ITEM_LOAD, KeyEvent.VK_L);
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createProgramMenu());
+        menuBar.add(createSecretsMenu());
+        menuBar.add(createHelpMenu());
+
+        components.frame.setJMenuBar(menuBar);
+    }
+    
+    private JMenu createProgramMenu() {
+    	JMenuItem loadMenuItem = new JMenuItem(Labels.MENU_ITEM_LOAD, KeyEvent.VK_L);
         loadMenuItem.addActionListener(this::loadData);
 
         JMenuItem storeMenuItem = new JMenuItem(Labels.MENU_ITEM_STORE, KeyEvent.VK_S);
@@ -150,21 +152,38 @@ public final class MainWindow {
         JMenuItem exitMenuItem = new JMenuItem(Labels.MENU_ITEM_EXIT, KeyEvent.VK_X);
         exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
 
-        JMenu menu = new JMenu("Programme");
-        menu.setMnemonic(KeyEvent.VK_P);
-        menu.add(loadMenuItem);
-        menu.add(storeMenuItem);
-        menu.add(exitMenuItem);
+        JMenu programMenu = new JMenu("Programme");
+        programMenu.setMnemonic(KeyEvent.VK_P);
+        programMenu.add(loadMenuItem);
+        programMenu.add(storeMenuItem);
+        programMenu.add(exitMenuItem);
+        
+        return programMenu;
+    }
 
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(menu);
-        menuBar.add(createHelpMenu());
+    private JMenu createSecretsMenu() {
+    	JMenuItem addSecretMenuItem = new JMenuItem("Add", KeyEvent.VK_A);
+        addSecretMenuItem.addActionListener(this::addSecret);
 
-        components.frame.setJMenuBar(menuBar);
+        components.editSecretMenuItem = new JMenuItem("Edit", KeyEvent.VK_E);
+        components.editSecretMenuItem.setEnabled(false);
+        components.editSecretMenuItem.addActionListener(this::loadRowInFormForEdit);
+
+        components.removeSecretMenuItem = new JMenuItem("Remove", KeyEvent.VK_R);
+        components.removeSecretMenuItem.setEnabled(false);
+        components.removeSecretMenuItem.setForeground(Color.RED);
+        components.removeSecretMenuItem.addActionListener(this::removeRow);
+
+        JMenu secretsMenu = new JMenu("Secrets");
+        secretsMenu.setMnemonic(KeyEvent.VK_S);
+        secretsMenu.add(addSecretMenuItem);
+        secretsMenu.add(components.editSecretMenuItem);
+        secretsMenu.add(components.removeSecretMenuItem);
+
+        return secretsMenu;
     }
 
     private JMenu createHelpMenu() {
-
         JMenuItem aboutItem = new JMenuItem("About", KeyEvent.VK_S);
         aboutItem.addActionListener(l -> AboutWindow.createAndShow(components.frame));
 
@@ -174,114 +193,18 @@ public final class MainWindow {
         return helpMenu;
     }
 
-    private void createInputPanel() {
-        JPanel inputPanel = new JPanel(new GridBagLayout());
-
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        JLabel identifierLabel = new JLabel("Identifier: ");
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.LINE_END;
-        constraints.weightx = 0.2;
-        constraints.weighty = 0.25;
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        inputPanel.add(identifierLabel, constraints);
-
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 0.8;
-        constraints.gridwidth = 2;
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        components.identifierTextField = new JTextField(39);
-        inputPanel.add(components.identifierTextField, constraints);
-
-        JLabel secretLabel = new JLabel("Secret: ");
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.LINE_END;
-        constraints.weightx = 0.2;
-        constraints.gridwidth = 1;
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        inputPanel.add(secretLabel, constraints);
-
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 0.7;
-        constraints.gridwidth = 1;
-        constraints.gridx = 1;
-        constraints.gridy = 1;
-        components.secretPasswordField = new JPasswordField(39);
-        inputPanel.add(components.secretPasswordField, constraints);
-
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 0.1;
-        constraints.gridwidth = 1;
-        constraints.gridx = 2;
-        constraints.gridy = 1;
-        JButton generateSecretButton = new JButton("Generate secret");
-        generateSecretButton.addActionListener(l -> {
-            char[] secret = SecretGenerationWindow.createAndShow(components.frame, (scrt, chars) -> session.generateSecret(scrt, chars));
-            if (secret.length > 0) {
-                components.secretPasswordField.setText(new String(secret));
-            }
-        });
-        inputPanel.add(generateSecretButton, constraints);
-
-        JLabel noteLabel = new JLabel("Note: ");
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.FIRST_LINE_END;
-        constraints.weightx = 0.2;
-        constraints.gridwidth = 1;
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        inputPanel.add(noteLabel, constraints);
-
-        constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.CENTER;
-        constraints.weightx = 0.8;
-        constraints.gridwidth = 2;
-        constraints.gridx = 1;
-        constraints.gridy = 2;
-        components.noteTextArea = new JTextArea(3, 39);
-        inputPanel.add(new JScrollPane(components.noteTextArea), constraints);
-
-        constraints.fill = GridBagConstraints.NONE;
-        constraints.anchor = GridBagConstraints.LINE_END;
-        constraints.weightx = 0.;
-        constraints.gridwidth = 2;
-        constraints.gridx = 1;
-        constraints.gridy = 3;
-        components.addRowButton = new JButton(session.dataFileExist() ? "Load existing secrets then add" : Labels.BTN_ADD);
-        components.addRowButton.addActionListener(this::addRow);
-        inputPanel.add(components.addRowButton, constraints);
-
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        components.frame.add(inputPanel);
+    private void addSecret(ActionEvent event) {
+    	try {
+    		session.checkDataLoaded();
+    		AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret);
+    	} catch (ExistingDataNotLoadedException e) {
+    		JOptionPane.showMessageDialog(components.frame, "Local secrets exist. Load them before adding new.", "Error", JOptionPane.ERROR_MESSAGE);
+    	}
     }
 
-    private void addRow(ActionEvent event) {
-        char[] password = components.secretPasswordField.getPassword();
-        char[] identifier = components.identifierTextField.getText().toCharArray();
-        char[] note = components.noteTextArea.getText().toCharArray();
-        try {
-            session.write(password, identifier, note);
-            components.identifierTextField.setText("");
-            components.noteTextArea.setText("");
-            components.tableModel.fireTableDataChanged();
-            components.addRowButton.setText(Labels.BTN_ADD);
-        } catch (ExistingDataNotLoadedException e) {
-            loadData(event);
-            addRow(event);
-        } catch (MaxSizeExceededException | EmptySequenceException e) {
-            JOptionPane.showMessageDialog(components.frame, e.getMessage(), "Input error", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            // Always clear the password. Clear the other fields only on success.
-            components.secretPasswordField.setText("");
-        }
+    private void writeSecret(char[] secret, char[] identifier, char[] note) throws Exception {
+    	session.write(secret, identifier, note);
+        components.tableModel.fireTableDataChanged();
     }
 
     private void createTable() {
@@ -289,7 +212,17 @@ public final class MainWindow {
         components.tableModel.addTableModelListener(e -> components.secretCountLabel.setText(components.tableModel.getRowCount() + " secrets"));
         TableRowSorter<AbstractTableModel> tableRowSorter = new TableRowSorter<>(components.tableModel);
 
-        JTextField filterTextField = new JTextField(50);
+        JLabel filterLabel = new JLabel("Filter:");
+        filterLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        filterLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
+        components.frame.add(filterLabel);
+        
+        Box filterBox = new Box(BoxLayout.LINE_AXIS);
+        filterBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        filterBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        
+        JTextField filterTextField = new JTextField();
+        filterTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
         filterTextField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -304,17 +237,17 @@ public final class MainWindow {
             public void keyPressed(KeyEvent e) {
             }
         });
-        JPanel filterPanel = createPanelWithBoxLayout();
-        filterPanel.add(new JLabel("Filter: "));
-        filterPanel.add(Box.createHorizontalGlue());
-        filterPanel.add(filterTextField);
-        JButton clearButton = new JButton("Clear");
+        filterBox.add(filterTextField);
+        
+        filterBox.add(Layout.createHSpacer());
+
+        JButton clearButton = Layout.createFixedSizeButton("Clear", 85);
         clearButton.addActionListener(l -> {
             filterTextField.setText("");
             tableRowSorter.setRowFilter(null);
         });
-        filterPanel.add(clearButton);
-        components.frame.add(filterPanel);
+        filterBox.add(clearButton);
+        components.frame.add(filterBox);
 
         components.table = new JTable(components.tableModel);
         components.table.setRowSorter(tableRowSorter);
@@ -350,15 +283,9 @@ public final class MainWindow {
         setupNoteColumn();
 
         JScrollPane scrollPane = new JScrollPane(components.table);
+        scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
         scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         components.frame.add(scrollPane);
-    }
-
-    private JPanel createPanelWithBoxLayout() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        return panel;
     }
 
     private void tableSelectionChanged(ListSelectionEvent listSelectionEvent) {
@@ -377,35 +304,54 @@ public final class MainWindow {
     }
 
     private void createCommandPanel() {
-        JPanel panel = createPanelWithBoxLayout();
+        Box commandBox = new Box(BoxLayout.LINE_AXIS);
+        commandBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        commandBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
         components.secretCountLabel = new JLabel();
-        panel.add(components.secretCountLabel);
-        panel.add(Box.createHorizontalGlue());
+        components.secretCountLabel.setPreferredSize(new Dimension(80, 26));
+        commandBox.add(components.secretCountLabel);
+
+        commandBox.add(Box.createHorizontalGlue());
+
         components.operationProgressBar = new JProgressBar();
         components.operationProgressBar.setStringPainted(true);
         components.operationProgressBar.setString("");
         components.operationProgressBar.setIndeterminate(false);
         components.operationProgressBar.setBorderPainted(false);
-        components.operationProgressBar.setMaximumSize(new Dimension(160, 26));
+        components.operationProgressBar.setMinimumSize(new Dimension(80, 26));
         components.operationProgressBar.setPreferredSize(new Dimension(100, 26));
-        panel.add(components.operationProgressBar);
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        components.showSecretButton = new JButton("Show secret");
+        components.operationProgressBar.setMaximumSize(new Dimension(160, 26));
+        commandBox.add(components.operationProgressBar);
+
+        commandBox.add(Layout.createHSpacer());
+
+        components.addRowButton = Layout.createFixedSizeButton("Add", 85);
+        components.addRowButton.addActionListener(this::addSecret);
+        commandBox.add(components.addRowButton);
+
+        commandBox.add(Layout.createHSpacer());
+
+        components.showSecretButton = Layout.createFixedSizeButton("Show", 85);
         components.showSecretButton.setEnabled(false);
         components.showSecretButton.addActionListener(this::showSecret);
-        panel.add(components.showSecretButton);
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        components.editRowButton = new JButton("Edit");
+        commandBox.add(components.showSecretButton);
+
+        commandBox.add(Layout.createHSpacer());
+
+        components.editRowButton = Layout.createFixedSizeButton("Edit", 85);
         components.editRowButton.setEnabled(false);
         components.editRowButton.addActionListener(this::loadRowInFormForEdit);
-        panel.add(components.editRowButton);
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        components.removeRowButton = new JButton("Remove");
+        commandBox.add(components.editRowButton);
+        
+        commandBox.add(Layout.createHSpacer());
+
+        components.removeRowButton = Layout.createFixedSizeButton("Remove", 85);
         components.removeRowButton.setForeground(Color.RED);
         components.removeRowButton.setEnabled(false);
         components.removeRowButton.addActionListener(this::removeRow);
-        panel.add(components.removeRowButton);
-        components.frame.add(panel);
+        commandBox.add(components.removeRowButton);
+        components.frame.add(commandBox);
     }
 
     private void showSecret(ActionEvent actionEvent) {
@@ -449,9 +395,11 @@ public final class MainWindow {
     private void loadRowInFormForEdit(ActionEvent actionEvent) {
         int row = getSelected();
         session.setEditMode(row);
-        components.identifierTextField.setText(new String(session.getSecretTable().readIdentifier(row)));
-        components.noteTextArea.setText(new String(session.getSecretTable().readNote(row)));
-        components.addRowButton.setText("Update");
+        byte[] identifier = session.getSecretTable().readIdentifier(row);
+        byte[] note = session.getSecretTable().readNote(row);
+        AddUpdateSecretWindow.createAndShowUpdate(components.frame, this::writeSecret, session::generateSecret, 
+        		new String(identifier, 0, identifier.length, StandardCharsets.UTF_8), 
+        		new String(note, 0, note.length, StandardCharsets.UTF_8));
     }
 
     private void removeRow(ActionEvent event) {
@@ -529,14 +477,6 @@ public final class MainWindow {
     }
 
     private void storeData(ActionEvent actionEvent) {
-        if (components.isFormDirty()) {
-            int selectedOption = JOptionPane.showConfirmDialog(components.frame,
-                    "There's new data in the form, are you sure you want to store the current table before the new data is added?", "Store despite existing new data?",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (JOptionPane.YES_OPTION != selectedOption) {
-                return;
-            }
-        }
         Collection<String> selectedServicesIds;
         try {
             selectedServicesIds = LoadStoreWindow.showStore(components.frame, session.getSupportedPersistenceServices());

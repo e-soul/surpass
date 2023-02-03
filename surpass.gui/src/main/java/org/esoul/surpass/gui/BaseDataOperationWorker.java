@@ -16,10 +16,10 @@ abstract class BaseDataOperationWorker extends SwingWorker<Consumer<Component>, 
 	private static final Logger logger = System.getLogger(BaseDataOperationWorker.class.getSimpleName());
 
 	protected Session session;
-	protected Components components;
+	protected MainWindowComponents components;
 	protected char[] password;
 	
-	BaseDataOperationWorker(Session session, Components components, char[] password) {
+	BaseDataOperationWorker(Session session, MainWindowComponents components, char[] password) {
 		this.session = session;
 		this.components = components;
 		this.password = password;

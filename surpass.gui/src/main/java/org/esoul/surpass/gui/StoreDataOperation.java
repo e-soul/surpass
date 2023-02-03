@@ -17,7 +17,7 @@ class StoreDataOperation extends BaseDataOperationWorker {
 
 	private Collection<String> selectedServicesIds;
 	
-	StoreDataOperation(Session session, Components components, char[] password, Collection<String> selectedServicesIds) {
+	StoreDataOperation(Session session, MainWindowComponents components, char[] password, Collection<String> selectedServicesIds) {
 		super(session, components, password);
 		this.selectedServicesIds = new ArrayList<>(selectedServicesIds);
 	}

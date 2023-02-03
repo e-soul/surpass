@@ -21,7 +21,8 @@
 */
 package org.esoul.surpass.gui.secgen;
 
-import java.awt.FlowLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.Collection;
 import java.util.function.BiConsumer;
@@ -32,12 +33,12 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 
+import org.esoul.surpass.gui.Layout;
+import org.esoul.surpass.gui.dialog.Dialogs;
 import org.esoul.surpass.secgen.api.CharClass;
 
 /**
@@ -61,31 +62,33 @@ public class SecretGenerationWindow {
     /**
      * Shows the secret generation dialog and returns the generated secret.
      *
-     * @param parentFrame The owner of this dialog.
+     * @param parentDialog The owner of this dialog.
      * @param secretGenerator Lambda to generate the secret.
      * @return The generated secret or an empty array.
      */
-    public static char[] createAndShow(JFrame parentFrame, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
+    public static char[] createAndShow(JDialog parentDialog, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
         SecretGenerationComponents components = new SecretGenerationComponents();
 
-        JDialog secretGenerationDialog = new JDialog(parentFrame, "Secret Generation", true);
-        secretGenerationDialog.setLayout(new BoxLayout(secretGenerationDialog.getContentPane(), BoxLayout.PAGE_AXIS));
-        setupCharClassesPanel(secretGenerationDialog, components);
-        setupLengthPanel(secretGenerationDialog, components);
-        setupSecretPanel(secretGenerationDialog, components, secretGenerator);
-        setupCommandPanel(secretGenerationDialog, components);
+        components.frame = new JDialog(parentDialog, "Secret Generation", true);
+        components.frame.setLayout(new BoxLayout(components.frame.getContentPane(), BoxLayout.PAGE_AXIS));
+        
+        setupCharClassesPanel(components);
+        setupLengthPanel(components);
+        setupSecretPanel(components, secretGenerator);
+        setupCommandPanel(components);
 
-        secretGenerationDialog.pack();
-        secretGenerationDialog.setLocationRelativeTo(parentFrame);
-        secretGenerationDialog.setVisible(true);
-        secretGenerationDialog.dispose();
+        Dialogs.show(parentDialog, components.frame);
 
         return components.secretField.getText().toCharArray();
     }
 
-    private static void setupCharClassesPanel(JDialog secretGenerationDialog, SecretGenerationComponents components) {
+    private static void setupCharClassesPanel(SecretGenerationComponents components) {
         Box charClassesBox = new Box(BoxLayout.PAGE_AXIS);
+        charClassesBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        charClassesBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 6, 10, 6), "Character classes"));
+        
         components.alphaUpperCheckBox = new JCheckBox("Upper case latin characters, A-Z", true);
+        components.alphaUpperCheckBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
         charClassesBox.add(components.alphaUpperCheckBox);
         components.alphaLowerCheckBox = new JCheckBox("Lower case latin characters, a-z", true);
         charClassesBox.add(components.alphaLowerCheckBox);
@@ -93,55 +96,67 @@ public class SecretGenerationWindow {
         charClassesBox.add(components.digitsCheckBox);
         components.specialCharsCheckBox = new JCheckBox("Special characters", true);
         charClassesBox.add(components.specialCharsCheckBox);
-        JPanel charClassesPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        charClassesPanel.setBorder(BorderFactory.createTitledBorder("Character classes"));
-        charClassesPanel.add(charClassesBox);
-        secretGenerationDialog.getContentPane().add(charClassesPanel);
+        components.frame.add(charClassesBox);
     }
 
-    private static void setupLengthPanel(JDialog secretGenerationDialog, SecretGenerationComponents components) {
-        JPanel lengthPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        lengthPanel.setBorder(BorderFactory.createTitledBorder("Length"));
+    private static void setupLengthPanel(SecretGenerationComponents components) {
+        Box lengthBox = new Box(BoxLayout.LINE_AXIS);
+        lengthBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lengthBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 6, 10, 6), "Length"));
+        
         components.lengthSlider = new JSlider(MIN_SECRET_LEN, MAX_SECRET_LEN, DEFAULT_SECRET_LEN);
         components.lengthSlider.setPaintTicks(true);
         components.lengthSlider.setMinorTickSpacing(1);
-        lengthPanel.add(components.lengthSlider);
+        lengthBox.add(components.lengthSlider);
+
         components.lengthLabel = new JLabel(components.getLengthLabelValue());
-        lengthPanel.add(components.lengthLabel);
+        lengthBox.add(components.lengthLabel);
         components.lengthSlider.addChangeListener(l -> components.updateLengthLabel());
-        secretGenerationDialog.getContentPane().add(lengthPanel);
+        components.frame.add(lengthBox);
     }
 
-    private static void setupSecretPanel(JDialog secretGenerationDialog, SecretGenerationComponents components, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
-        JPanel secretPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        secretPanel.setBorder(BorderFactory.createTitledBorder("Secret"));
+    private static void setupSecretPanel(SecretGenerationComponents components, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
+        Box secretBox = new Box(BoxLayout.LINE_AXIS);
+        secretBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        secretBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 6, 10, 6), "Secret"));
 
-        components.generateButton = new JButton("Generate");
+        components.secretField = new JTextField(SECRET_FIELD_COLS);
+        components.secretField.setEditable(false);
+        components.secretField.setHorizontalAlignment(JTextField.CENTER);
+        components.secretField.setFont(new Font(Font.MONOSPACED, Font.BOLD, SECRET_FIELD_FONT_SIZE));
+        secretBox.add(components.secretField);
+        
+        secretBox.add(Layout.createHSpacer());
+        
+        components.generateButton = Layout.createFixedSizeButton("Generate", 90);
         components.generateButton.addActionListener(l -> {
             char[] secret = new char[components.lengthSlider.getValue()];
             secretGenerator.accept(secret, components.getSelectedCharClasses());
             components.secretField.setText(new String(secret));
         });
-        secretPanel.add(components.generateButton);
-        components.secretField = new JTextField(SECRET_FIELD_COLS);
-        components.secretField.setEditable(false);
-        components.secretField.setHorizontalAlignment(JTextField.CENTER);
-        components.secretField.setFont(new Font(Font.MONOSPACED, Font.BOLD, SECRET_FIELD_FONT_SIZE));
-        secretPanel.add(components.secretField);
-        secretGenerationDialog.getContentPane().add(secretPanel);
+        secretBox.add(components.generateButton);
+        components.frame.add(secretBox);
     }
 
-    private static void setupCommandPanel(JDialog secretGenerationDialog, SecretGenerationComponents components) {
-        JPanel commandPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(l -> secretGenerationDialog.setVisible(false));
-        commandPanel.add(okButton);
-        JButton cancelButton = new JButton("Cancel");
+    private static void setupCommandPanel(SecretGenerationComponents components) {
+        Box commandBox = new Box(BoxLayout.LINE_AXIS);
+        commandBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        commandBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        
+        commandBox.add(Box.createHorizontalGlue());
+        
+        JButton okButton = Layout.createFixedSizeButton("OK", 90);
+        okButton.addActionListener(l -> components.frame.setVisible(false));
+        commandBox.add(okButton);
+        
+        commandBox.add(Layout.createHSpacer());
+        
+        JButton cancelButton = Layout.createFixedSizeButton("Cancel", 90);
         cancelButton.addActionListener(l -> {
-            secretGenerationDialog.setVisible(false);
+        	components.frame.setVisible(false);
             components.secretField.setText("");
         });
-        commandPanel.add(cancelButton);
-        secretGenerationDialog.getContentPane().add(commandPanel);
+        commandBox.add(cancelButton);
+        components.frame.add(commandBox);
     }
 }
