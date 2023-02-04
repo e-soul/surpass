@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -64,8 +64,8 @@ final class MainWindowComponents {
     JProgressBar operationProgressBar = null;
 
     void setEnabledTableButtons(boolean enabled) {
-    	editSecretMenuItem.setEnabled(enabled);
-    	removeSecretMenuItem.setEnabled(enabled);
+        editSecretMenuItem.setEnabled(enabled);
+        removeSecretMenuItem.setEnabled(enabled);
         showSecretButton.setEnabled(enabled);
         editRowButton.setEnabled(enabled);
         removeRowButton.setEnabled(enabled);

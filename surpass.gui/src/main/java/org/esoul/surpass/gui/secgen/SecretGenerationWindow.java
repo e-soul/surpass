@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -45,7 +45,6 @@ import org.esoul.surpass.secgen.api.CharClass;
  * Brings up a dialog that allows the user to generate random secrets based on various parameters.
  *
  * @author mgp
- *
  */
 public class SecretGenerationWindow {
 
@@ -71,7 +70,7 @@ public class SecretGenerationWindow {
 
         components.frame = new JDialog(parentDialog, "Secret Generation", true);
         components.frame.setLayout(new BoxLayout(components.frame.getContentPane(), BoxLayout.PAGE_AXIS));
-        
+
         setupCharClassesPanel(components);
         setupLengthPanel(components);
         setupSecretPanel(components, secretGenerator);
@@ -86,7 +85,7 @@ public class SecretGenerationWindow {
         Box charClassesBox = new Box(BoxLayout.PAGE_AXIS);
         charClassesBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         charClassesBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(10, 6, 10, 6), "Character classes"));
-        
+
         components.alphaUpperCheckBox = new JCheckBox("Upper case latin characters, A-Z", true);
         components.alphaUpperCheckBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
         charClassesBox.add(components.alphaUpperCheckBox);
@@ -103,7 +102,7 @@ public class SecretGenerationWindow {
         Box lengthBox = new Box(BoxLayout.LINE_AXIS);
         lengthBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         lengthBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0, 6, 10, 6), "Length"));
-        
+
         components.lengthSlider = new JSlider(MIN_SECRET_LEN, MAX_SECRET_LEN, DEFAULT_SECRET_LEN);
         components.lengthSlider.setPaintTicks(true);
         components.lengthSlider.setMinorTickSpacing(1);
@@ -125,9 +124,9 @@ public class SecretGenerationWindow {
         components.secretField.setHorizontalAlignment(JTextField.CENTER);
         components.secretField.setFont(new Font(Font.MONOSPACED, Font.BOLD, SECRET_FIELD_FONT_SIZE));
         secretBox.add(components.secretField);
-        
+
         secretBox.add(Layout.createHSpacer());
-        
+
         components.generateButton = Layout.createFixedSizeButton("Generate", 90);
         components.generateButton.addActionListener(l -> {
             char[] secret = new char[components.lengthSlider.getValue()];
@@ -142,18 +141,18 @@ public class SecretGenerationWindow {
         Box commandBox = new Box(BoxLayout.LINE_AXIS);
         commandBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         commandBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        
+
         commandBox.add(Box.createHorizontalGlue());
-        
+
         JButton okButton = Layout.createFixedSizeButton("OK", 90);
         okButton.addActionListener(l -> components.frame.setVisible(false));
         commandBox.add(okButton);
-        
+
         commandBox.add(Layout.createHSpacer());
-        
+
         JButton cancelButton = Layout.createFixedSizeButton("Cancel", 90);
         cancelButton.addActionListener(l -> {
-        	components.frame.setVisible(false);
+            components.frame.setVisible(false);
             components.secretField.setText("");
         });
         commandBox.add(cancelButton);

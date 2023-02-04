@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -27,7 +27,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class TextAreaTableCellRenderer implements TableCellRenderer {
-    
+
     private NoteCell noteCell = new NoteCell();
 
     @Override

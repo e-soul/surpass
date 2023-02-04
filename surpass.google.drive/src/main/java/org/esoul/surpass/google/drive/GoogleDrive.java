@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -52,12 +52,12 @@ import com.google.api.services.drive.model.FileList;
 
 class GoogleDrive implements DriveFacade {
 
-	@FunctionalInterface
-	interface DriveOperation<T> {
-		T execute() throws IOException, GeneralSecurityException;
-	}
+    @FunctionalInterface
+    interface DriveOperation<T> {
+        T execute() throws IOException, GeneralSecurityException;
+    }
 
-	private static final Logger logger = System.getLogger(GoogleDrive.class.getSimpleName());
+    private static final Logger logger = System.getLogger(GoogleDrive.class.getSimpleName());
 
     private Drive service = null;
 
@@ -67,10 +67,9 @@ class GoogleDrive implements DriveFacade {
                     new InputStreamReader(GooglePersistenceService.class.getResourceAsStream("/surpass-oauth2.json"), StandardCharsets.UTF_8));
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets, java.util.List.of(DriveScopes.DRIVE_FILE))
-            		.setAccessType("offline")
-            		.setDataStoreFactory(new FileDataStoreFactory(PersistenceDefaults.getDataDir().toFile()))
-            		.build();
+            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets,
+                    java.util.List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline")
+                    .setDataStoreFactory(new FileDataStoreFactory(PersistenceDefaults.getDataDir().toFile())).build();
 
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(41080).build();
             Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
@@ -81,16 +80,16 @@ class GoogleDrive implements DriveFacade {
     }
 
     private <T> T executeOperation(DriveOperation<T> s) throws IOException, GeneralSecurityException {
-    	try {
-			return s.execute();
-		} catch (TokenResponseException e) {
-			logger.log(Level.INFO, () -> "Refresh token invalid. Starting new authorization.");
-			logger.log(Level.DEBUG, () -> "Drive operation failed.", e);
-			// Setting the service field to null, deleting the tokens and re-executing the operation will trigger a new authz.
-			service = null;
-			Files.delete(PersistenceDefaults.getGoogleStoredCredential());
-			return s.execute();
-		}
+        try {
+            return s.execute();
+        } catch (TokenResponseException e) {
+            logger.log(Level.INFO, () -> "Refresh token invalid. Starting new authorization.");
+            logger.log(Level.DEBUG, () -> "Drive operation failed.", e);
+            // Setting the service field to null, deleting the tokens and re-executing the operation will trigger a new authz.
+            service = null;
+            Files.delete(PersistenceDefaults.getGoogleStoredCredential());
+            return s.execute();
+        }
     }
 
     @Override
@@ -101,12 +100,13 @@ class GoogleDrive implements DriveFacade {
 
     @Override
     public String searchFile(String parentDirectoryId, String name) throws IOException, GeneralSecurityException {
-        String query = String.format("mimeType!='application/vnd.google-apps.folder' and name='%s' and trashed=false and '%s' in parents", name, parentDirectoryId);
+        String query = String.format("mimeType!='application/vnd.google-apps.folder' and name='%s' and trashed=false and '%s' in parents", name,
+                parentDirectoryId);
         return search(query, name);
     }
 
     private String search(String query, String name) throws IOException, GeneralSecurityException {
-    	FileList list = executeOperation(() -> getService().files().list().setQ(query).setFields("files(id)").execute());
+        FileList list = executeOperation(() -> getService().files().list().setQ(query).setFields("files(id)").execute());
         Collection<File> result = list.getFiles();
         if (result.isEmpty()) {
             return null;
@@ -144,7 +144,10 @@ class GoogleDrive implements DriveFacade {
     @Override
     public byte[] readFile(String fileId) throws IOException, GeneralSecurityException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        executeOperation(() -> { getService().files().get(fileId).executeMediaAndDownloadTo(baos); return null; });
+        executeOperation(() -> {
+            getService().files().get(fileId).executeMediaAndDownloadTo(baos);
+            return null;
+        });
         return baos.toByteArray();
     }
 }

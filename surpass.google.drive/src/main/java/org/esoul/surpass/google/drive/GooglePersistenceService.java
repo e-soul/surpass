@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -31,7 +31,6 @@ import org.esoul.surpass.persist.api.PersistenceService;
  * Warning, not thread-safe.
  * 
  * @author mgp
- *
  */
 public class GooglePersistenceService implements PersistenceService {
 

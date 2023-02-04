@@ -50,41 +50,41 @@ public class GoogleDriveTest {
 
     @Test
     public void testHandleInvalidRefreshTokenInteractive() throws Exception {
-    	assumeInteractiveEnv();
-    	Path testDir = Paths.get("google_drive_test_invalid_refresh_token_" + System.currentTimeMillis());
-    	setupInvalidRefreshToken(testDir);
-    	new GooglePersistenceService().write(PersistenceDefaults.DEFAULT_SECRETS, ABC);
-    	tearDownInvalidRefreshToken(testDir);
+        assumeInteractiveEnv();
+        Path testDir = Paths.get("google_drive_test_invalid_refresh_token_" + System.currentTimeMillis());
+        setupInvalidRefreshToken(testDir);
+        new GooglePersistenceService().write(PersistenceDefaults.DEFAULT_SECRETS, ABC);
+        tearDownInvalidRefreshToken(testDir);
     }
 
     private void setupInvalidRefreshToken(Path testDir) throws IOException {
-    	Files.createDirectories(testDir);
-    	try (InputStream is = getClass().getResourceAsStream("/StoredCredential_invalid_refresh_token")) {
-    		Assertions.assertNotNull(is);
-    		Files.copy(is, testDir.resolve("StoredCredential"));
-    	}
-    	System.setProperty(PersistenceDefaults.SYS_PROP_DATADIR, testDir.toAbsolutePath().toString());
+        Files.createDirectories(testDir);
+        try (InputStream is = getClass().getResourceAsStream("/StoredCredential_invalid_refresh_token")) {
+            Assertions.assertNotNull(is);
+            Files.copy(is, testDir.resolve("StoredCredential"));
+        }
+        System.setProperty(PersistenceDefaults.SYS_PROP_DATADIR, testDir.toAbsolutePath().toString());
     }
 
     private void tearDownInvalidRefreshToken(Path testDir) throws IOException {
-    	System.clearProperty(PersistenceDefaults.SYS_PROP_DATADIR);
-    	Files.walkFileTree(testDir, new SimpleFileVisitor<Path>() {
+        System.clearProperty(PersistenceDefaults.SYS_PROP_DATADIR);
+        Files.walkFileTree(testDir, new SimpleFileVisitor<Path>() {
 
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
 
-			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-				if (null == e) {
-					Files.delete(dir);
-					return FileVisitResult.CONTINUE;
-				}
-				throw e;
-			}
-    	});
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                if (null == e) {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                throw e;
+            }
+        });
     }
 
     private void assumeInteractiveEnv() {

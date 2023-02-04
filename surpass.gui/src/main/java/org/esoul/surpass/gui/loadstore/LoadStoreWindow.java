@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -89,7 +89,8 @@ public class LoadStoreWindow {
     public static Collection<String> showStore(JFrame parentFrame, Map<String, String> supportedPersistenceServices) {
         Function<Component[], Collection<String>> resultFactory = components -> Arrays.stream(components).filter(c -> ((JCheckBox) c).isSelected())
                 .map(c -> ((ServiceCheckBox) c).serviceId).collect(Collectors.toSet());
-        return showDialog(parentFrame, supportedPersistenceServices, "Storing secrets", e -> new ServiceCheckBox(e.getKey(), e.getValue(), true), resultFactory);
+        return showDialog(parentFrame, supportedPersistenceServices, "Storing secrets", e -> new ServiceCheckBox(e.getKey(), e.getValue(), true),
+                resultFactory);
     }
 
     private static <T> T showDialog(JFrame parentFrame, Map<String, String> supportedPersistenceServices, String dialogTitle,

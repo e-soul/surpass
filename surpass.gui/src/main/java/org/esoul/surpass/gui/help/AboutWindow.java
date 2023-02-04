@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -45,7 +45,6 @@ import javax.swing.JPanel;
  * Brings up an "about" dialog with basic information about this application such as release version and web page link.
  * 
  * @author mgp
- *
  */
 public class AboutWindow {
 
@@ -64,7 +63,8 @@ public class AboutWindow {
         panel.add(createLabel("version 1.1"));
         JLabel homepage = createLabel("https://surpass.e-soul.org");
 
-        Map<TextAttribute, Object> hyperlinkFontAttributes = Map.of(TextAttribute.FAMILY, Font.MONOSPACED, TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_GRAY);
+        Map<TextAttribute, Object> hyperlinkFontAttributes = Map.of(TextAttribute.FAMILY, Font.MONOSPACED, TextAttribute.UNDERLINE,
+                TextAttribute.UNDERLINE_LOW_GRAY);
         homepage.setFont(new Font(hyperlinkFontAttributes));
         homepage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         homepage.addMouseListener(new MouseAdapter() {

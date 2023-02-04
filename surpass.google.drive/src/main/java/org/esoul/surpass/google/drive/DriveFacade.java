@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -28,12 +28,12 @@ import java.security.GeneralSecurityException;
  * A simplified representation of the Google Drive API.
  * 
  * @author mgp
- *
  */
 public interface DriveFacade {
 
     /**
-     * Searches for directory by name. If multiple directories with the same name exist, the first one is returned in the order they were returned from Drive.
+     * Searches for directory by name. If multiple directories with the same name exist, the first one is returned in the
+     * order they were returned from Drive.
      * 
      * @param name The name of the directory
      * @return The directory ID if the directory exists or {@code null} otherwise.
@@ -53,7 +53,8 @@ public interface DriveFacade {
     String createDirectory(String name) throws IOException, GeneralSecurityException;
 
     /**
-     * Searches for file by parent directory ID and name. If multiple files with the same name exist, the first one is returned in the order they were returned from Drive.
+     * Searches for file by parent directory ID and name. If multiple files with the same name exist, the first one is
+     * returned in the order they were returned from Drive.
      * 
      * @param parentDirectoryId Parent directory ID.
      * @param name The name of the file.

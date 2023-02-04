@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -43,8 +43,9 @@ public class ExitProgrammeHandler implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         int selectedOption;
         if (unsavedDataExistSupplier.getAsBoolean()) {
-            selectedOption = JOptionPane.showConfirmDialog(components.frame, "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?",
-                    "Exit despite unsaved data?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            selectedOption = JOptionPane.showConfirmDialog(components.frame,
+                    "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?", "Exit despite unsaved data?",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
             selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
         }

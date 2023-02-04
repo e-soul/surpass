@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -23,6 +23,12 @@ package org.esoul.surpass.secgen.api;
 
 import java.util.function.IntPredicate;
 
+/**
+ * Represents the supported character classes when working with secrets. E.g. when generating secrets.
+ * 
+ * @author mgp
+ *
+ */
 public enum CharClass {
 
     DIGIT(c -> Character.isDigit((char) c)),
@@ -36,10 +42,22 @@ public enum CharClass {
         this.isInClassPredicate = inClassPredicate;
     }
 
+    /**
+     * Returns {@code true} if the given character is in this character class and {@code false} otherwise.
+     * 
+     * @param c The character to check.
+     * @return {@code true} if the given character is in this character class and {@code false} otherwise.
+     */
     public boolean isInClass(char c) {
         return isInClassPredicate.test(c);
     }
 
+    /**
+     * Returns the {@link CharClass} for the given character.
+     * 
+     * @param c The character to get the {@link CharClass} for.
+     * @return The {@link CharClass} for the given character.
+     */
     public static CharClass getCharClass(char c) {
         for (CharClass charClass : values()) {
             if (charClass.isInClass(c)) {

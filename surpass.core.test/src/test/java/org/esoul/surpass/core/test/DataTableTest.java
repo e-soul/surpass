@@ -65,7 +65,7 @@ public class DataTableTest {
         for (int i = 0; i < SquareMatrix.MAX_ROW; i++) {
             dt.createRow("GG".toCharArray(), "PP".toCharArray(), "AA".toCharArray());
         }
-		Assertions.assertThrows(MaxSizeExceededException.class, () -> dt.createRow("GG".toCharArray(), "PP".toCharArray(), "AA".toCharArray()));
+        Assertions.assertThrows(MaxSizeExceededException.class, () -> dt.createRow("GG".toCharArray(), "PP".toCharArray(), "AA".toCharArray()));
     }
 
     @Test
@@ -257,7 +257,7 @@ public class DataTableTest {
         Assertions.assertTrue(Arrays.equals(encode(identifier1), dt.readIdentifier(0)));
         Assertions.assertTrue(Arrays.equals(encode(note1), dt.readNote(0)));
     }
-    
+
     @Test
     public void testUpdateRows() throws Exception {
         char[] secret0 = "AAA".toCharArray();
@@ -274,19 +274,19 @@ public class DataTableTest {
         char[] identifier2 = "Pesho".toCharArray();
         char[] note2 = "work work".toCharArray();
         dt.createRow(secret2.clone(), identifier2.clone(), note2.clone());
-        
+
         dt.updateRow(0, "AAA-updated".toCharArray(), "BBB-updated".toCharArray(), "CCC-updated".toCharArray());
-        
+
         Assertions.assertTrue(Arrays.equals(encode("AAA-updated".toCharArray()), dt.readSecret(0)));
         Assertions.assertTrue(Arrays.equals(encode("BBB-updated".toCharArray()), dt.readIdentifier(0)));
         Assertions.assertTrue(Arrays.equals(encode("CCC-updated".toCharArray()), dt.readNote(0)));
-        
+
         dt.updateRow(1, null, "BB-updated".toCharArray(), note1.clone());
-        
+
         Assertions.assertTrue(Arrays.equals(encode(secret1), dt.readSecret(1)));
         Assertions.assertTrue(Arrays.equals(encode("BB-updated".toCharArray()), dt.readIdentifier(1)));
         Assertions.assertTrue(Arrays.equals(encode(note1), dt.readNote(1)));
-        
+
         Assertions.assertTrue(Arrays.equals(encode(secret2), dt.readSecret(2)));
         Assertions.assertTrue(Arrays.equals(encode(identifier2), dt.readIdentifier(2)));
         Assertions.assertTrue(Arrays.equals(encode(note2), dt.readNote(2)));

@@ -60,7 +60,7 @@ public class SessionTest {
         session.start();
         session.write("pass1".toCharArray(), "id1".toCharArray(), "note1".toCharArray());
         Assertions.assertFalse(Files.exists(PersistenceDefaults.getSecrets()));
-        Map<String,String> supportedPersistenceServices = session.getSupportedPersistenceServices();
+        Map<String, String> supportedPersistenceServices = session.getSupportedPersistenceServices();
         Assertions.assertEquals(2, supportedPersistenceServices.size());
         Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
         Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.google.drive.GooglePersistenceService"));

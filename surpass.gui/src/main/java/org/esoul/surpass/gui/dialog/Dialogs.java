@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -56,11 +56,11 @@ public final class Dialogs {
         }
         return null;
     }
-    
+
     public static void show(Window parentFrame, Window frame) {
-    	frame.pack();
-    	frame.setLocationRelativeTo(parentFrame);
-    	frame.setVisible(true);
-    	frame.dispose();
+        frame.pack();
+        frame.setLocationRelativeTo(parentFrame);
+        frame.setVisible(true);
+        frame.dispose();
     }
 }

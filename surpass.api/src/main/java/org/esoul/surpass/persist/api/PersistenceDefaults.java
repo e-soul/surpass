@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -67,8 +67,7 @@ public final class PersistenceDefaults {
     }
 
     /**
-     * Returns a {@link Path} to the "secrets" file.
-     * The "secrets" file is where user data is stored, passwords, keys, etc.
+     * Returns a {@link Path} to the "secrets" file. The "secrets" file is where user data is stored, passwords, keys, etc.
      * 
      * @return A {@link Path} to the "secrets" file.
      */
@@ -78,8 +77,8 @@ public final class PersistenceDefaults {
     }
 
     /**
-     * Returns a {@link Path} to the "data" directory.
-     * The "data" directory is where application and user data is stored, e.g. the "secrets" file.
+     * Returns a {@link Path} to the "data" directory. The "data" directory is where application and user data is stored,
+     * e.g. the "secrets" file.
      * 
      * @return A {@link Path} to the "data" directory.
      */
@@ -99,14 +98,14 @@ public final class PersistenceDefaults {
     public static String getDriveDataDir() {
         return System.getProperty(SYS_PROP_DRIVE_DATADIR, DEFAULT_DRIVE_DATADIR);
     }
-    
+
     /**
      * Returns the serialized Google Credential file.
      * 
      * @return The serialized Google Credential file.
      */
     public static Path getGoogleStoredCredential() {
-    	return getDataDir().resolve("StoredCredential");
+        return getDataDir().resolve("StoredCredential");
     }
 
     private static String getUserHome() {

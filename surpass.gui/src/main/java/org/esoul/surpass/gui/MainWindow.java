@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2022 e-soul.org
+   Copyright 2017-2023 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
@@ -90,10 +90,10 @@ import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
 
 /**
- * All GUI component creation, setup and policies are encapsulated here. This is the ultimate detail. Literals are intentionally not externalized to help with readability.
+ * All GUI component creation, setup and policies are encapsulated here. This is the ultimate detail. Literals are
+ * intentionally not externalized to help with readability.
  * 
  * @author mgp
- *
  */
 public final class MainWindow {
 
@@ -141,9 +141,9 @@ public final class MainWindow {
 
         components.frame.setJMenuBar(menuBar);
     }
-    
+
     private JMenu createProgramMenu() {
-    	JMenuItem loadMenuItem = new JMenuItem(Labels.MENU_ITEM_LOAD, KeyEvent.VK_L);
+        JMenuItem loadMenuItem = new JMenuItem(Labels.MENU_ITEM_LOAD, KeyEvent.VK_L);
         loadMenuItem.addActionListener(this::loadData);
 
         JMenuItem storeMenuItem = new JMenuItem(Labels.MENU_ITEM_STORE, KeyEvent.VK_S);
@@ -157,12 +157,12 @@ public final class MainWindow {
         programMenu.add(loadMenuItem);
         programMenu.add(storeMenuItem);
         programMenu.add(exitMenuItem);
-        
+
         return programMenu;
     }
 
     private JMenu createSecretsMenu() {
-    	JMenuItem addSecretMenuItem = new JMenuItem("Add", KeyEvent.VK_A);
+        JMenuItem addSecretMenuItem = new JMenuItem("Add", KeyEvent.VK_A);
         addSecretMenuItem.addActionListener(this::addSecret);
 
         components.editSecretMenuItem = new JMenuItem("Edit", KeyEvent.VK_E);
@@ -194,16 +194,16 @@ public final class MainWindow {
     }
 
     private void addSecret(ActionEvent event) {
-    	try {
-    		session.checkDataLoaded();
-    		AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret);
-    	} catch (ExistingDataNotLoadedException e) {
-    		JOptionPane.showMessageDialog(components.frame, "Local secrets exist. Load them before adding new.", "Error", JOptionPane.ERROR_MESSAGE);
-    	}
+        try {
+            session.checkDataLoaded();
+            AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret);
+        } catch (ExistingDataNotLoadedException e) {
+            JOptionPane.showMessageDialog(components.frame, "Local secrets exist. Load them before adding new.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void writeSecret(char[] secret, char[] identifier, char[] note) throws Exception {
-    	session.write(secret, identifier, note);
+        session.write(secret, identifier, note);
         components.tableModel.fireTableDataChanged();
     }
 
@@ -216,11 +216,11 @@ public final class MainWindow {
         filterLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         filterLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 0));
         components.frame.add(filterLabel);
-        
+
         Box filterBox = new Box(BoxLayout.LINE_AXIS);
         filterBox.setAlignmentX(Component.LEFT_ALIGNMENT);
         filterBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        
+
         JTextField filterTextField = new JTextField();
         filterTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
         filterTextField.addKeyListener(new KeyListener() {
@@ -238,7 +238,7 @@ public final class MainWindow {
             }
         });
         filterBox.add(filterTextField);
-        
+
         filterBox.add(Layout.createHSpacer());
 
         JButton clearButton = Layout.createFixedSizeButton("Clear", 85);
@@ -343,7 +343,7 @@ public final class MainWindow {
         components.editRowButton.setEnabled(false);
         components.editRowButton.addActionListener(this::loadRowInFormForEdit);
         commandBox.add(components.editRowButton);
-        
+
         commandBox.add(Layout.createHSpacer());
 
         components.removeRowButton = Layout.createFixedSizeButton("Remove", 85);
@@ -363,7 +363,8 @@ public final class MainWindow {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(() -> clearClipboard(secretHashValue), DEFAULT_CLIPBOARD_EXPIRE_DELAY, TimeUnit.SECONDS);
         executor.shutdown();
-        JOptionPane.showMessageDialog(components.frame, secretStr, "Secret copied to clipboard for " + DEFAULT_CLIPBOARD_EXPIRE_DELAY + "s.", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(components.frame, secretStr, "Secret copied to clipboard for " + DEFAULT_CLIPBOARD_EXPIRE_DELAY + "s.",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void clearClipboard(byte[] secretHashValue) {
@@ -374,7 +375,8 @@ public final class MainWindow {
             if (null != value && secretHashValue.length > 0) {
                 byte[] contentsHashValue = calculateHash(value.toString().getBytes(StandardCharsets.UTF_8));
                 if (!Arrays.equals(contentsHashValue, secretHashValue)) {
-                    // Don't clear the clipboard if the content is different than the secret. The user may have already put something else in the clipboard already.
+                    // Don't clear the clipboard if the content is different than the secret. The user may have already put something else
+                    // in the clipboard already.
                     return;
                 }
             }
@@ -397,14 +399,13 @@ public final class MainWindow {
         session.setEditMode(row);
         byte[] identifier = session.getSecretTable().readIdentifier(row);
         byte[] note = session.getSecretTable().readNote(row);
-        AddUpdateSecretWindow.createAndShowUpdate(components.frame, this::writeSecret, session::generateSecret, 
-        		new String(identifier, 0, identifier.length, StandardCharsets.UTF_8), 
-        		new String(note, 0, note.length, StandardCharsets.UTF_8));
+        AddUpdateSecretWindow.createAndShowUpdate(components.frame, this::writeSecret, session::generateSecret,
+                new String(identifier, 0, identifier.length, StandardCharsets.UTF_8), new String(note, 0, note.length, StandardCharsets.UTF_8));
     }
 
     private void removeRow(ActionEvent event) {
-        int selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to remove this entry?", "Remove?", JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
+        int selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to remove this entry?", "Remove?",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (JOptionPane.YES_OPTION == selectedOption) {
             int row = getSelected();
             session.remove(row);
@@ -458,7 +459,7 @@ public final class MainWindow {
     }
 
     private void loadData(ActionEvent event) {
-    	String serviceId;
+        String serviceId;
         try {
             serviceId = LoadStoreWindow.showLoad(components.frame, session.getSupportedPersistenceServices());
             if (null == serviceId) {
@@ -470,9 +471,9 @@ public final class MainWindow {
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-        	components.operationProgressBar.setString("Loading...");
+            components.operationProgressBar.setString("Loading...");
             components.operationProgressBar.setIndeterminate(true);
-        	new LoadDataOperation(session, components, password, serviceId).execute();
+            new LoadDataOperation(session, components, password, serviceId).execute();
         }
     }
 
@@ -490,7 +491,7 @@ public final class MainWindow {
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-        	components.operationProgressBar.setString("Storing...");
+            components.operationProgressBar.setString("Storing...");
             components.operationProgressBar.setIndeterminate(true);
             new StoreDataOperation(session, components, password, selectedServicesIds).execute();
         }
