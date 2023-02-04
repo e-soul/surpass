@@ -36,12 +36,13 @@ generateAppImage.doLast {
         copy {
             from files("${projectDir}/bin/surpass_image.bat", "${projectDir}/bin/surpass.exe")
             into output
-			rename "surpass_image.bat", "surpass.bat"
+            rename "surpass_image.bat", "surpass.bat"
         }
     } else {
         copy {
-            from "${projectDir}/bin/surpass"
+            from "${projectDir}/bin/surpass_image"
             into output
+            rename "surpass_image", "surpass"
         }
         ant.chmod(file: "${output}/surpass", perm: "+x")
     }
@@ -62,7 +63,7 @@ task generateJre(type: Exec) {
 task generateAppDist(type: Copy) {
     doFirst {
         delete output
-		delete distArchive
+        delete distArchive
     }
 
     dependsOn = [":surpass.google.drive:jar", ":surpass.gui:jar", ":surpass.persist:jar", ":generateJre"]
@@ -78,15 +79,24 @@ task generateAppDist(type: Copy) {
     into "${output}/mods"
 
     doLast {
-        copy {
-            from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
-            into output
-            rename "surpass_dist.bat", "surpass.bat"
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            copy {
+                from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
+                into output
+                rename "surpass_dist.bat", "surpass.bat"
+            }
+        } else {
+            copy {
+                from "${projectDir}/bin/surpass_dist"
+                into output
+                rename "surpass_dist", "surpass"
+            }
         }
-		copy {
-		    from jre
-			into "${output}/jre"
-		}
-		ant.zip(basedir: distDir, destfile: distArchive, includes: "surpass/**")
+
+        copy {
+            from jre
+            into "${output}/jre"
+        }
+        ant.zip(basedir: distDir, destfile: distArchive, includes: "surpass/**")
     }
 }

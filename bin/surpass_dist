@@ -1,0 +1,5 @@
+#!/bin/sh
+
+SCRIPT_DIR=`dirname $0`
+# VM_OPTIONS=-Dorg.esoul.surpass.persist.datadir=$SCRIPT_DIR
+$SCRIPT_DIR/jre/bin/java $VM_OPTIONS -p "$SCRIPT_DIR/mods" --add-modules ALL-MODULE-PATH,ALL-SYSTEM -m surpass.gui/org.esoul.surpass.gui.Main "$@"
