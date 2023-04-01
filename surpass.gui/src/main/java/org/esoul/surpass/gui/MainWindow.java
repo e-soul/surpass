@@ -68,6 +68,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
@@ -88,6 +89,8 @@ import org.esoul.surpass.gui.loadstore.LoadStoreWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
+
+import com.formdev.flatlaf.FlatDarkLaf;
 
 /**
  * All GUI component creation, setup and policies are encapsulated here. This is the ultimate detail. Literals are
@@ -110,6 +113,8 @@ public final class MainWindow {
     }
 
     public static void createAndShow() {
+        setupLookAndFeel();
+
         Session session = SessionFactory.create();
         try {
             session.start();
@@ -126,6 +131,19 @@ public final class MainWindow {
         mainWindow.createCommandPanel();
         mainWindow.createWindowAndTrayIcon();
         mainWindow.show();
+    }
+
+    private static void setupLookAndFeel() {
+        String requestedLookAndFeel = System.getProperty("org.esoul.surpass.laf", "com.formdev.flatlaf.FlatDarkLaf");
+        try {
+            Class<?> lookAndFeelClass = Class.forName(requestedLookAndFeel);
+            lookAndFeelClass.getMethod("setup").invoke(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FlatDarkLaf.setup();
+            JOptionPane.showMessageDialog(null, requestedLookAndFeel + " cannot be used. Using default.", "Look and feel error!", JOptionPane.ERROR_MESSAGE);
+        }
+        UIManager.put("ProgressBar.background", "fade($ProgressBar.background, 100)");
     }
 
     private void createFrame() {

@@ -31,4 +31,6 @@ module surpass.gui {
 
     requires java.desktop;
     requires java.datatransfer;
+
+    requires com.formdev.flatlaf;
 }

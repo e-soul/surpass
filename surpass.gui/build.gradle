@@ -2,8 +2,21 @@ plugins {
     id "java"
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation project(":surpass.api")
     implementation project(":surpass.core")
     implementation project(":surpass.app")
+
+    implementation "com.formdev:flatlaf:3.0"
+}
+
+build.doLast {
+    copy {
+        from configurations.runtimeClasspath
+        into "$buildDir/libs"
+    }
 }

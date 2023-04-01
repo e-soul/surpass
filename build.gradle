@@ -71,9 +71,12 @@ task generateAppDist(type: Copy) {
     def surpassMods = ["surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]
     def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
 
-    fileTree(new File(project("surpass.google.drive").buildDir, "libs")).visit { details ->
+    def allDependencies = fileTree(new File(project("surpass.google.drive").buildDir, "libs")) + fileTree(new File(project("surpass.gui").buildDir, "libs"))
+    allDependencies.visit { details ->
         modulePath << details.file.path
     }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     from modulePath
     into "${output}/mods"

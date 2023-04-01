@@ -60,7 +60,7 @@ public class AboutWindow {
         JLabel appName = createLabel("Surpass");
         appName.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
         panel.add(appName);
-        panel.add(createLabel("version 1.1"));
+        panel.add(createLabel("version 1.2"));
         JLabel homepage = createLabel("https://surpass.e-soul.org");
 
         Map<TextAttribute, Object> hyperlinkFontAttributes = Map.of(TextAttribute.FAMILY, Font.MONOSPACED, TextAttribute.UNDERLINE,
@@ -79,7 +79,7 @@ public class AboutWindow {
             }
         });
         panel.add(homepage);
-        panel.add(createLabel("\u00A9 2017-2022 e-soul.org"));
+        panel.add(createLabel("\u00A9 2017-2023 e-soul.org"));
         JDialog aboutDialog = new JDialog(parentFrame, "About Surpass", true);
         aboutDialog.add(panel);
         aboutDialog.pack();
