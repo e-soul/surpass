@@ -19,52 +19,49 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.masterpass;
 
 import java.awt.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
 import java.util.function.Consumer;
 
-import javax.swing.table.AbstractTableModel;
+import javax.swing.JProgressBar;
 
+import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
-import org.esoul.surpass.app.ServiceUnavailableException;
-import org.esoul.surpass.app.Session;
+import org.esoul.surpass.gui.BaseDataOperationWorker;
 import org.esoul.surpass.gui.dialog.MessageDialog;
 
-class LoadDataOperation extends BaseDataOperationWorker {
+public class ChangeMasterPassOperation extends BaseDataOperationWorker {
 
-    private AbstractTableModel tableModel;
-    private Session session;
-    private char[] password;
-    private String serviceId;
+    private ChangeMasterPassComponents components;
+    private ChangeMasterPassPolicy policy;
+    private Collection<String> selectedServices;
 
-    LoadDataOperation(Session session, MainWindowComponents components, char[] password, String serviceId) {
-        super(components.frame, components.operationProgressBar);
-        this.tableModel = components.tableModel;
-        this.session = session;
-        this.password = password;
-        this.serviceId = serviceId;
+    public ChangeMasterPassOperation(Component parent, JProgressBar operationProgressBar, ChangeMasterPassComponents components, ChangeMasterPassPolicy policy,
+            Collection<String> selectedServices) {
+        super(parent, operationProgressBar);
+        this.components = components;
+        this.policy = policy;
+        this.selectedServices = selectedServices;
     }
 
     @Override
     protected Consumer<Component> operation() {
         try {
-            session.loadData(password, serviceId);
-        } catch (IOException | ServiceUnavailableException e) {
-            return parent -> MessageDialog.LOAD_ERROR.show(parent, "Secrets cannot be loaded! " + e.getMessage());
-        } catch (GeneralSecurityException e) {
-            return parent -> MessageDialog.DECRYPT_ERROR.show(parent, "Secrets cannot be decrypted! " + e.getMessage());
+            policy.executeChange(components, selectedServices);
+        } catch (NewMasterPassInputMismatchException e) {
+            return parent -> MessageDialog.INVALID_PASS_ERROR.show(parent, e.getMessage());
         } catch (InvalidPasswordException e) {
-            return parent -> MessageDialog.EMPTY_PASS_ERROR.show(parent, "Password is empty! Provide password and try again.");
+            return parent -> MessageDialog.INVALID_PASS_ERROR.show(parent, "Incorrect Current Master Password.");
+        } catch (ExistingDataNotLoadedException e) {
+            return parent -> MessageDialog.GENERIC_ERROR.show(parent, "Local secrets exist. Load them before changing the Master Password.");
+        } catch (IOException | GeneralSecurityException e) {
+            return parent -> MessageDialog.GENERIC_ERROR.show(parent, "Master Password cannot be changed! " + e.getMessage());
         }
-        return msg -> {
+        return parent -> {
         };
-    }
-
-    @Override
-    protected void doneSuccess() {
-        tableModel.fireTableDataChanged();
     }
 }

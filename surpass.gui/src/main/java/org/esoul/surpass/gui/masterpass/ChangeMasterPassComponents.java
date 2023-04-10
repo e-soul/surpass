@@ -19,17 +19,21 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.masterpass;
 
-class Labels {
+import javax.swing.Box;
+import javax.swing.JDialog;
+import javax.swing.JPasswordField;
 
-    static final String BTN_ADD = "Add";
+final class ChangeMasterPassComponents {
 
-    static final String MENU_ITEM_LOAD = "Load secrets";
+    JDialog frame = null;
 
-    static final String MENU_ITEM_STORE = "Store secrets";
+    JPasswordField currentMasterPasswordField = null;
 
-    static final String MENU_ITEM_CHANGE_MASTER_PASS = "Change master password";
+    JPasswordField newMasterPasswordField = null;
 
-    static final String MENU_ITEM_EXIT = "Exit";
+    JPasswordField repeatedNewMasterPasswordField = null;
+    
+    Box servicesBox = null;
 }

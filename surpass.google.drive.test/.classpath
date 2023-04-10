@@ -27,22 +27,22 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.api-client/google-api-client/2.0.0/c3daf5048a26a73182b5e6c81ad141fb859f0787/google-api-client-2.0.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.api-client/google-api-client/2.2.0/10e53fd4d987e37190432e896bdaa62e8ea2c628/google-api-client-2.2.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.apis/google-api-services-drive/v3-rev20220709-2.0.0/c7da51ce7ffe2576902048c651933fb0e7d41121/google-api-services-drive-v3-rev20220709-2.0.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.apis/google-api-services-drive/v3-rev20230306-2.0.0/c7bef44bf1aacb191b7c1601ce14b4bd81f11a4e/google-api-services-drive-v3-rev20230306-2.0.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client/1.42.1/808ea5d28383a32db7531a19462d45266ad0745f/google-http-client-1.42.1.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client/1.42.3/e0feb1bd93ad9fb1e064706cff96e32b41a57b9c/google-http-client-1.42.3.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client-gson/1.42.1/19528e0766bbd63187ca0a8d3f5d77577c2c10b5/google-http-client-gson-1.42.1.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client-gson/1.42.3/3251b36ee9e9c3effe3293f8d7094aa3841cad55/google-http-client-gson-1.42.3.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -67,7 +67,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.9.0/8a1167e089096758b49f9b34066ef98b2f4b37aa/gson-2.9.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10/dd9b193aef96e973d5a11ab13cd17430c2e4306b/gson-2.10.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

@@ -1,15 +1,22 @@
 package org.esoul.surpass.app.test;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.esoul.surpass.app.ExistingDataNotLoadedException;
+import org.esoul.surpass.app.InvalidPasswordException;
+import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
+import org.esoul.surpass.table.api.EmptySequenceException;
+import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.esoul.surpass.table.api.SecretTable;
 import org.esoul.surpass.test.Fs;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +29,7 @@ public class SessionTest {
     private static final Charset UTF8 = StandardCharsets.UTF_8;
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws Exception {
         Fs.tearDownDataDir();
     }
 
@@ -42,10 +49,45 @@ public class SessionTest {
     @Test
     public void testLoad(@TempDir Path tmp) throws Exception {
         testStore(tmp);
-        Fs.setupDataDir(tmp);
         Session session = SessionFactory.create();
         session.start();
-        session.loadData("123".toCharArray(), "org.esoul.surpass.persist.LocalFileSystemPersistenceService");
+        checkSecret1(session, "123");
+    }
+
+    @Test
+    public void testStore(@TempDir Path tmp) throws Exception {
+        Fs.setupDataDir(tmp);
+        Session session = createSessionWithSecret1();
+        Map<String, String> supportedPersistenceServices = session.getSupportedPersistenceServices();
+        Assertions.assertEquals(2, supportedPersistenceServices.size());
+        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.google.drive.GooglePersistenceService"));
+        session.storeData("123".toCharArray(), Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        Assertions.assertTrue(Files.exists(PersistenceDefaults.getSecrets()));
+    }
+
+    @Test
+    public void testChangeMasterPassAndStore(@TempDir Path tmp) throws Exception {
+        Fs.setupDataDir(tmp);
+        Session session = createSessionWithSecret1();
+        session.storeData("123".toCharArray(), Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        session.changeMasterPassAndStoreData("123".toCharArray(), "abc".toCharArray(),
+                Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        checkSecret1(session, "abc");
+    }
+
+    @Test
+    public void testChangeMasterPassWithWrongCurrent(@TempDir Path tmp) throws Exception {
+        Fs.setupDataDir(tmp);
+        Session session = createSessionWithSecret1();
+        session.storeData("123".toCharArray(), Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
+        Assertions.assertThrows(InvalidPasswordException.class, () -> session.changeMasterPassAndStoreData("WRONG".toCharArray(), "abc".toCharArray(),
+                Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService")));
+    }
+
+    private void checkSecret1(Session session, String masterPass)
+            throws IOException, InvalidPasswordException, GeneralSecurityException, ServiceUnavailableException {
+        session.loadData(masterPass.toCharArray(), "org.esoul.surpass.persist.LocalFileSystemPersistenceService");
         SecretTable secretTable = session.getSecretTable();
         Assertions.assertEquals(1, secretTable.getRowNumber());
         Assertions.assertArrayEquals("pass1".getBytes(UTF8), secretTable.readSecret(0));
@@ -53,18 +95,12 @@ public class SessionTest {
         Assertions.assertArrayEquals("note1".getBytes(UTF8), secretTable.readNote(0));
     }
 
-    @Test
-    public void testStore(@TempDir Path tmp) throws Exception {
-        Fs.setupDataDir(tmp);
+    private Session createSessionWithSecret1()
+            throws ServiceUnavailableException, IOException, ExistingDataNotLoadedException, MaxSizeExceededException, EmptySequenceException {
         Session session = SessionFactory.create();
         session.start();
         session.write("pass1".toCharArray(), "id1".toCharArray(), "note1".toCharArray());
         Assertions.assertFalse(Files.exists(PersistenceDefaults.getSecrets()));
-        Map<String, String> supportedPersistenceServices = session.getSupportedPersistenceServices();
-        Assertions.assertEquals(2, supportedPersistenceServices.size());
-        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
-        Assertions.assertTrue(supportedPersistenceServices.containsKey("org.esoul.surpass.google.drive.GooglePersistenceService"));
-        session.storeData("123".toCharArray(), Collections.singletonList("org.esoul.surpass.persist.LocalFileSystemPersistenceService"));
-        Assertions.assertTrue(Files.exists(PersistenceDefaults.getSecrets()));
+        return session;
     }
 }

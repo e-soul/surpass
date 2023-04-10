@@ -19,52 +19,45 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.masterpass;
 
-import java.awt.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.function.Consumer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 
-import javax.swing.table.AbstractTableModel;
-
+import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
-import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
-import org.esoul.surpass.gui.dialog.MessageDialog;
 
-class LoadDataOperation extends BaseDataOperationWorker {
+public class ChangeMasterPassPolicy {
 
-    private AbstractTableModel tableModel;
-    private Session session;
-    private char[] password;
-    private String serviceId;
+    private Session session = null;
 
-    LoadDataOperation(Session session, MainWindowComponents components, char[] password, String serviceId) {
-        super(components.frame, components.operationProgressBar);
-        this.tableModel = components.tableModel;
+    public ChangeMasterPassPolicy(Session session) {
         this.session = session;
-        this.password = password;
-        this.serviceId = serviceId;
     }
 
-    @Override
-    protected Consumer<Component> operation() {
-        try {
-            session.loadData(password, serviceId);
-        } catch (IOException | ServiceUnavailableException e) {
-            return parent -> MessageDialog.LOAD_ERROR.show(parent, "Secrets cannot be loaded! " + e.getMessage());
-        } catch (GeneralSecurityException e) {
-            return parent -> MessageDialog.DECRYPT_ERROR.show(parent, "Secrets cannot be decrypted! " + e.getMessage());
-        } catch (InvalidPasswordException e) {
-            return parent -> MessageDialog.EMPTY_PASS_ERROR.show(parent, "Password is empty! Provide password and try again.");
+    public void executeChange(ChangeMasterPassComponents components, Collection<String> selectedServices)
+            throws NewMasterPassInputMismatchException, ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
+        char[] currentMasterPass = components.currentMasterPasswordField.getPassword();
+        if (new String(components.currentMasterPasswordField.getPassword()).trim().isEmpty()) {
+            throw new InvalidPasswordException("Current Master Password cannot be empty!");
         }
-        return msg -> {
-        };
+        if (!Arrays.equals(components.newMasterPasswordField.getPassword(), components.repeatedNewMasterPasswordField.getPassword())) {
+            throw new NewMasterPassInputMismatchException();
+        }
+        if (Arrays.equals(components.currentMasterPasswordField.getPassword(), components.newMasterPasswordField.getPassword())) {
+            return;
+        }
+        if (session.unsavedDataExists()) {
+            
+        }
+        session.changeMasterPassAndStoreData(currentMasterPass, components.newMasterPasswordField.getPassword(), selectedServices);
     }
 
-    @Override
-    protected void doneSuccess() {
-        tableModel.fireTableDataChanged();
+    public Map<String, String> getSupportedPersistenceServices() {
+        return session.getSupportedPersistenceServices();
     }
 }

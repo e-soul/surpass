@@ -24,8 +24,12 @@ package org.esoul.surpass.gui;
 import java.awt.Component;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 public final class Layout {
 
@@ -33,6 +37,13 @@ public final class Layout {
 
     private Layout() {
         // no instances
+    }
+
+    public static JDialog createDialogFrame(JFrame parentFrame, String title) {
+        JDialog frame = new JDialog(parentFrame, title, true);
+        frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.PAGE_AXIS));
+        frame.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        return frame;
     }
 
     public static JButton createFixedSizeButton(String title, int width) {
@@ -49,5 +60,9 @@ public final class Layout {
 
     public static Component createVSpacer() {
         return Box.createRigidArea(new Dimension(0, 5));
+    }
+
+    public static Component createVSpacer(int height) {
+        return Box.createRigidArea(new Dimension(0, height));
     }
 }

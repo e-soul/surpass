@@ -40,8 +40,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -86,6 +84,8 @@ import org.esoul.surpass.gui.dialog.Dialogs;
 import org.esoul.surpass.gui.dialog.MessageDialog;
 import org.esoul.surpass.gui.help.AboutWindow;
 import org.esoul.surpass.gui.loadstore.LoadStoreWindow;
+import org.esoul.surpass.gui.masterpass.ChangeMasterPassPolicy;
+import org.esoul.surpass.gui.masterpass.ChangeMasterPassWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
@@ -99,8 +99,6 @@ import com.formdev.flatlaf.FlatDarkLaf;
  * @author mgp
  */
 public final class MainWindow {
-
-    private static final Logger logger = System.getLogger(MainWindow.class.getSimpleName());
 
     private static final long DEFAULT_CLIPBOARD_EXPIRE_DELAY = 45L;
 
@@ -167,6 +165,9 @@ public final class MainWindow {
         JMenuItem storeMenuItem = new JMenuItem(Labels.MENU_ITEM_STORE, KeyEvent.VK_S);
         storeMenuItem.addActionListener(this::storeData);
 
+        JMenuItem changeMasterPassItem = new JMenuItem(Labels.MENU_ITEM_CHANGE_MASTER_PASS, KeyEvent.VK_C);
+        changeMasterPassItem.addActionListener(this::changeMasterPass);
+
         JMenuItem exitMenuItem = new JMenuItem(Labels.MENU_ITEM_EXIT, KeyEvent.VK_X);
         exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
 
@@ -174,6 +175,7 @@ public final class MainWindow {
         programMenu.setMnemonic(KeyEvent.VK_P);
         programMenu.add(loadMenuItem);
         programMenu.add(storeMenuItem);
+        programMenu.add(changeMasterPassItem);
         programMenu.add(exitMenuItem);
 
         return programMenu;
@@ -216,7 +218,7 @@ public final class MainWindow {
             session.checkDataLoaded();
             AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret);
         } catch (ExistingDataNotLoadedException e) {
-            JOptionPane.showMessageDialog(components.frame, "Local secrets exist. Load them before adding new.", "Error", JOptionPane.ERROR_MESSAGE);
+            MessageDialog.GENERIC_ERROR.show(components.frame, "Local secrets exist. Load them before adding new.");
         }
     }
 
@@ -478,40 +480,34 @@ public final class MainWindow {
 
     private void loadData(ActionEvent event) {
         String serviceId;
-        try {
-            serviceId = LoadStoreWindow.showLoad(components.frame, session.getSupportedPersistenceServices());
-            if (null == serviceId) {
-                return;
-            }
-        } catch (ServiceUnavailableException e) {
-            MessageDialog.LOAD_ERROR.show(components.frame, "Secrets cannot be loaded! " + e.getMessage());
+        serviceId = LoadStoreWindow.showLoad(components.frame, session.getSupportedPersistenceServices());
+        if (null == serviceId) {
             return;
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-            components.operationProgressBar.setString("Loading...");
-            components.operationProgressBar.setIndeterminate(true);
             new LoadDataOperation(session, components, password, serviceId).execute();
         }
     }
 
     private void storeData(ActionEvent actionEvent) {
         Collection<String> selectedServicesIds;
-        try {
-            selectedServicesIds = LoadStoreWindow.showStore(components.frame, session.getSupportedPersistenceServices());
-            if (null == selectedServicesIds || selectedServicesIds.isEmpty()) {
-                return;
-            }
-        } catch (ServiceUnavailableException e) {
-            logger.log(Level.ERROR, () -> "Cannot obtain supported persistence services!", e);
-            JOptionPane.showMessageDialog(components.frame, "Secrets cannot be stored! " + e.getMessage(), "Store error", JOptionPane.ERROR_MESSAGE);
+        selectedServicesIds = LoadStoreWindow.showStore(components.frame, session.getSupportedPersistenceServices());
+        if (null == selectedServicesIds || selectedServicesIds.isEmpty()) {
             return;
         }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
-            components.operationProgressBar.setString("Storing...");
-            components.operationProgressBar.setIndeterminate(true);
             new StoreDataOperation(session, components, password, selectedServicesIds).execute();
         }
+    }
+
+    private void changeMasterPass(ActionEvent actionEvent) {
+        if (session.unsavedDataExists()) {
+            MessageDialog.SAVE_DATA_INFO.show(components.frame, "You have unsaved data.\nSave your data before changing the Master Password.");
+            return;
+        }
+        ChangeMasterPassPolicy policy = new ChangeMasterPassPolicy(session);
+        ChangeMasterPassWindow.createAndShow(components.frame, components.operationProgressBar, policy);
     }
 }

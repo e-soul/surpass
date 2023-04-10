@@ -34,7 +34,9 @@ public enum MessageDialog {
             // do nothing
         }
     },
+    SAVE_DATA_INFO("Save data", JOptionPane.INFORMATION_MESSAGE),
     UNEXPECTED_ERROR("Unexpected error!", JOptionPane.ERROR_MESSAGE),
+    GENERIC_ERROR("Error", JOptionPane.ERROR_MESSAGE),
     ENCRYPT_ERROR("Encrypt error", JOptionPane.ERROR_MESSAGE),
     DECRYPT_ERROR("Decrypt error", JOptionPane.ERROR_MESSAGE),
     LOAD_ERROR("Load error", JOptionPane.ERROR_MESSAGE),

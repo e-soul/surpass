@@ -32,7 +32,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.9.0/8a1167e089096758b49f9b34066ef98b2f4b37aa/gson-2.9.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10/dd9b193aef96e973d5a11ab13cd17430c2e4306b/gson-2.10.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

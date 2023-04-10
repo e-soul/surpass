@@ -44,7 +44,7 @@ public class ExitProgrammeHandler implements ActionListener {
         int selectedOption;
         if (unsavedDataExistSupplier.getAsBoolean()) {
             selectedOption = JOptionPane.showConfirmDialog(components.frame,
-                    "You have unsaved data. Exiting will result in DATA LOSS! Are you sure you want to exit?", "Exit despite unsaved data?",
+                    "You have unsaved data.\nExiting will result in DATA LOSS! Are you sure you want to exit?", "Exit despite unsaved data?",
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         } else {
             selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);

@@ -27,27 +27,27 @@ import java.lang.System.Logger.Level;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
+import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
-import org.esoul.surpass.app.Session;
 import org.esoul.surpass.gui.dialog.MessageDialog;
 
-abstract class BaseDataOperationWorker extends SwingWorker<Consumer<Component>, Void> {
+public abstract class BaseDataOperationWorker extends SwingWorker<Consumer<Component>, Void> {
 
     private static final Logger logger = System.getLogger(BaseDataOperationWorker.class.getSimpleName());
 
-    protected Session session;
-    protected MainWindowComponents components;
-    protected char[] password;
+    protected Component parent;
+    protected JProgressBar operationProgressBar;
 
-    BaseDataOperationWorker(Session session, MainWindowComponents components, char[] password) {
-        this.session = session;
-        this.components = components;
-        this.password = password;
+    public BaseDataOperationWorker(Component parent, JProgressBar operationProgressBar) {
+        this.parent = parent;
+        this.operationProgressBar = operationProgressBar;
     }
 
     @Override
     protected Consumer<Component> doInBackground() throws Exception {
+        operationProgressBar.setString("Working...");
+        operationProgressBar.setIndeterminate(true);
         try {
             return operation();
         } catch (RuntimeException e) {
@@ -56,14 +56,14 @@ abstract class BaseDataOperationWorker extends SwingWorker<Consumer<Component>, 
         }
     }
 
-    abstract Consumer<Component> operation();
+    protected abstract Consumer<Component> operation();
 
     @Override
     protected void done() {
-        components.operationProgressBar.setString("");
-        components.operationProgressBar.setIndeterminate(false);
+        operationProgressBar.setString("");
+        operationProgressBar.setIndeterminate(false);
         try {
-            get().accept(components.frame);
+            get().accept(parent);
             doneSuccess();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

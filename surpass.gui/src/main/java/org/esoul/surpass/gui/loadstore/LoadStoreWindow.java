@@ -55,7 +55,7 @@ public class LoadStoreWindow {
         }
     }
 
-    private static class ServiceCheckBox extends JCheckBox {
+    public static class ServiceCheckBox extends JCheckBox {
 
         private static final long serialVersionUID = 1L;
 
@@ -87,21 +87,23 @@ public class LoadStoreWindow {
     }
 
     public static Collection<String> showStore(JFrame parentFrame, Map<String, String> supportedPersistenceServices) {
-        Function<Component[], Collection<String>> resultFactory = components -> Arrays.stream(components).filter(c -> ((JCheckBox) c).isSelected())
-                .map(c -> ((ServiceCheckBox) c).serviceId).collect(Collectors.toSet());
-        return showDialog(parentFrame, supportedPersistenceServices, "Storing secrets", e -> new ServiceCheckBox(e.getKey(), e.getValue(), true),
-                resultFactory);
+        return showDialog(parentFrame, supportedPersistenceServices, "Storing secrets", LoadStoreWindow::createServiceCheckBox,
+                LoadStoreWindow::getSelectedServices);
+    }
+
+    public static ServiceCheckBox createServiceCheckBox(Map.Entry<String, String> e) {
+        return new ServiceCheckBox(e.getKey(), e.getValue(), true);
+    }
+
+    public static Collection<String> getSelectedServices(Component[] components) {
+        return Arrays.stream(components).filter(c -> ((JCheckBox) c).isSelected()).map(c -> ((ServiceCheckBox) c).serviceId).collect(Collectors.toSet());
     }
 
     private static <T> T showDialog(JFrame parentFrame, Map<String, String> supportedPersistenceServices, String dialogTitle,
             Function<Map.Entry<String, String>, Component> toggleButtonFactory, Function<Component[], T> resultFactory) {
         JDialog persistenceDialog = new JDialog(parentFrame, dialogTitle, true);
         persistenceDialog.setLayout(new BoxLayout(persistenceDialog.getContentPane(), BoxLayout.PAGE_AXIS));
-        Box servicesBox = new Box(BoxLayout.PAGE_AXIS);
-        for (Map.Entry<String, String> e : supportedPersistenceServices.entrySet()) {
-            Component c = toggleButtonFactory.apply(e);
-            servicesBox.add(c);
-        }
+        Box servicesBox = createServicesBox(supportedPersistenceServices, toggleButtonFactory);
         JPanel servicesPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         servicesPanel.setBorder(BorderFactory.createTitledBorder("Supported persistence services"));
         servicesPanel.add(servicesBox);
@@ -124,5 +126,14 @@ public class LoadStoreWindow {
         persistenceDialog.setVisible(true);
         persistenceDialog.dispose();
         return resultFactory.apply(servicesBox.getComponents());
+    }
+
+    public static Box createServicesBox(Map<String, String> supportedPersistenceServices, Function<Map.Entry<String, String>, Component> toggleButtonFactory) {
+        Box servicesBox = new Box(BoxLayout.PAGE_AXIS);
+        for (Map.Entry<String, String> e : supportedPersistenceServices.entrySet()) {
+            Component c = toggleButtonFactory.apply(e);
+            servicesBox.add(c);
+        }
+        return servicesBox;
     }
 }

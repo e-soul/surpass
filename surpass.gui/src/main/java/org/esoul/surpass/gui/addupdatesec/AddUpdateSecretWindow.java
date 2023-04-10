@@ -26,11 +26,9 @@ import java.awt.Dimension;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,7 +47,7 @@ public class AddUpdateSecretWindow {
 
     public static void createAndShowAdd(JFrame parentFrame, AddUpdateSecretListener listener, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
         AddUpdateSecretComponents components = new AddUpdateSecretComponents();
-        createFrame(components, parentFrame, "Add Secret");
+        components.frame = Layout.createDialogFrame(parentFrame, "Add Secret");
         setupIdentifierLine(components);
         setupSecretLine(components, secretGenerator);
         setupNoteLine(components);
@@ -60,7 +58,7 @@ public class AddUpdateSecretWindow {
     public static void createAndShowUpdate(JFrame parentFrame, AddUpdateSecretListener listener, BiConsumer<char[], Collection<CharClass>> secretGenerator,
             String identifier, String note) {
         AddUpdateSecretComponents components = new AddUpdateSecretComponents();
-        createFrame(components, parentFrame, "Update Secret");
+        components.frame = Layout.createDialogFrame(parentFrame, "Update Secret");
         setupIdentifierLine(components);
         components.identifierTextField.setText(identifier);
         setupSecretLine(components, secretGenerator);
@@ -68,12 +66,6 @@ public class AddUpdateSecretWindow {
         components.noteTextArea.setText(note);
         setupCommandPanel(components, listener, "Update");
         Dialogs.show(parentFrame, components.frame);
-    }
-
-    private static void createFrame(AddUpdateSecretComponents components, JFrame parentFrame, String title) {
-        components.frame = new JDialog(parentFrame, title, true);
-        components.frame.setLayout(new BoxLayout(components.frame.getContentPane(), BoxLayout.PAGE_AXIS));
-        components.frame.getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
     private static void setupIdentifierLine(AddUpdateSecretComponents components) {

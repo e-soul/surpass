@@ -19,17 +19,13 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.esoul.surpass.gui;
+package org.esoul.surpass.gui.masterpass;
 
-class Labels {
+public class NewMasterPassInputMismatchException extends Exception {
 
-    static final String BTN_ADD = "Add";
+    private static final long serialVersionUID = 1L;
 
-    static final String MENU_ITEM_LOAD = "Load secrets";
-
-    static final String MENU_ITEM_STORE = "Store secrets";
-
-    static final String MENU_ITEM_CHANGE_MASTER_PASS = "Change master password";
-
-    static final String MENU_ITEM_EXIT = "Exit";
+    public NewMasterPassInputMismatchException() {
+        super("New master password input does not match!");
+    }
 }

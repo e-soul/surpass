@@ -50,7 +50,6 @@ import org.esoul.surpass.table.api.SecretTable;
  * {@link SecretTable} implementation is.
  * 
  * @author mgp
- *
  */
 public class Session {
 
@@ -130,6 +129,28 @@ public class Session {
         }
     }
 
+    public void changeMasterPassAndStoreData(char[] currentMasterPass, char[] newMasterPass, Collection<String> serviceIds)
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
+        checkDataLoaded();
+        if (null != newMasterPass) {
+            try {
+                byte[] clearText = secretTable.toOneDimension();
+                byte[] cipherText = cryptoService.encrypt(newMasterPass, clearText);
+                for (String serviceId : serviceIds) {
+                    checkCanDecryptPassword(currentMasterPass, serviceId);
+                    persistenceServiceMap.get(serviceId).write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                }
+                state.unsavedDataExist = false;
+            } catch (IOException e) {
+                logger.log(Level.ERROR, () -> "Store secrets error!", e);
+                throw e;
+            } catch (GeneralSecurityException e) {
+                logger.log(Level.ERROR, () -> "Encrypt secrets error!", e);
+                throw e;
+            }
+        }
+    }
+
     /**
      * Stores the data to a persistent state.
      * 
@@ -143,7 +164,7 @@ public class Session {
      * @throws ServiceUnavailableException
      */
     public void storeData(char[] password, Collection<String> serviceIds)
-            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException, ServiceUnavailableException {
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != password) {
             try {
@@ -169,7 +190,7 @@ public class Session {
         }
     }
 
-    private void checkCanDecryptPassword(char[] password, String serviceId) throws IOException, InvalidPasswordException, ServiceUnavailableException {
+    private void checkCanDecryptPassword(char[] password, String serviceId) throws IOException, InvalidPasswordException {
         try {
             readCipherTextAndDecrypt(password, serviceId);
         } catch (GeneralSecurityException e) {
@@ -179,7 +200,7 @@ public class Session {
         }
     }
 
-    private byte[] readCipherTextAndDecrypt(char[] password, String serviceId) throws IOException, GeneralSecurityException, ServiceUnavailableException {
+    private byte[] readCipherTextAndDecrypt(char[] password, String serviceId) throws IOException, GeneralSecurityException {
         byte[] cipherText = persistenceServiceMap.get(serviceId).read(PersistenceDefaults.DEFAULT_SECRETS);
         if (cipherText.length == 0) {
             return cipherText;
@@ -192,9 +213,8 @@ public class Session {
      * 
      * @return A {@link Map} service ID - service display name. The Service IDs can be used with
      *         {@link #storeData(char[], Collection)}.
-     * @throws ServiceUnavailableException
      */
-    public Map<String, String> getSupportedPersistenceServices() throws ServiceUnavailableException {
+    public Map<String, String> getSupportedPersistenceServices() {
         return persistenceServiceMap.values().stream().collect(Collectors.toMap(PersistenceService::getId, PersistenceService::getDisplayName));
     }
 

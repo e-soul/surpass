@@ -30,7 +30,6 @@ import java.util.function.Consumer;
 
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
-import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.gui.dialog.MessageDialog;
 
@@ -38,8 +37,13 @@ class StoreDataOperation extends BaseDataOperationWorker {
 
     private Collection<String> selectedServicesIds;
 
+    private Session session = null;
+    private char[] password = null;
+
     StoreDataOperation(Session session, MainWindowComponents components, char[] password, Collection<String> selectedServicesIds) {
-        super(session, components, password);
+        super(components.frame, components.operationProgressBar);
+        this.session = session;
+        this.password = password;
         this.selectedServicesIds = new ArrayList<>(selectedServicesIds);
     }
 
@@ -47,7 +51,7 @@ class StoreDataOperation extends BaseDataOperationWorker {
     protected Consumer<Component> operation() {
         try {
             session.storeData(password, selectedServicesIds);
-        } catch (IOException | ServiceUnavailableException e) {
+        } catch (IOException e) {
             return parent -> MessageDialog.STORE_ERROR.show(parent, "Secrets cannot be stored! " + e.getMessage());
         } catch (GeneralSecurityException e) {
             return parent -> MessageDialog.ENCRYPT_ERROR.show(parent, "Secrets cannot be encrypted! " + e.getMessage());
@@ -58,7 +62,7 @@ class StoreDataOperation extends BaseDataOperationWorker {
             return parent -> MessageDialog.INVALID_PASS_ERROR.show(parent,
                     "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!");
         }
-        return msg -> {
+        return parent -> {
         };
     }
 }
