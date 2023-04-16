@@ -54,6 +54,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -91,6 +92,7 @@ import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.util.SystemInfo;
 
 /**
  * All GUI component creation, setup and policies are encapsulated here. This is the ultimate detail. Literals are
@@ -136,6 +138,10 @@ public final class MainWindow {
         try {
             Class<?> lookAndFeelClass = Class.forName(requestedLookAndFeel);
             lookAndFeelClass.getMethod("setup").invoke(null);
+            if (SystemInfo.isLinux) {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+                JDialog.setDefaultLookAndFeelDecorated(true);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             FlatDarkLaf.setup();
