@@ -29,14 +29,14 @@
     </div>
     <div class="menu">
         <p>
-            Latest release: 1.1
+            Latest release: 1.2
             <div class="dropdown">
                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-download fa-lg"></i> Downloads
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.1/surpass-1.1-win10-amd64.zip"><i class="fab fa-windows"></i> Windows 7-11 x86_64</a></li>
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.1/surpass-1.1-linux-amd64.tar.bz2"><i class="fab fa-linux"></i> Linux x86_64</a></li>
+                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.2/surpass-1.2-windows10-amd64.zip"><i class="fab fa-windows"></i> Windows 7-11 x86_64</a></li>
+                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.2/surpass-1.2-linux-amd64.tar.bz2"><i class="fab fa-linux"></i> Linux x86_64</a></li>
                 </ul>
             </div>
             <br>
@@ -66,6 +66,7 @@
                 <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
                 <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="6" aria-label="Slide 7"></button>
                 <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="7" aria-label="Slide 8"></button>
+                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="8" aria-label="Slide 9"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -83,7 +84,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="img/select-persistence-local-1.2.png" class="mx-auto d-block" alt="load secrets">
+                    <img src="img/select-persistence-local-1.2.png" class="mx-auto d-block" alt="select persistence">
                     <div class="carousel-caption">
                         <h5>Select persistence</h5>
                         <p>Load secrets from local file system or Google Drive.</p>
@@ -104,7 +105,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img src="img/add-secret-1.2.png" class="mx-auto d-block" alt="loaded secrets">
+                    <img src="img/add-secret-1.2.png" class="mx-auto d-block" alt="add secret">
                     <div class="carousel-caption">
                         <h5>Add secret</h5>
                         <p>Enter a new account details and, optionally, generate a secret.</p>
@@ -115,6 +116,13 @@
                     <div class="carousel-caption">
                         <h5>Generate secrets</h5>
                         <p>Generate a random secret based on parameters.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="img/change-master-password-1.2.png" class="mx-auto d-block" alt="change master password">
+                    <div class="carousel-caption">
+                        <h5>Change Master Password</h5>
+                        <p>Change Master Password and save locally and/or in Google Drive.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
@@ -145,11 +153,20 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>1.2 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
+                    <td>1.3 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td>1.1 <span class="p-1 bg-success"><i class="fas fa-clipboard-check fa-lg"></i> latest release</span></td>
+                    <td>1.2 <span class="p-1 bg-success"><i class="fas fa-clipboard-check fa-lg"></i> latest release</span></td>
+                    <td>
+                        <ul>
+                            <li>Integrate modern dark (default) and light themes based on FlatLaf.</li>
+                            <li>Add option to change Master Password</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>1.1</td>
                     <td>
                         <ul>
                             <li>Support Google Drive as backend for storing secrets</li>
