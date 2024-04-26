@@ -11,7 +11,7 @@ dependencies {
     implementation project(":surpass.core")
     implementation project(":surpass.app")
 
-    implementation "com.formdev:flatlaf:3.0"
+    implementation "com.formdev:flatlaf:3.4.1"
 }
 
 build.doLast {

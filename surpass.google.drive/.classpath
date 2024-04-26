@@ -12,42 +12,42 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10/dd9b193aef96e973d5a11ab13cd17430c2e4306b/gson-2.10.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.api-client/google-api-client/2.2.0/10e53fd4d987e37190432e896bdaa62e8ea2c628/google-api-client-2.2.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.api-client/google-api-client/2.4.1/3a52d1dd8be6a1750c9e955006cb5224e02bb9cb/google-api-client-2.4.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.apis/google-api-services-drive/v3-rev20230306-2.0.0/c7bef44bf1aacb191b7c1601ce14b4bd81f11a4e/google-api-services-drive-v3-rev20230306-2.0.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.apis/google-api-services-drive/v3-rev20240327-2.0.0/f0181353f6d089350f39f4f3a6b57a7f46dbdb11/google-api-services-drive-v3-rev20240327-2.0.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client/1.42.3/e0feb1bd93ad9fb1e064706cff96e32b41a57b9c/google-http-client-1.42.3.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client/1.44.1/d8956bacb8a4011365fa15a690482c49a70c78c5/google-http-client-1.44.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client-gson/1.42.3/3251b36ee9e9c3effe3293f8d7094aa3841cad55/google-http-client-gson-1.42.3.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.http-client/google-http-client-gson/1.44.1/f3b8967c6f7078da6380687859d0873105f84d39/google-http-client-gson-1.44.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client/1.34.1/4a4f88c5e13143f882268c98239fb85c3b2c6cb2/google-oauth-client-1.34.1.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client/1.35.0/2f52003156e40ba8be5f349a2716a77428896e69/google-oauth-client-1.35.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-java6/1.34.1/af6b85ed729e96a5257741986e823aa241f3d9a4/google-oauth-client-java6-1.34.1.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-java6/1.35.0/5bb90adda917f9b1a440ddd92b71ce61e3388963/google-oauth-client-java6-1.35.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-jetty/1.34.1/a6aff2c1be148bac622e5048e20f536f71b3380d/google-oauth-client-jetty-1.34.1.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.oauth-client/google-oauth-client-jetty/1.35.0/bfee777768385244cda77b0780da3b6fd4ab64c/google-oauth-client-jetty-1.35.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>

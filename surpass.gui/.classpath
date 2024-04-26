@@ -32,12 +32,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10/dd9b193aef96e973d5a11ab13cd17430c2e4306b/gson-2.10.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.code.gson/gson/2.10.1/b3add478d4382b78ea20b1671390a858002feb6c/gson-2.10.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.guava/guava/31.1-jre/60458f877d055d0c9114d9e1a2efb737b4bc282c/guava-31.1-jre.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.google.guava/guava/33.0.0-jre/161ba27964a62f241533807a46b8711b13c1d94b/guava-33.0.0-jre.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -52,12 +52,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/io.grpc/grpc-context/1.27.2/1789190601b7a5361e4fa52b6bc95ec2cd71e854/grpc-context-1.27.2.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/io.grpc/grpc-context/1.60.1/e823c153f507d3131a13d703fc41c67bae50b73e/grpc-context-1.60.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.formdev/flatlaf/3.0/b5410f3f9137febc7d916ca4e0a7e9f6ddeb5b9a/flatlaf-3.0.jar">
+	<classpathentry kind="var" path="GRADLE_CACHES/modules-2/files-2.1/com.formdev/flatlaf/3.4.1/59161ce93728eaec725a26d646f7eff1d363decd/flatlaf-3.4.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
