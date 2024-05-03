@@ -205,7 +205,7 @@ public class SquareMatrix implements SecretTable {
 
     private int nextRow() throws MaxSizeExceededException {
         byte nextRow = table[SERVICE_ROW][SERVICE_COL_NEXT_ROW];
-        if (nextRow == (byte) MAX_ROW) {
+        if (Byte.toUnsignedInt(nextRow) >= MAX_ROW) {
             throw new MaxSizeExceededException("Maximum number of secrets reached! " + Byte.toUnsignedInt(nextRow));
         }
         table[SERVICE_ROW][SERVICE_COL_NEXT_ROW] = (byte) (nextRow + (byte) 1);
@@ -299,10 +299,15 @@ public class SquareMatrix implements SecretTable {
     public int getRowNumber() {
         lock.lock();
         try {
-            return table[SERVICE_ROW][SERVICE_COL_NEXT_ROW];
+            return Byte.toUnsignedInt(table[SERVICE_ROW][SERVICE_COL_NEXT_ROW]);
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public int getMaxRow() {
+        return MAX_ROW;
     }
 
     @Override

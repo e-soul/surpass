@@ -235,7 +235,10 @@ public final class MainWindow {
 
     private void createTable() {
         components.tableModel = new SimpleTableModel(session.getSecretTable());
-        components.tableModel.addTableModelListener(e -> components.secretCountLabel.setText(components.tableModel.getRowCount() + " secrets"));
+        components.tableModel.addTableModelListener(e -> {
+            String secrets = components.tableModel.getRowCount() + "/" + session.getSecretTable().getMaxRow() + " secrets";
+            components.secretCountLabel.setText(secrets);
+        });
         TableRowSorter<AbstractTableModel> tableRowSorter = new TableRowSorter<>(components.tableModel);
 
         JLabel filterLabel = new JLabel("Filter:");
@@ -335,7 +338,7 @@ public final class MainWindow {
         commandBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
         components.secretCountLabel = new JLabel();
-        components.secretCountLabel.setPreferredSize(new Dimension(80, 26));
+        components.secretCountLabel.setPreferredSize(new Dimension(85, 26));
         commandBox.add(components.secretCountLabel);
 
         commandBox.add(Box.createHorizontalGlue());

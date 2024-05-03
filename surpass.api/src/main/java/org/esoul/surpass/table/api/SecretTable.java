@@ -61,6 +61,13 @@ public interface SecretTable {
      */
     int getRowNumber();
 
+    /**
+     * Returns the maximum number of secrets this table can hold.
+     * 
+     * @return The maximum number of secrets this table can hold.
+     */
+    int getMaxRow();
+
     byte[] readSecret(int row);
 
     byte[] readIdentifier(int row);
