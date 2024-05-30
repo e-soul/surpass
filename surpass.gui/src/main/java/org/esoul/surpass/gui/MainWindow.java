@@ -340,7 +340,7 @@ public final class MainWindow {
         commandBox.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
         components.secretCountLabel = new JLabel();
-        components.secretCountLabel.setPreferredSize(new Dimension(85, 26));
+        components.secretCountLabel.setPreferredSize(new Dimension(105, 26));
         commandBox.add(components.secretCountLabel);
 
         commandBox.add(Box.createHorizontalGlue());

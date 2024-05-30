@@ -79,7 +79,7 @@ public class AddUpdateSecretWindow {
         components.identifierTextField.setPreferredSize(new Dimension(400, 26));
         components.identifierTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
-        JButton selectIdButton = Layout.createFixedSizeButton("Select existing", 120);
+        JButton selectIdButton = Layout.createFixedSizeButton("Select existing", 125);
         selectIdButton.setEnabled(!uniqueIdsSupplier.get().isEmpty());
         selectIdButton.addActionListener(l -> {
             String selectedIdentifier = Dialogs.showComboSelectionDialog(components.frame, "Existing identifiers", uniqueIdsSupplier.get());
@@ -104,7 +104,7 @@ public class AddUpdateSecretWindow {
         components.secretPasswordField.setPreferredSize(new Dimension(400, 26));
         components.secretPasswordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
-        JButton generateSecretButton = Layout.createFixedSizeButton("Generate", 120);
+        JButton generateSecretButton = Layout.createFixedSizeButton("Generate", 125);
         generateSecretButton.addActionListener(l -> {
             char[] secret = SecretGenerationWindow.createAndShow(components.frame, secretGenerator);
             if (secret.length > 0) {
