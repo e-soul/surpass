@@ -1,8 +1,8 @@
 package org.esoul.surpass.app.test;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
@@ -26,8 +26,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 public class SessionTest {
 
-    private static final Charset UTF8 = StandardCharsets.UTF_8;
-
     @AfterEach
     public void tearDown() throws Exception {
         Fs.tearDownDataDir();
@@ -43,7 +41,7 @@ public class SessionTest {
         Assertions.assertEquals(1, session.getSecretTable().getRowNumber());
         session.setEditMode(0);
         session.write("pass2".toCharArray(), "id1".toCharArray(), "note1".toCharArray());
-        Assertions.assertArrayEquals("pass2".getBytes(UTF8), session.getSecretTable().readSecret(0));
+        Assertions.assertArrayEquals("pass2".getBytes(UTF_8), session.getSecretTable().readSecret(0));
     }
 
     @Test
@@ -90,9 +88,9 @@ public class SessionTest {
         session.loadData(masterPass.toCharArray(), "org.esoul.surpass.persist.LocalFileSystemPersistenceService");
         SecretTable secretTable = session.getSecretTable();
         Assertions.assertEquals(1, secretTable.getRowNumber());
-        Assertions.assertArrayEquals("pass1".getBytes(UTF8), secretTable.readSecret(0));
-        Assertions.assertArrayEquals("id1".getBytes(UTF8), secretTable.readIdentifier(0));
-        Assertions.assertArrayEquals("note1".getBytes(UTF8), secretTable.readNote(0));
+        Assertions.assertArrayEquals("pass1".getBytes(UTF_8), secretTable.readSecret(0));
+        Assertions.assertArrayEquals("id1".getBytes(UTF_8), secretTable.readIdentifier(0));
+        Assertions.assertArrayEquals("note1".getBytes(UTF_8), secretTable.readNote(0));
     }
 
     private Session createSessionWithSecret1()

@@ -25,12 +25,16 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Collection;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 
 public final class Dialogs {
+
+    private static final int COMBO_ITEM_MAX_LEN = 32;
 
     private Dialogs() {
         // no instances
@@ -49,10 +53,26 @@ public final class Dialogs {
         });
         dialog.setVisible(true);
         dialog.dispose();
-
-        Object selectedValue = pane.getValue();
-        if ((selectedValue instanceof Integer) && (((Integer) selectedValue).intValue() == JOptionPane.OK_OPTION)) {
+        if (pane.getValue() instanceof Integer option && JOptionPane.OK_OPTION == option.intValue()) {
             return passwordField.getPassword();
+        }
+        return null;
+    }
+
+    public static String showComboSelectionDialog(Component parentComponent, String title, Collection<String> items) {
+        String[] filtered = items.stream().map(s -> {
+            if (s.length() > COMBO_ITEM_MAX_LEN) {
+                return s.substring(0, COMBO_ITEM_MAX_LEN) + "...";
+            }
+            return s;
+        }).toArray(String[]::new);
+        JComboBox<String> combo = new JComboBox<String>(filtered);
+        JOptionPane pane = new JOptionPane(combo, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = pane.createDialog(parentComponent, title);
+        dialog.setVisible(true);
+        dialog.dispose();
+        if (pane.getValue() instanceof Integer option && JOptionPane.OK_OPTION == option.intValue()) {
+            return (String) combo.getSelectedItem();
         }
         return null;
     }

@@ -300,4 +300,8 @@ public class Session {
     public void generateSecret(char[] secret, Collection<CharClass> allowedCharClasses) {
         randomSecretService.generateSecret(secret, allowedCharClasses);
     }
+
+    public SecretQuery createQuery() {
+        return new SecretQuery(secretTable);
+    }
 }

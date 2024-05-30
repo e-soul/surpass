@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.util.Collection;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -45,10 +46,11 @@ import org.esoul.surpass.secgen.api.CharClass;
 
 public class AddUpdateSecretWindow {
 
-    public static void createAndShowAdd(JFrame parentFrame, AddUpdateSecretListener listener, BiConsumer<char[], Collection<CharClass>> secretGenerator) {
+    public static void createAndShowAdd(JFrame parentFrame, AddUpdateSecretListener listener, BiConsumer<char[], Collection<CharClass>> secretGenerator,
+            Supplier<Collection<String>> uniqueIdsSupplier) {
         AddUpdateSecretComponents components = new AddUpdateSecretComponents();
         components.frame = Layout.createDialogFrame(parentFrame, "Add Secret");
-        setupIdentifierLine(components);
+        setupIdentifierLine(components, uniqueIdsSupplier);
         setupSecretLine(components, secretGenerator);
         setupNoteLine(components);
         setupCommandPanel(components, listener, "Add");
@@ -56,10 +58,10 @@ public class AddUpdateSecretWindow {
     }
 
     public static void createAndShowUpdate(JFrame parentFrame, AddUpdateSecretListener listener, BiConsumer<char[], Collection<CharClass>> secretGenerator,
-            String identifier, String note) {
+            Supplier<Collection<String>> uniqueIdsSupplier, String identifier, String note) {
         AddUpdateSecretComponents components = new AddUpdateSecretComponents();
         components.frame = Layout.createDialogFrame(parentFrame, "Update Secret");
-        setupIdentifierLine(components);
+        setupIdentifierLine(components, uniqueIdsSupplier);
         components.identifierTextField.setText(identifier);
         setupSecretLine(components, secretGenerator);
         setupNoteLine(components);
@@ -68,7 +70,7 @@ public class AddUpdateSecretWindow {
         Dialogs.show(parentFrame, components.frame);
     }
 
-    private static void setupIdentifierLine(AddUpdateSecretComponents components) {
+    private static void setupIdentifierLine(AddUpdateSecretComponents components, Supplier<Collection<String>> uniqueIdsSupplier) {
         JLabel identifierLabel = new JLabel("Identifier: ");
         identifierLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         components.frame.add(identifierLabel);
@@ -78,7 +80,11 @@ public class AddUpdateSecretWindow {
         components.identifierTextField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
         JButton selectIdButton = Layout.createFixedSizeButton("Select existing", 120);
-        selectIdButton.setEnabled(false);
+        selectIdButton.setEnabled(!uniqueIdsSupplier.get().isEmpty());
+        selectIdButton.addActionListener(l -> {
+            String selectedIdentifier = Dialogs.showComboSelectionDialog(components.frame, "Existing identifiers", uniqueIdsSupplier.get());
+            components.identifierTextField.setText(selectedIdentifier);
+        });
 
         Box idBox = new Box(BoxLayout.LINE_AXIS);
         idBox.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -145,7 +151,7 @@ public class AddUpdateSecretWindow {
 
     private static void addSecret(AddUpdateSecretComponents components, AddUpdateSecretListener listener) {
         char[] secret = components.secretPasswordField.getPassword();
-        char[] identifier = components.identifierTextField.getText().toCharArray();
+        char[] identifier = components.identifierTextField.getText().trim().toCharArray();
         char[] note = components.noteTextArea.getText().toCharArray();
         try {
             listener.actionPerformed(secret, identifier, note);

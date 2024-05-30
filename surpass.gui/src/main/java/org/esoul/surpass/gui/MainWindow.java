@@ -77,6 +77,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
+import org.esoul.surpass.app.SecretQuery;
 import org.esoul.surpass.app.ServiceUnavailableException;
 import org.esoul.surpass.app.Session;
 import org.esoul.surpass.app.SessionFactory;
@@ -222,7 +223,8 @@ public final class MainWindow {
     private void addSecret(ActionEvent event) {
         try {
             session.checkDataLoaded();
-            AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret);
+            SecretQuery secretQuery = session.createQuery();
+            AddUpdateSecretWindow.createAndShowAdd(components.frame, this::writeSecret, session::generateSecret, secretQuery::getUniqueIdentifiers);
         } catch (ExistingDataNotLoadedException e) {
             MessageDialog.GENERIC_ERROR.show(components.frame, "Local secrets exist. Load them before adding new.");
         }
@@ -426,10 +428,11 @@ public final class MainWindow {
     private void loadRowInFormForEdit(ActionEvent actionEvent) {
         int row = getSelected();
         session.setEditMode(row);
+        SecretQuery secretQuery = session.createQuery();
         byte[] identifier = session.getSecretTable().readIdentifier(row);
         byte[] note = session.getSecretTable().readNote(row);
-        AddUpdateSecretWindow.createAndShowUpdate(components.frame, this::writeSecret, session::generateSecret,
-                new String(identifier, 0, identifier.length, StandardCharsets.UTF_8), new String(note, 0, note.length, StandardCharsets.UTF_8));
+        AddUpdateSecretWindow.createAndShowUpdate(components.frame, this::writeSecret, session::generateSecret, secretQuery::getUniqueIdentifiers,
+                new String(identifier, StandardCharsets.UTF_8), new String(note, StandardCharsets.UTF_8));
     }
 
     private void removeRow(ActionEvent event) {
