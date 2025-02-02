@@ -1,6 +1,5 @@
 .gradle
-build-lib
-build-output
+build*
 dist
 surpass.*/bin
 surpass.*/build
