@@ -1,5 +1,5 @@
 /*
-   Copyright 2017-2024 e-soul.org
+   Copyright 2017-2025 e-soul.org
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without modification, are permitted
