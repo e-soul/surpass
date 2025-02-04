@@ -321,7 +321,7 @@ public final class MainWindow {
 
     private void tableSelectionChanged(ListSelectionEvent listSelectionEvent) {
         if (components.table.getSelectedColumn() == SimpleTableModel.IDENTIFIER_COLUMN_INDEX) {
-            components.setEnabledTableButtons(true);
+            components.setEnabledTableButtons(components.table.getSelectedRow() >= 0);
         } else {
             components.setEnabledTableButtons(false);
         }
