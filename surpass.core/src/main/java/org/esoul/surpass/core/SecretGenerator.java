@@ -35,7 +35,6 @@ import org.esoul.surpass.secgen.api.RandomSecretService;
  * the printable special ASCII characters are used.
  *
  * @author mgp
- *
  */
 public class SecretGenerator implements RandomSecretService {
 

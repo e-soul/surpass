@@ -25,7 +25,6 @@ package org.esoul.surpass.app;
  * Encapsulate the visual and logical state of the data in the application.
  *
  * @author mgp
- *
  */
 final class DataState {
 

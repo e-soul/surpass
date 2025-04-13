@@ -21,7 +21,11 @@
 */
 package org.esoul.surpass.core;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import javax.crypto.Cipher;
@@ -41,6 +45,8 @@ import org.esoul.surpass.crypto.api.CryptoService;
 public class SimpleCipher implements CryptoService {
 
     private static final String PBE_ALGO = System.getProperty(ConfigurationProperties.PBE_ALGO, "PBEWithHmacSHA512AndAES_128");
+
+    private static final String DIGEST_ALGO = System.getProperty(ConfigurationProperties.DIGEST_ALGO, "SHA-512");
 
     private static final int ITERATION_COUNT = Integer.getInteger(ConfigurationProperties.ITERATION_COUNT, 100);
 
@@ -102,5 +108,20 @@ public class SimpleCipher implements CryptoService {
             result[i] = cipherText[j];
         }
         return result;
+    }
+
+    @Override
+    public CharBuffer digest(CharBuffer input) throws GeneralSecurityException {
+        MessageDigest messageDigest = MessageDigest.getInstance(DIGEST_ALGO);
+        ByteBuffer inputByteBuffer = StandardCharsets.UTF_8.encode(input);
+        byte[] digest = messageDigest.digest(inputByteBuffer.array());
+        char[] hexDigits = "0123456789abcdef".toCharArray();
+        char[] hexValue = new char[digest.length * 2];
+        for (int i = 0; i < digest.length; i++) {
+            int v = Byte.toUnsignedInt(digest[i]);
+            hexValue[i * 2] = hexDigits[v >>> 4];
+            hexValue[i * 2 + 1] = hexDigits[v & 0xf];
+        }
+        return CharBuffer.wrap(hexValue);
     }
 }

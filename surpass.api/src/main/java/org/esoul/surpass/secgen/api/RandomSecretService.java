@@ -27,7 +27,6 @@ import java.util.Collection;
  * Generate a random secret.
  *
  * @author mgp
- *
  */
 public interface RandomSecretService {
 

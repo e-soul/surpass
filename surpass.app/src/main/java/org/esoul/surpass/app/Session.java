@@ -24,12 +24,15 @@ package org.esoul.surpass.app;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
+import java.nio.CharBuffer;
 import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
+import org.esoul.surpass.crypto.api.ContextAwareCryptoServiceAbstractFactory;
 import org.esoul.surpass.crypto.api.CryptoService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
@@ -65,6 +68,8 @@ public class Session {
 
     private CryptoService cryptoService = null;
 
+    private ContextAwareCryptoServiceAbstractFactory contextAwareCryptoAbstractFactory = null;
+
     private RandomSecretService randomSecretService = null;
 
     private DataState state = new DataState();
@@ -86,6 +91,7 @@ public class Session {
 
     private void createCollaborators() throws ServiceUnavailableException {
         cryptoService = collaboratorFactory.obtainOne(CryptoService.class);
+        contextAwareCryptoAbstractFactory = collaboratorFactory.obtainOne(ContextAwareCryptoServiceAbstractFactory.class);
         primaryPersistenceService = collaboratorFactory.obtainOne(PrimaryPersistenceService.class);
         persistenceServiceMap = collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toMap(PersistenceService::getId, s -> s));
         secretTable = collaboratorFactory.obtainOne(SecretTable.class);
@@ -116,8 +122,9 @@ public class Session {
         if ((null == password) || (0 == password.length)) {
             throw new InvalidPasswordException("Password is null or empty!");
         }
+        CharBuffer passwordHash = cryptoService.digest(CharBuffer.wrap(password));
         try {
-            byte[] clearText = readCipherTextAndDecrypt(password, serviceId);
+            byte[] clearText = readCipherTextAndDecrypt(passwordHash, password, serviceId);
             secretTable.load(clearText);
             state.dataFileLoaded = true;
         } catch (IOException e) {
@@ -133,12 +140,19 @@ public class Session {
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != newMasterPass) {
+            CharBuffer currentPasswordHash = cryptoService.digest(CharBuffer.wrap(currentMasterPass));
+            CharBuffer newPasswordHash = cryptoService.digest(CharBuffer.wrap(newMasterPass));
             try {
+                checkCanDecryptPassword(currentPasswordHash, currentMasterPass, serviceIds);
                 byte[] clearText = secretTable.toOneDimension();
                 byte[] cipherText = cryptoService.encrypt(newMasterPass, clearText);
+                ContextAwareCryptoService currentContextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, currentPasswordHash);
+                ContextAwareCryptoService newContextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, newPasswordHash);
                 for (String serviceId : serviceIds) {
-                    checkCanDecryptPassword(currentMasterPass, serviceId);
-                    persistenceServiceMap.get(serviceId).write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                    PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
+                    persistenceService.authorize(currentContextAwareCrypto);
+                    persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                    persistenceService.regenerateSupprtingData(newContextAwareCrypto);
                 }
                 state.unsavedDataExist = false;
             } catch (IOException e) {
@@ -167,14 +181,16 @@ public class Session {
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != password) {
+            CharBuffer passwordHash = cryptoService.digest(CharBuffer.wrap(password));
             try {
-                for (var serviceId : serviceIds) {
-                    checkCanDecryptPassword(password, serviceId);
-                }
+                checkCanDecryptPassword(passwordHash, password, serviceIds);
                 byte[] clearText = secretTable.toOneDimension();
                 byte[] cipherText = cryptoService.encrypt(password, clearText);
+                ContextAwareCryptoService contextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, passwordHash);
                 for (String serviceId : serviceIds) {
-                    persistenceServiceMap.get(serviceId).write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                    PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
+                    persistenceService.authorize(contextAwareCrypto);
+                    persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
                 }
                 state.unsavedDataExist = false;
             } catch (IOException e) {
@@ -190,9 +206,11 @@ public class Session {
         }
     }
 
-    private void checkCanDecryptPassword(char[] password, String serviceId) throws IOException, InvalidPasswordException {
+    private void checkCanDecryptPassword(CharBuffer passwordHash, char[] password, Collection<String> serviceIds) throws IOException, InvalidPasswordException {
         try {
-            readCipherTextAndDecrypt(password, serviceId);
+            for (var serviceId : serviceIds) {
+                readCipherTextAndDecrypt(passwordHash, password, serviceId);
+            }
         } catch (GeneralSecurityException e) {
             throw new InvalidPasswordException(e);
         } catch (NoSuchFileException e) {
@@ -200,8 +218,11 @@ public class Session {
         }
     }
 
-    private byte[] readCipherTextAndDecrypt(char[] password, String serviceId) throws IOException, GeneralSecurityException {
-        byte[] cipherText = persistenceServiceMap.get(serviceId).read(PersistenceDefaults.DEFAULT_SECRETS);
+    private byte[] readCipherTextAndDecrypt(CharBuffer passwordHash, char[] password, String serviceId) throws IOException, GeneralSecurityException {
+        ContextAwareCryptoService contextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, passwordHash);
+        PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
+        persistenceService.authorize(contextAwareCrypto);
+        byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
         if (cipherText.length == 0) {
             return cipherText;
         }

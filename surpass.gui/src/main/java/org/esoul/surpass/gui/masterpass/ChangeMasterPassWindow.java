@@ -90,10 +90,10 @@ public class ChangeMasterPassWindow {
         components.frame.add(Layout.createVSpacer(10));
 
         JButton changeButton = Layout.createFixedSizeButton("Change", 80);
-        changeButton.addActionListener(l -> changeMasterPassword(parentFrame, operationProgressBar, policy, components));
+        changeButton.addActionListener(_ -> changeMasterPassword(parentFrame, operationProgressBar, policy, components));
 
         JButton cancelButton = Layout.createFixedSizeButton("Cancel", 80);
-        cancelButton.addActionListener(l -> components.frame.setVisible(false));
+        cancelButton.addActionListener(_ -> components.frame.setVisible(false));
 
         Box changeBox = new Box(BoxLayout.LINE_AXIS);
         changeBox.setAlignmentX(Component.LEFT_ALIGNMENT);

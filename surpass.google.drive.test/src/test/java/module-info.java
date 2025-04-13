@@ -9,6 +9,7 @@ module surpass.google.drive.test {
     requires org.junit.jupiter.api;
 
     requires org.mockito;
+    requires com.google.api.client;
 
     exports org.esoul.surpass.google.drive.test to org.junit.platform.commons;
 }

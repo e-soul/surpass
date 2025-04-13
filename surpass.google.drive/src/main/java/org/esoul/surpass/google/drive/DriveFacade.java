@@ -24,12 +24,18 @@ package org.esoul.surpass.google.drive;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
+
 /**
  * A simplified representation of the Google Drive API.
  * 
  * @author mgp
  */
 public interface DriveFacade {
+
+    void authorize(ContextAwareCryptoService crypto);
+
+    void regenerateCredentials(ContextAwareCryptoService crypto);
 
     /**
      * Searches for directory by name. If multiple directories with the same name exist, the first one is returned in the

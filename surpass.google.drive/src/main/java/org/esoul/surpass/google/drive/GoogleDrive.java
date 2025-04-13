@@ -31,7 +31,11 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
+import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
+import org.esoul.surpass.google.drive.EncryptedFileDataStoreFactory.DataStoreCaptor;
+import org.esoul.surpass.google.drive.EncryptedFileDataStoreFactory.EncryptedFileDataStore;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -44,7 +48,6 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
@@ -61,15 +64,21 @@ class GoogleDrive implements DriveFacade {
 
     private Drive service = null;
 
+    private DataStoreCaptor dataStoreCaptor = null;
+
+    private ContextAwareCryptoService crypto = null;
+
     private Drive getService() throws IOException, GeneralSecurityException {
         if (null == service) {
             GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(GsonFactory.getDefaultInstance(),
                     new InputStreamReader(GooglePersistenceService.class.getResourceAsStream("/surpass-oauth2.json"), StandardCharsets.UTF_8));
+            // See NetHttpTransport.SHOULD_USE_PROXY_FLAG for proxy settings.
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
+            dataStoreCaptor = new DataStoreCaptor();
+            EncryptedFileDataStoreFactory dataStoreFactory = new EncryptedFileDataStoreFactory(PersistenceDefaults.getDataDir(), crypto, dataStoreCaptor);
             GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets,
-                    java.util.List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline")
-                    .setDataStoreFactory(new FileDataStoreFactory(PersistenceDefaults.getDataDir().toFile())).build();
+                    List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline").setDataStoreFactory(dataStoreFactory).build();
 
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(41080).build();
             Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
@@ -79,6 +88,11 @@ class GoogleDrive implements DriveFacade {
         return service;
     }
 
+    private void clearService() {
+        this.service = null;
+        this.dataStoreCaptor = null;
+    }
+
     private <T> T executeOperation(DriveOperation<T> s) throws IOException, GeneralSecurityException {
         try {
             return s.execute();
@@ -86,9 +100,30 @@ class GoogleDrive implements DriveFacade {
             logger.log(Level.INFO, () -> "Refresh token invalid. Starting new authorization.");
             logger.log(Level.DEBUG, () -> "Drive operation failed.", e);
             // Setting the service field to null, deleting the tokens and re-executing the operation will trigger a new authz.
-            service = null;
+            clearService();
             Files.delete(PersistenceDefaults.getGoogleStoredCredential());
             return s.execute();
+        }
+    }
+
+    @Override
+    public void authorize(ContextAwareCryptoService crypto) {
+        if (null == this.crypto || !this.crypto.equals(crypto)) {
+            this.crypto = crypto;
+            clearService();
+        }
+    }
+
+    @Override
+    public void regenerateCredentials(ContextAwareCryptoService crypto) {
+        if (null != dataStoreCaptor) {
+            dataStoreCaptor.dataStores.forEach(dataStore -> {
+                try {
+                    ((EncryptedFileDataStore<?>) dataStore).reinitializeAndResave(crypto);
+                } catch (Exception e) {
+                    logger.log(Level.ERROR, () -> "Regenerate credentials failed.", e);
+                }
+            });
         }
     }
 

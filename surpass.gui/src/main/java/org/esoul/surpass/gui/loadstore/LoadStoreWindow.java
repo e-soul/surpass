@@ -111,10 +111,10 @@ public class LoadStoreWindow {
         persistenceDialog.getContentPane().add(servicesPanel);
         JPanel commandPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton okButton = new JButton("OK");
-        okButton.addActionListener(l -> persistenceDialog.setVisible(false));
+        okButton.addActionListener(_ -> persistenceDialog.setVisible(false));
         commandPanel.add(okButton);
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(l -> {
+        cancelButton.addActionListener(_ -> {
             persistenceDialog.setVisible(false);
             servicesBox.removeAll();
         });

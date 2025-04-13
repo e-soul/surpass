@@ -65,6 +65,15 @@ public class SessionTest {
     }
 
     @Test
+    public void testRemove(@TempDir Path tmp) throws Exception {
+        Fs.setupDataDir(tmp);
+        Session session = createSessionWithSecret1();
+        Assertions.assertEquals(session.getSecretTable().getRowNumber(), 1);
+        session.remove(0);
+        Assertions.assertEquals(session.getSecretTable().getRowNumber(), 0);
+    }
+
+    @Test
     public void testChangeMasterPassAndStore(@TempDir Path tmp) throws Exception {
         Fs.setupDataDir(tmp);
         Session session = createSessionWithSecret1();

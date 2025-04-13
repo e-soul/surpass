@@ -25,7 +25,6 @@ package org.esoul.surpass.app;
  * Thrown when a save operation is attempted but there's existing data file that is not loaded.
  * 
  * @author mgp
- *
  */
 public class ExistingDataNotLoadedException extends Exception {
 

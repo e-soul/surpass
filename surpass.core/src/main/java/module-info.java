@@ -19,13 +19,24 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+import org.esoul.surpass.core.DefaultContextAwareCryptoServiceFactory;
+import org.esoul.surpass.core.SecretGenerator;
+import org.esoul.surpass.core.SimpleCipher;
+import org.esoul.surpass.core.SquareMatrix;
+import org.esoul.surpass.crypto.api.ContextAwareCryptoServiceAbstractFactory;
+import org.esoul.surpass.crypto.api.CryptoService;
+import org.esoul.surpass.secgen.api.RandomSecretService;
+import org.esoul.surpass.table.api.SecretTable;
+
 module surpass.core {
-    
+
     requires transitive surpass.api;
 
     exports org.esoul.surpass.core;
-    
-    provides org.esoul.surpass.crypto.api.CryptoService with org.esoul.surpass.core.SimpleCipher;
-    provides org.esoul.surpass.table.api.SecretTable with org.esoul.surpass.core.SquareMatrix;
-    provides org.esoul.surpass.secgen.api.RandomSecretService with org.esoul.surpass.core.SecretGenerator;
+
+    provides CryptoService with SimpleCipher;
+    provides ContextAwareCryptoServiceAbstractFactory with DefaultContextAwareCryptoServiceFactory;
+    provides SecretTable with SquareMatrix;
+    provides RandomSecretService with SecretGenerator;
 }

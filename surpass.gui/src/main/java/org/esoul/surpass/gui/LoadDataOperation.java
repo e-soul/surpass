@@ -59,7 +59,7 @@ class LoadDataOperation extends BaseDataOperationWorker {
         } catch (InvalidPasswordException e) {
             return parent -> MessageDialog.EMPTY_PASS_ERROR.show(parent, "Password is empty! Provide password and try again.");
         }
-        return msg -> {
+        return _ -> {
         };
     }
 

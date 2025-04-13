@@ -23,13 +23,34 @@ package org.esoul.surpass.persist.api;
 
 import java.io.IOException;
 
+import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
+
 /**
  * Read/write data from/to some local or remote storage medium.
  * 
  * @author mgp
- *
  */
 public interface PersistenceService {
+
+    /**
+     * Some services (like Google Drive) maintain supporting data (not user data) that needs to be encrypted with a key derived from the master password
+     * ({@link ContextAwareCryptoService}). This method authorizes the service to encrypt supporting data with the given {@link ContextAwareCryptoService}.
+     * 
+     * @param crypto
+     */
+    default void authorize(ContextAwareCryptoService crypto) {
+    }
+
+    /**
+     * Regenerates supporting data with the given {@link ContextAwareCryptoService}. This is needed for services that require authorization (like Google Drive)
+     * to support changing the master password. The credential data like OAuth2 tokens are stored on the file system in an encrypted state and the encryption
+     * key is derived from the master password. When the master password is changed the stored credentials need to be re-encrypted with the new key derived from
+     * the new master password.
+     * 
+     * @param crypto Has the new encryption key to regenerate the stored credential data.
+     */
+    default void regenerateSupprtingData(ContextAwareCryptoService crypto) {
+    }
 
     /**
      * Reads data into a byte array.

@@ -30,6 +30,8 @@ public final class ConfigurationProperties {
 
     public static final String PBE_ALGO = "org.esoul.surpass.pbe.algo";
 
+    public static final String DIGEST_ALGO = "org.esoul.surpass.digest.algo";
+
     public static final String ITERATION_COUNT = "org.esoul.surpass.pbe.iteration.count";
 
     public static final String SALT_LEN = "org.esoul.surpass.pbe.salt.len";

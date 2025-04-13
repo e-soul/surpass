@@ -27,7 +27,6 @@ import java.util.function.IntPredicate;
  * Represents the supported character classes when working with secrets. E.g. when generating secrets.
  * 
  * @author mgp
- *
  */
 public enum CharClass {
 

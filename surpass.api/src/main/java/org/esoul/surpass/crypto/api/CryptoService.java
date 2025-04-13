@@ -21,10 +21,11 @@
 */
 package org.esoul.surpass.crypto.api;
 
+import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 
 /**
- * Encrypt or decrypt arbitrary data.
+ * Encrypt, decrypt or digest arbitrary data.
  * 
  * @author mgp
  *
@@ -50,4 +51,13 @@ public interface CryptoService {
      * @throws GeneralSecurityException
      */
     byte[] decrypt(char[] key, byte[] cipherInput) throws GeneralSecurityException;
+
+    /**
+     * Calculate the SHA-512 digest (a.k.a. the SHA-512 hash) of the given input.
+     * 
+     * @param input The input to digest.
+     * @return The ASCII hex representation of the digest.
+     * @throws GeneralSecurityException
+     */
+    CharBuffer digest(CharBuffer input) throws GeneralSecurityException;
 }

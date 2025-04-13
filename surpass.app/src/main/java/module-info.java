@@ -19,15 +19,24 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+import org.esoul.surpass.crypto.api.ContextAwareCryptoServiceAbstractFactory;
+import org.esoul.surpass.crypto.api.CryptoService;
+import org.esoul.surpass.persist.api.PersistenceService;
+import org.esoul.surpass.persist.api.PrimaryPersistenceService;
+import org.esoul.surpass.secgen.api.RandomSecretService;
+import org.esoul.surpass.table.api.SecretTable;
+
 module surpass.app {
 
     requires transitive surpass.api;
 
-    uses org.esoul.surpass.crypto.api.CryptoService;
-    uses org.esoul.surpass.persist.api.PersistenceService;
-    uses org.esoul.surpass.persist.api.PrimaryPersistenceService;
-    uses org.esoul.surpass.table.api.SecretTable;
-    uses org.esoul.surpass.secgen.api.RandomSecretService;
+    uses CryptoService;
+    uses ContextAwareCryptoServiceAbstractFactory;
+    uses PersistenceService;
+    uses PrimaryPersistenceService;
+    uses SecretTable;
+    uses RandomSecretService;
 
     exports org.esoul.surpass.app;
 }

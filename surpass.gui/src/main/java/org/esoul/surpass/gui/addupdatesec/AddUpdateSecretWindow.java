@@ -81,7 +81,7 @@ public class AddUpdateSecretWindow {
 
         JButton selectIdButton = Layout.createFixedSizeButton("Select existing", 125);
         selectIdButton.setEnabled(!uniqueIdsSupplier.get().isEmpty());
-        selectIdButton.addActionListener(l -> {
+        selectIdButton.addActionListener(_ -> {
             String selectedIdentifier = Dialogs.showComboSelectionDialog(components.frame, "Existing identifiers", uniqueIdsSupplier.get());
             components.identifierTextField.setText(selectedIdentifier);
         });
@@ -105,7 +105,7 @@ public class AddUpdateSecretWindow {
         components.secretPasswordField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 26));
 
         JButton generateSecretButton = Layout.createFixedSizeButton("Generate", 125);
-        generateSecretButton.addActionListener(l -> {
+        generateSecretButton.addActionListener(_ -> {
             char[] secret = SecretGenerationWindow.createAndShow(components.frame, secretGenerator);
             if (secret.length > 0) {
                 components.secretPasswordField.setText(new String(secret));
@@ -135,10 +135,10 @@ public class AddUpdateSecretWindow {
 
     private static void setupCommandPanel(AddUpdateSecretComponents components, AddUpdateSecretListener listener, String actionName) {
         JButton addUpdateButton = Layout.createFixedSizeButton(actionName, 80);
-        addUpdateButton.addActionListener(l -> addSecret(components, listener));
+        addUpdateButton.addActionListener(_ -> addSecret(components, listener));
 
         JButton cancelButton = Layout.createFixedSizeButton("Cancel", 80);
-        cancelButton.addActionListener(l -> components.frame.setVisible(false));
+        cancelButton.addActionListener(_ -> components.frame.setVisible(false));
 
         Box addUpdateBox = new Box(BoxLayout.LINE_AXIS);
         addUpdateBox.setAlignmentX(Component.LEFT_ALIGNMENT);

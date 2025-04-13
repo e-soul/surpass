@@ -25,7 +25,6 @@ package org.esoul.surpass.persist.api;
  * The primary persistence service is used for reading data.
  * 
  * @author mgp
- *
  */
 public interface PrimaryPersistenceService extends PersistenceService {
     // This is a marker interface.

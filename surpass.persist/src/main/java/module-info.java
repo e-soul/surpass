@@ -19,10 +19,15 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+import org.esoul.surpass.persist.LocalFileSystemPersistenceService;
+import org.esoul.surpass.persist.api.PersistenceService;
+import org.esoul.surpass.persist.api.PrimaryPersistenceService;
+
 module surpass.persist {
 
-    requires surpass.api;
+    requires transitive surpass.api;
     exports org.esoul.surpass.persist;
-    provides org.esoul.surpass.persist.api.PersistenceService with org.esoul.surpass.persist.LocalFileSystemPersistenceService;
-    provides org.esoul.surpass.persist.api.PrimaryPersistenceService with org.esoul.surpass.persist.LocalFileSystemPersistenceService;
+    provides PersistenceService with LocalFileSystemPersistenceService;
+    provides PrimaryPersistenceService with LocalFileSystemPersistenceService;
 }

@@ -24,6 +24,7 @@ package org.esoul.surpass.google.drive;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
 
@@ -42,6 +43,16 @@ public class GooglePersistenceService implements PersistenceService {
 
     public GooglePersistenceService() {
         this(new GoogleDrive());
+    }
+
+    @Override
+    public void authorize(ContextAwareCryptoService crypto) {
+        drive.authorize(crypto);
+    }
+
+    @Override
+    public void regenerateSupprtingData(ContextAwareCryptoService crypto) {
+        drive.regenerateCredentials(crypto);
     }
 
     @Override

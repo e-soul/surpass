@@ -28,7 +28,6 @@ import java.nio.file.Paths;
  * Default names and paths used in the persistence service.
  * 
  * @author mgp
- *
  */
 public final class PersistenceDefaults {
 
