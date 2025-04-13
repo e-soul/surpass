@@ -212,7 +212,7 @@ public final class MainWindow {
 
     private JMenu createHelpMenu() {
         JMenuItem aboutItem = new JMenuItem("About", KeyEvent.VK_S);
-        aboutItem.addActionListener(l -> AboutWindow.createAndShow(components.frame));
+        aboutItem.addActionListener(_ -> AboutWindow.createAndShow(components.frame));
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic(KeyEvent.VK_H);
@@ -237,7 +237,7 @@ public final class MainWindow {
 
     private void createTable() {
         components.tableModel = new SimpleTableModel(session.getSecretTable());
-        components.tableModel.addTableModelListener(e -> {
+        components.tableModel.addTableModelListener(_ -> {
             String secrets = components.tableModel.getRowCount() + "/" + session.getSecretTable().getMaxRow() + " secrets";
             components.secretCountLabel.setText(secrets);
         });
@@ -273,7 +273,7 @@ public final class MainWindow {
         filterBox.add(Layout.createHSpacer());
 
         JButton clearButton = Layout.createFixedSizeButton("Clear", 85);
-        clearButton.addActionListener(l -> {
+        clearButton.addActionListener(_ -> {
             filterTextField.setText("");
             tableRowSorter.setRowFilter(null);
         });
@@ -475,7 +475,7 @@ public final class MainWindow {
                 popupMenu.add(exitMenuItem);
 
                 components.trayIcon.setPopupMenu(popupMenu);
-                components.trayIcon.addActionListener(actionEvent -> show());
+                components.trayIcon.addActionListener(_ -> show());
                 components.trayIcon.addMouseListener(new TrayMouseHandler(this::show));
                 SystemTray.getSystemTray().add(components.trayIcon);
             } catch (AWTException e) {

@@ -21,10 +21,11 @@
 */
 package org.esoul.surpass.crypto.api;
 
+import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 
 /**
- * Encrypt or decrypt arbitrary data.
+ * Encrypt, decrypt or digest arbitrary data.
  * 
  * @author mgp
  *
@@ -50,4 +51,13 @@ public interface CryptoService {
      * @throws GeneralSecurityException
      */
     byte[] decrypt(char[] key, byte[] cipherInput) throws GeneralSecurityException;
+
+    /**
+     * 
+     * 
+     * @param input
+     * @return
+     * @throws GeneralSecurityException
+     */
+    CharBuffer digest(CharBuffer input) throws GeneralSecurityException;
 }

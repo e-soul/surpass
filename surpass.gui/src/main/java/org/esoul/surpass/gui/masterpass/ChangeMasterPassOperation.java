@@ -61,7 +61,7 @@ public class ChangeMasterPassOperation extends BaseDataOperationWorker {
         } catch (IOException | GeneralSecurityException e) {
             return parent -> MessageDialog.GENERIC_ERROR.show(parent, "Master Password cannot be changed! " + e.getMessage());
         }
-        return parent -> {
+        return _ -> {
         };
     }
 }

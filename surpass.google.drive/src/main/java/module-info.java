@@ -19,9 +19,13 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+import org.esoul.surpass.google.drive.GooglePersistenceServiceFactory;
+import org.esoul.surpass.persist.api.PersistenceServiceAbstractFactory;
+
 module surpass.google.drive {
 
-    requires surpass.api;
+    requires transitive surpass.api;
 
     requires google.api.client;
     requires com.google.api.client;
@@ -34,4 +38,5 @@ module surpass.google.drive {
     exports org.esoul.surpass.google.drive;
 
     provides org.esoul.surpass.persist.api.PersistenceService with org.esoul.surpass.google.drive.GooglePersistenceService;
+    provides PersistenceServiceAbstractFactory with GooglePersistenceServiceFactory;
 }

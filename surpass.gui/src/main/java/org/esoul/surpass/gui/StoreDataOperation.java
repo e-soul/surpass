@@ -62,7 +62,7 @@ class StoreDataOperation extends BaseDataOperationWorker {
             return parent -> MessageDialog.INVALID_PASS_ERROR.show(parent,
                     "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!");
         }
-        return parent -> {
+        return _ -> {
         };
     }
 }

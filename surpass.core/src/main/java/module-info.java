@@ -26,6 +26,7 @@ module surpass.core {
     exports org.esoul.surpass.core;
     
     provides org.esoul.surpass.crypto.api.CryptoService with org.esoul.surpass.core.SimpleCipher;
+    provides org.esoul.surpass.crypto.api.ContextAwareCryptoAbstractFactory with org.esoul.surpass.core.DefaultContextAwareCryptoFactory;
     provides org.esoul.surpass.table.api.SecretTable with org.esoul.surpass.core.SquareMatrix;
     provides org.esoul.surpass.secgen.api.RandomSecretService with org.esoul.surpass.core.SecretGenerator;
 }

@@ -24,6 +24,7 @@ module surpass.app {
     requires transitive surpass.api;
 
     uses org.esoul.surpass.crypto.api.CryptoService;
+    uses org.esoul.surpass.crypto.api.ContextAwareCryptoAbstractFactory;
     uses org.esoul.surpass.persist.api.PersistenceService;
     uses org.esoul.surpass.persist.api.PrimaryPersistenceService;
     uses org.esoul.surpass.table.api.SecretTable;

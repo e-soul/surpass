@@ -23,6 +23,8 @@ package org.esoul.surpass.persist.api;
 
 import java.io.IOException;
 
+import org.esoul.surpass.crypto.api.ContextAwareCrypto;
+
 /**
  * Read/write data from/to some local or remote storage medium.
  * 
@@ -30,6 +32,8 @@ import java.io.IOException;
  *
  */
 public interface PersistenceService {
+
+    default void authorize(ContextAwareCrypto crypto) {}
 
     /**
      * Reads data into a byte array.

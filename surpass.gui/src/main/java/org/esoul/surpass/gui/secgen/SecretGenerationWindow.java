@@ -110,7 +110,7 @@ public class SecretGenerationWindow {
 
         components.lengthLabel = new JLabel(components.getLengthLabelValue());
         lengthBox.add(components.lengthLabel);
-        components.lengthSlider.addChangeListener(l -> components.updateLengthLabel());
+        components.lengthSlider.addChangeListener(_ -> components.updateLengthLabel());
         components.frame.add(lengthBox);
     }
 
@@ -128,7 +128,7 @@ public class SecretGenerationWindow {
         secretBox.add(Layout.createHSpacer());
 
         components.generateButton = Layout.createFixedSizeButton("Generate", 90);
-        components.generateButton.addActionListener(l -> {
+        components.generateButton.addActionListener(_ -> {
             char[] secret = new char[components.lengthSlider.getValue()];
             secretGenerator.accept(secret, components.getSelectedCharClasses());
             components.secretField.setText(new String(secret));
@@ -145,13 +145,13 @@ public class SecretGenerationWindow {
         commandBox.add(Box.createHorizontalGlue());
 
         JButton okButton = Layout.createFixedSizeButton("OK", 90);
-        okButton.addActionListener(l -> components.frame.setVisible(false));
+        okButton.addActionListener(_ -> components.frame.setVisible(false));
         commandBox.add(okButton);
 
         commandBox.add(Layout.createHSpacer());
 
         JButton cancelButton = Layout.createFixedSizeButton("Cancel", 90);
-        cancelButton.addActionListener(l -> {
+        cancelButton.addActionListener(_ -> {
             components.frame.setVisible(false);
             components.secretField.setText("");
         });

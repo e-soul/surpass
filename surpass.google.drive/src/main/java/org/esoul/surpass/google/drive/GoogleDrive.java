@@ -31,7 +31,9 @@ import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
+import org.esoul.surpass.crypto.api.ContextAwareCrypto;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -44,7 +46,6 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
@@ -61,15 +62,17 @@ class GoogleDrive implements DriveFacade {
 
     private Drive service = null;
 
+    private ContextAwareCrypto crypto = null;
+
     private Drive getService() throws IOException, GeneralSecurityException {
         if (null == service) {
             GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(GsonFactory.getDefaultInstance(),
                     new InputStreamReader(GooglePersistenceService.class.getResourceAsStream("/surpass-oauth2.json"), StandardCharsets.UTF_8));
             NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
+            EncryptedFileDataStoreFactory dataStoreFactory = new EncryptedFileDataStoreFactory(PersistenceDefaults.getDataDir(), crypto);
             GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets,
-                    java.util.List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline")
-                    .setDataStoreFactory(new FileDataStoreFactory(PersistenceDefaults.getDataDir().toFile())).build();
+                    List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline").setDataStoreFactory(dataStoreFactory).build();
 
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(41080).build();
             Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
@@ -89,6 +92,14 @@ class GoogleDrive implements DriveFacade {
             service = null;
             Files.delete(PersistenceDefaults.getGoogleStoredCredential());
             return s.execute();
+        }
+    }
+
+    @Override
+    public void authorize(ContextAwareCrypto crypto) {
+        if (null == this.crypto || !this.crypto.equals(crypto)) {
+            this.crypto = crypto;
+            this.service = null;
         }
     }
 
