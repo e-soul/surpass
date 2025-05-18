@@ -77,8 +77,8 @@ class GoogleDrive implements DriveFacade {
 
             dataStoreCaptor = new DataStoreCaptor();
             EncryptedFileDataStoreFactory dataStoreFactory = new EncryptedFileDataStoreFactory(PersistenceDefaults.getDataDir(), crypto, dataStoreCaptor);
-            GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets,
-                    List.of(DriveScopes.DRIVE_FILE)).setAccessType("offline").setDataStoreFactory(dataStoreFactory).build();
+            var flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport, GsonFactory.getDefaultInstance(), clientSecrets, List.of(DriveScopes.DRIVE_FILE))
+                    .setAccessType("offline").setDataStoreFactory(dataStoreFactory).enablePKCE().build();
 
             LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(41080).build();
             Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
@@ -101,7 +101,7 @@ class GoogleDrive implements DriveFacade {
             logger.log(Level.DEBUG, () -> "Drive operation failed.", e);
             // Setting the service field to null, deleting the tokens and re-executing the operation will trigger a new authz.
             clearService();
-            Files.delete(PersistenceDefaults.getGoogleStoredCredential());
+            Files.deleteIfExists(PersistenceDefaults.getGoogleStoredCredential());
             return s.execute();
         }
     }
