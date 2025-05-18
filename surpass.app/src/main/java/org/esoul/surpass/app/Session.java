@@ -44,13 +44,11 @@ import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.esoul.surpass.table.api.SecretTable;
 
 /**
- * Facilitates the interactions between various services to provide a high-level API for building user interfaces.
- * Logging in response to errors is also done by this class, all exceptions are re-thrown. A typical usage pattern would
- * look like this: Obtain an instance of this class. When the application is loaded, call {@link #start()}. When the
- * application is ready to process user input, call {@link #loadData(char[])}. React to user input via
- * {@link #write(char[], char[], char[])}, {@link #setEditMode(int)}, {@link #remove(int)}, etc. When the user wants to
- * persist their changes, call {@link #storeData(char[], Collection)}. Note, this class is thread-safe if the
- * {@link SecretTable} implementation is.
+ * Facilitates the interactions between various services to provide a high-level API for building user interfaces. Logging in response to errors is also done by
+ * this class, all exceptions are re-thrown. A typical usage pattern would look like this: Obtain an instance of this class. When the application is loaded,
+ * call {@link #start()}. When the application is ready to process user input, call {@link #loadData(char[])}. React to user input via
+ * {@link #write(char[], char[], char[])}, {@link #setEditMode(int)}, {@link #remove(int)}, etc. When the user wants to persist their changes, call
+ * {@link #storeData(char[], Collection)}. Note, this class is thread-safe if the {@link SecretTable} implementation is.
  * 
  * @author mgp
  */
@@ -169,8 +167,7 @@ public class Session {
      * Stores the data to a persistent state.
      * 
      * @param password The password needed to encrypt the data.
-     * @param serviceIds The IDs of the services to use to store the data. Can be obtained from
-     *        {@link #getSupportedPersistenceServices()}.
+     * @param serviceIds The IDs of the services to use to store the data. Can be obtained from {@link #getSupportedPersistenceServices()}.
      * @throws ExistingDataNotLoadedException
      * @throws IOException
      * @throws GeneralSecurityException
@@ -232,8 +229,7 @@ public class Session {
     /**
      * Returns supported persistence services. This is intended to give the user a choice.
      * 
-     * @return A {@link Map} service ID - service display name. The Service IDs can be used with
-     *         {@link #storeData(char[], Collection)}.
+     * @return A {@link Map} service ID - service display name. The Service IDs can be used with {@link #storeData(char[], Collection)}.
      */
     public Map<String, String> getSupportedPersistenceServices() {
         return persistenceServiceMap.values().stream().collect(Collectors.toMap(PersistenceService::getId, PersistenceService::getDisplayName));

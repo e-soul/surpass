@@ -1,7 +1,5 @@
 package org.esoul.surpass.core.test;
 
-import org.junit.jupiter.api.Test;
-
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -10,6 +8,7 @@ import org.esoul.surpass.core.SquareMatrix;
 import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DataTableTest {
 

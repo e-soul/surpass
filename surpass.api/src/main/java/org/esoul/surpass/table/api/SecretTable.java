@@ -27,8 +27,7 @@ public interface SecretTable {
      * Creates a row in this table. All input is cleared immediately.
      *
      * @param secret The secret. Usually a password or some sort of cryptographic key.
-     * @param identifier The identifier used with the secret. Usually a user-name, email address or some sort of
-     *        cryptographic key.
+     * @param identifier The identifier used with the secret. Usually a user-name, email address or some sort of cryptographic key.
      * @param note A short note. Optional.
      * @throws MaxSizeExceededException In case the maximum size of any of the input is exceeded.
      * @throws EmptySequenceException

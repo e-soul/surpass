@@ -76,8 +76,7 @@ public final class PersistenceDefaults {
     }
 
     /**
-     * Returns a {@link Path} to the "data" directory. The "data" directory is where application and user data is stored,
-     * e.g. the "secrets" file.
+     * Returns a {@link Path} to the "data" directory. The "data" directory is where application and user data is stored, e.g. the "secrets" file.
      * 
      * @return A {@link Path} to the "data" directory.
      */

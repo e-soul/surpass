@@ -30,8 +30,7 @@ import java.util.function.IntPredicate;
  */
 public enum CharClass {
 
-    DIGIT(c -> Character.isDigit((char) c)),
-    ALPHA_UPPER(c -> Character.isLetter((char) c) && Character.isUpperCase((char) c)),
+    DIGIT(c -> Character.isDigit((char) c)), ALPHA_UPPER(c -> Character.isLetter((char) c) && Character.isUpperCase((char) c)),
     ALPHA_LOWER(c -> Character.isLetter((char) c) && Character.isLowerCase((char) c)),
     SPECIAL(c -> !Character.isLetter((char) c) && !Character.isDigit((char) c));
 

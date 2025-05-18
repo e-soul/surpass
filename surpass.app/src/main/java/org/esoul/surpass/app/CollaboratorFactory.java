@@ -35,7 +35,6 @@ public interface CollaboratorFactory {
      * 
      * @param <T> The type of the service.
      * @param clazz The {@link Class} instance of the service.
-     * 
      * @return The service instance.
      */
     <T> T obtainOne(Class<T> clazz) throws ServiceUnavailableException;

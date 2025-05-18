@@ -28,7 +28,6 @@ import java.security.GeneralSecurityException;
  * Encrypt, decrypt or digest arbitrary data.
  * 
  * @author mgp
- *
  */
 public interface CryptoService {
 

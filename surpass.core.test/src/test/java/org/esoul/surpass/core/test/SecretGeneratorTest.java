@@ -26,10 +26,8 @@ public class SecretGeneratorTest {
     }
 
     public static Stream<Arguments> testGenerateSecretArguments() {
-        return Stream.of(Arguments.of(6, List.of(CharClass.ALPHA_LOWER)),
-                Arguments.of(4, List.of(CharClass.SPECIAL)),
-                Arguments.of(8, List.of(CharClass.ALPHA_LOWER, CharClass.ALPHA_UPPER)),
-                Arguments.of(12, List.of(CharClass.DIGIT, CharClass.SPECIAL)),
+        return Stream.of(Arguments.of(6, List.of(CharClass.ALPHA_LOWER)), Arguments.of(4, List.of(CharClass.SPECIAL)),
+                Arguments.of(8, List.of(CharClass.ALPHA_LOWER, CharClass.ALPHA_UPPER)), Arguments.of(12, List.of(CharClass.DIGIT, CharClass.SPECIAL)),
                 Arguments.of(2, List.of(CharClass.ALPHA_UPPER, CharClass.SPECIAL)),
                 Arguments.of(6, List.of(CharClass.ALPHA_LOWER, CharClass.ALPHA_UPPER, CharClass.DIGIT, CharClass.SPECIAL)),
                 Arguments.of(20, List.of(CharClass.ALPHA_LOWER, CharClass.ALPHA_UPPER, CharClass.DIGIT, CharClass.SPECIAL)),

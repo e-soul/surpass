@@ -5,7 +5,7 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 class Fixtures {
-    
+
     static final byte[] ABC = new byte[] { 65, 66, 67 };
 
     static ContextAwareCryptoService setUpCryptoStub() {

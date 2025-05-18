@@ -28,11 +28,10 @@ import org.esoul.surpass.secgen.api.CharClass;
 import org.esoul.surpass.secgen.api.RandomSecretService;
 
 /**
- * Generates a secret with the following properties. Allowed character classes will be represented by at least one
- * character regardless of the secret length. If {@link CharClass#SPECIAL} is allowed, approximately 10% of the
- * characters will be of class {@link CharClass#SPECIAL}. The other character classes will have approximately equal
- * representation. The secret length cannot be smaller than the number of allowed character classes. Only a subset of
- * the printable special ASCII characters are used.
+ * Generates a secret with the following properties. Allowed character classes will be represented by at least one character regardless of the secret length. If
+ * {@link CharClass#SPECIAL} is allowed, approximately 10% of the characters will be of class {@link CharClass#SPECIAL}. The other character classes will have
+ * approximately equal representation. The secret length cannot be smaller than the number of allowed character classes. Only a subset of the printable special
+ * ASCII characters are used.
  *
  * @author mgp
  */

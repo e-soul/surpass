@@ -38,8 +38,7 @@ public interface DriveFacade {
     void regenerateCredentials(ContextAwareCryptoService crypto);
 
     /**
-     * Searches for directory by name. If multiple directories with the same name exist, the first one is returned in the
-     * order they were returned from Drive.
+     * Searches for directory by name. If multiple directories with the same name exist, the first one is returned in the order they were returned from Drive.
      * 
      * @param name The name of the directory
      * @return The directory ID if the directory exists or {@code null} otherwise.
@@ -59,8 +58,8 @@ public interface DriveFacade {
     String createDirectory(String name) throws IOException, GeneralSecurityException;
 
     /**
-     * Searches for file by parent directory ID and name. If multiple files with the same name exist, the first one is
-     * returned in the order they were returned from Drive.
+     * Searches for file by parent directory ID and name. If multiple files with the same name exist, the first one is returned in the order they were returned
+     * from Drive.
      * 
      * @param parentDirectoryId Parent directory ID.
      * @param name The name of the file.

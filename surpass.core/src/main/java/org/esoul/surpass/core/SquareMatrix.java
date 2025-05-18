@@ -33,18 +33,15 @@ import org.esoul.surpass.table.api.MaxSizeExceededException;
 import org.esoul.surpass.table.api.SecretTable;
 
 /**
- * This {@link SecretTable} implementation is backed by a square matrix. The idea is that the size of the data remains
- * constant regardless of the number and length of stored secrets. Of course this implies a hard limit on the number
- * (and length) of secrets that can be stored. Storage scheme:
+ * This {@link SecretTable} implementation is backed by a square matrix. The idea is that the size of the data remains constant regardless of the number and
+ * length of stored secrets. Of course this implies a hard limit on the number (and length) of secrets that can be stored. Storage scheme:
  * 
  * <pre>
  * [secret length - 1 byte][secret - up to 63 bytes][identifier length - 1 byte][identifier - up to 63 bytes][note length - 1 byte][note - up to 127 bytes]
  * </pre>
  * 
- * Unused positions are automatically filled with random bytes. The last row contains service data such as the number of
- * used rows and the version of the format or storage scheme. The focus is on simplicity at the expense of flexibility.
- * 
- * This class is thread-safe.
+ * Unused positions are automatically filled with random bytes. The last row contains service data such as the number of used rows and the version of the format
+ * or storage scheme. The focus is on simplicity at the expense of flexibility. This class is thread-safe.
  *
  * @author mgp
  */
