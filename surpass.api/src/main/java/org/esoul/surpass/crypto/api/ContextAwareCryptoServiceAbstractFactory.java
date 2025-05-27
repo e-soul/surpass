@@ -21,8 +21,6 @@
 */
 package org.esoul.surpass.crypto.api;
 
-import java.nio.CharBuffer;
-
 /**
  * Knows how to create {@link ContextAwareCryptoService} objects.
  * 
@@ -37,5 +35,5 @@ public interface ContextAwareCryptoServiceAbstractFactory {
      * @param key
      * @return A new {@link ContextAwareCryptoService}.
      */
-    ContextAwareCryptoService create(CryptoService cryptoService, CharBuffer key);
+    ContextAwareCryptoService create(CryptoService cryptoService, char[] key);
 }

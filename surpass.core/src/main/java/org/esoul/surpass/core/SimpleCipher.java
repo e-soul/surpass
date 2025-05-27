@@ -112,9 +112,9 @@ public class SimpleCipher implements CryptoService {
     }
 
     @Override
-    public CharBuffer digest(CharBuffer input) throws GeneralSecurityException {
+    public char[] digest(char[] input) throws GeneralSecurityException {
         MessageDigest messageDigest = MessageDigest.getInstance(DIGEST_ALGO);
-        ByteBuffer inputByteBuffer = StandardCharsets.UTF_8.encode(input);
+        ByteBuffer inputByteBuffer = StandardCharsets.UTF_8.encode(CharBuffer.wrap(input));
         byte[] digest = messageDigest.digest(inputByteBuffer.array());
         char[] hexDigits = "0123456789abcdef".toCharArray();
         char[] hexValue = new char[digest.length * 2];
@@ -123,6 +123,6 @@ public class SimpleCipher implements CryptoService {
             hexValue[i * 2] = hexDigits[v >>> 4];
             hexValue[i * 2 + 1] = hexDigits[v & 0xf];
         }
-        return CharBuffer.wrap(hexValue);
+        return hexValue;
     }
 }

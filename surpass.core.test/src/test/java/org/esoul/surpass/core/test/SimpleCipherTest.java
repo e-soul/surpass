@@ -1,6 +1,5 @@
 package org.esoul.surpass.core.test;
 
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -39,9 +38,9 @@ public class SimpleCipherTest {
 
     @Test
     public void testDigest() throws Exception {
-        CharBuffer digest = cipher.digest(CharBuffer.wrap("AAAA"));
+        char[] digest = cipher.digest("AAAA".toCharArray());
         Assertions.assertEquals(
                 "53b74be8b295b733fdfafbd7d2a22b1686733740de7fdc592b26cf3e1874cfce158170ce9230e24696331a61829244e5d9f48abdacc9ffa8c4cb498724844cf8",
-                digest.toString());
+                new String(digest));
     }
 }

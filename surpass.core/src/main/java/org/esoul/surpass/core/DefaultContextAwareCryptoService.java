@@ -1,6 +1,5 @@
 package org.esoul.surpass.core;
 
-import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 import java.util.Objects;
 
@@ -10,21 +9,21 @@ import org.esoul.surpass.crypto.api.CryptoService;
 public class DefaultContextAwareCryptoService implements ContextAwareCryptoService {
 
     private final CryptoService cryptoService;
-    private final CharBuffer key;
+    private final char[] key;
 
-    public DefaultContextAwareCryptoService(CryptoService cryptoService, CharBuffer key) {
+    public DefaultContextAwareCryptoService(CryptoService cryptoService, char[] key) {
         this.cryptoService = cryptoService;
         this.key = key;
     }
 
     @Override
     public byte[] encrypt(byte[] data) throws GeneralSecurityException {
-        return cryptoService.encrypt(key.array(), data);
+        return cryptoService.encrypt(key, data);
     }
 
     @Override
     public byte[] decrypt(byte[] cipherInput) throws GeneralSecurityException {
-        return cryptoService.decrypt(key.array(), cipherInput);
+        return cryptoService.decrypt(key, cipherInput);
     }
 
     @Override

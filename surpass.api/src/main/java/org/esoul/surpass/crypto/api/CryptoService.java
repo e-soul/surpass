@@ -21,7 +21,6 @@
 */
 package org.esoul.surpass.crypto.api;
 
-import java.nio.CharBuffer;
 import java.security.GeneralSecurityException;
 
 /**
@@ -58,5 +57,5 @@ public interface CryptoService {
      * @return The ASCII hex representation of the digest.
      * @throws GeneralSecurityException
      */
-    CharBuffer digest(CharBuffer input) throws GeneralSecurityException;
+    char[] digest(char[] input) throws GeneralSecurityException;
 }

@@ -24,7 +24,6 @@ package org.esoul.surpass.app;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.nio.CharBuffer;
 import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
@@ -120,7 +119,7 @@ public class Session {
         if ((null == password) || (0 == password.length)) {
             throw new InvalidPasswordException("Password is null or empty!");
         }
-        CharBuffer passwordHash = cryptoService.digest(CharBuffer.wrap(password));
+        char[] passwordHash = cryptoService.digest(password);
         try {
             byte[] clearText = readCipherTextAndDecrypt(passwordHash, password, serviceId);
             secretTable.load(clearText);
@@ -138,8 +137,8 @@ public class Session {
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != newMasterPass) {
-            CharBuffer currentPasswordHash = cryptoService.digest(CharBuffer.wrap(currentMasterPass));
-            CharBuffer newPasswordHash = cryptoService.digest(CharBuffer.wrap(newMasterPass));
+            char[] currentPasswordHash = cryptoService.digest(currentMasterPass);
+            char[] newPasswordHash = cryptoService.digest(newMasterPass);
             try {
                 checkCanDecryptPassword(currentPasswordHash, currentMasterPass, serviceIds);
                 byte[] clearText = secretTable.toOneDimension();
@@ -178,7 +177,7 @@ public class Session {
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != password) {
-            CharBuffer passwordHash = cryptoService.digest(CharBuffer.wrap(password));
+            char[] passwordHash = cryptoService.digest(password);
             try {
                 checkCanDecryptPassword(passwordHash, password, serviceIds);
                 byte[] clearText = secretTable.toOneDimension();
@@ -203,7 +202,7 @@ public class Session {
         }
     }
 
-    private void checkCanDecryptPassword(CharBuffer passwordHash, char[] password, Collection<String> serviceIds) throws IOException, InvalidPasswordException {
+    private void checkCanDecryptPassword(char[] passwordHash, char[] password, Collection<String> serviceIds) throws IOException, InvalidPasswordException {
         try {
             for (var serviceId : serviceIds) {
                 readCipherTextAndDecrypt(passwordHash, password, serviceId);
@@ -215,7 +214,7 @@ public class Session {
         }
     }
 
-    private byte[] readCipherTextAndDecrypt(CharBuffer passwordHash, char[] password, String serviceId) throws IOException, GeneralSecurityException {
+    private byte[] readCipherTextAndDecrypt(char[] passwordHash, char[] password, String serviceId) throws IOException, GeneralSecurityException {
         ContextAwareCryptoService contextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, passwordHash);
         PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
         persistenceService.authorize(contextAwareCrypto);
