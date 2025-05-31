@@ -11,7 +11,7 @@ public class RecursiveDeleteFileVisitor<T extends Path> extends SimpleFileVisito
 
     @Override
     public FileVisitResult visitFile(T file, BasicFileAttributes attrs) throws IOException {
-        Files.delete(file);
+        Files.deleteIfExists(file);
         return FileVisitResult.CONTINUE;
     }
 

@@ -76,8 +76,9 @@ public class EncryptedFileDataStoreFactory extends AbstractDataStoreFactory {
 
         @Override
         public void save() throws IOException {
+            byte[] clearText = IOUtils.serialize(keyValueMap);
             try {
-                byte[] cipherText = crypto.encrypt(IOUtils.serialize(keyValueMap));
+                byte[] cipherText = crypto.encrypt(clearText);
                 Files.write(file, cipherText);
             } catch (GeneralSecurityException e) {
                 throw new IOException(e);

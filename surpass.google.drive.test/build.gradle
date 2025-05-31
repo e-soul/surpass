@@ -10,7 +10,9 @@ dependencies {
     implementation "com.google.api-client:google-api-client:2.7.2"
 
     testImplementation project(":surpass.api")
+    testImplementation project(":surpass.core")
     testImplementation project(":surpass.google.drive")
+    testImplementation project(":surpass.test")
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"

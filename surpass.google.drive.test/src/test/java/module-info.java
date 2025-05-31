@@ -4,7 +4,9 @@ module surpass.google.drive.test {
     requires jdk.unsupported;
 
     requires surpass.api;
+    requires surpass.core;
     requires surpass.google.drive;
+    requires surpass.test;
 
     requires org.junit.jupiter.api;
 

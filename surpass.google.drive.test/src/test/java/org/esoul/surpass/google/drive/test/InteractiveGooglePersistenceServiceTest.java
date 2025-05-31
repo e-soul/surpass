@@ -2,35 +2,52 @@ package org.esoul.surpass.google.drive.test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 
+import org.esoul.surpass.core.DefaultContextAwareCryptoServiceFactory;
+import org.esoul.surpass.core.SimpleCipher;
 import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
+import org.esoul.surpass.crypto.api.CryptoService;
 import org.esoul.surpass.google.drive.GooglePersistenceService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
+import org.esoul.surpass.test.Fs;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.io.TempDir;
 
+@TestMethodOrder(OrderAnnotation.class)
 public class InteractiveGooglePersistenceServiceTest {
 
-    private ContextAwareCryptoService crypto = Fixtures.setUpCryptoStub();
+    private ContextAwareCryptoService crypto = null;
 
-    private GooglePersistenceService persistenceService = new GooglePersistenceService();
+    private GooglePersistenceService persistenceService = null;
 
     @BeforeEach
     public void setUp() throws Exception {
+        persistenceService = new GooglePersistenceService();
+        CryptoService cryptoService = new SimpleCipher();
+        char[] passwordHash = cryptoService.digest("123123".toCharArray());
+        crypto = new DefaultContextAwareCryptoServiceFactory().create(cryptoService, passwordHash);
         persistenceService.authorize(crypto);
     }
 
+    @AfterEach
+    public void tearDown() throws Exception {
+        Fs.tearDownDataDir();
+    }
+
     @Test
-    public void testWriteReadSearchInteractive() throws Exception {
+    @Order(1)
+    public void testWriteReadSearchInteractive(@TempDir Path tmp) throws Exception {
         assumeInteractiveEnv();
+        Files.createDirectories(Fs.setupDataDir(tmp));
         persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, Fixtures.ABC);
         byte[] onlineData = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
         Assertions.assertArrayEquals(Fixtures.ABC, onlineData, "Reading returned different data than what was written!");
@@ -39,12 +56,15 @@ public class InteractiveGooglePersistenceServiceTest {
     }
 
     @Test
-    public void testHandleInvalidRefreshTokenInteractive() throws Exception {
+    @Order(2)
+    public void testHandleInvalidRefreshTokenInteractive(@TempDir Path tmp) throws Exception {
         assumeInteractiveEnv();
-        Path testDir = Paths.get("google_drive_test_invalid_refresh_token_" + System.currentTimeMillis());
-        setupInvalidRefreshToken(testDir);
-        persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, Fixtures.ABC);
-        tearDownInvalidRefreshToken(testDir);
+        Path dataDir = Fs.setupDataDir(tmp);
+        setupInvalidRefreshToken(dataDir);
+        byte[] secrets = loadSecrets();
+        persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, secrets);
+        byte[] onlineData = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
+        Assertions.assertArrayEquals(secrets, onlineData, "Reading returned different data than what was written!");
     }
 
     private void assumeInteractiveEnv() {
@@ -52,33 +72,17 @@ public class InteractiveGooglePersistenceServiceTest {
         Assumptions.assumeTrue(Boolean.parseBoolean(interactiveTestEnv), "Skipping interactive test.");
     }
 
-    private void setupInvalidRefreshToken(Path testDir) throws IOException {
-        Files.createDirectories(testDir);
+    private void setupInvalidRefreshToken(Path dataDir) throws IOException {
+        Files.createDirectories(dataDir);
         try (InputStream is = getClass().getResourceAsStream("/StoredCredential_invalid_refresh_token")) {
             Assertions.assertNotNull(is);
-            Files.copy(is, testDir.resolve("StoredCredential"));
+            Files.copy(is, dataDir.resolve("StoredCredential"));
         }
-        System.setProperty(PersistenceDefaults.SYS_PROP_DATADIR, testDir.toAbsolutePath().toString());
     }
 
-    private void tearDownInvalidRefreshToken(Path testDir) throws IOException {
-        System.clearProperty(PersistenceDefaults.SYS_PROP_DATADIR);
-        Files.walkFileTree(testDir, new SimpleFileVisitor<Path>() {
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                if (null == e) {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-                throw e;
-            }
-        });
+    private byte[] loadSecrets() throws Exception {
+        try (InputStream is = getClass().getResourceAsStream("/secrets_123123")) {
+            return is.readAllBytes();
+        }
     }
 }
