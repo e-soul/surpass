@@ -239,6 +239,9 @@ public final class MainWindow {
         components.tableModel = new SimpleTableModel(session.getSecretTable());
         components.tableModel.addTableModelListener(_ -> {
             String secrets = components.tableModel.getRowCount() + "/" + session.getSecretTable().getMaxRow() + " secrets";
+            if (session.unsavedDataExists()) {
+                secrets += " *";
+            }
             components.secretCountLabel.setText(secrets);
         });
         TableRowSorter<AbstractTableModel> tableRowSorter = new TableRowSorter<>(components.tableModel);

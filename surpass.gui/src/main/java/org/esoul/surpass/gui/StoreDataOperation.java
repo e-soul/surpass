@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import javax.swing.table.AbstractTableModel;
+
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
 import org.esoul.surpass.app.Session;
@@ -35,13 +37,14 @@ import org.esoul.surpass.gui.dialog.MessageDialog;
 
 class StoreDataOperation extends BaseDataOperationWorker {
 
-    private Collection<String> selectedServicesIds;
-
+    private AbstractTableModel tableModel;
     private Session session = null;
     private char[] password = null;
+    private Collection<String> selectedServicesIds;
 
     StoreDataOperation(Session session, MainWindowComponents components, char[] password, Collection<String> selectedServicesIds) {
         super(components.frame, components.operationProgressBar);
+        this.tableModel = components.tableModel;
         this.session = session;
         this.password = password;
         this.selectedServicesIds = new ArrayList<>(selectedServicesIds);
@@ -64,5 +67,10 @@ class StoreDataOperation extends BaseDataOperationWorker {
         }
         return _ -> {
         };
+    }
+
+    @Override
+    protected void doneSuccess() {
+        tableModel.fireTableDataChanged();
     }
 }
