@@ -63,8 +63,8 @@ public class EncryptedFileDataStoreFactory extends AbstractDataStoreFactory {
                 byte[] cipherText = Files.readAllBytes(file);
                 try {
                     keyValueMap = IOUtils.deserialize(crypto.decrypt(cipherText));
-                } catch (GeneralSecurityException e) {
-                    throw new IOException(e);
+                } catch (GeneralSecurityException _) {
+                    // If the file cannot be decrypted, it should be ignored and later overwritten.
                 }
             }
         }
