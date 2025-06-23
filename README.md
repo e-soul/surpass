@@ -14,6 +14,6 @@ This is a simple, secure and easy to use password manager.
 See [Releases](https://github.com/e-soul/surpass/releases)
 
 ### Build instructions
- - Install JDK 23 and Gradle 8.12.1 or later.
+ - Install JDK 24 and Gradle 8.14.2 or later.
  - Clone this repository.
  - Run `gradle build generateAppDist`
