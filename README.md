@@ -1,4 +1,5 @@
 [![Java CI with Gradle](https://github.com/e-soul/surpass/actions/workflows/gradle.yml/badge.svg)](https://github.com/e-soul/surpass/actions/workflows/gradle.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/e-soul/surpass)
 # Surpass
 
 This is a simple, secure and easy to use password manager.
