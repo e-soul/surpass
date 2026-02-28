@@ -10,5 +10,4 @@ include "surpass.api",
         "surpass.google.drive.test",
         "surpass.app",
         "surpass.app.test",
-        "surpass.gui",
-        "surpass.gui.jfx"
+        "surpass.gui"
