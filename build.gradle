@@ -57,7 +57,7 @@ task generateJre(type: Exec) {
     }
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
-    commandLine jlink, "--add-modules", "jdk.httpserver,java.desktop,java.logging,jdk.crypto.cryptoki,java.compiler",
+    commandLine jlink, "--add-modules", "jdk.httpserver,java.desktop,java.logging,jdk.crypto.cryptoki,java.compiler,jdk.unsupported,java.xml",
                 "--output", jre, "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
 }
 
@@ -69,12 +69,12 @@ task generateAppDist(type: Copy) {
         delete "${distArchiveTar}.bz2"
     }
 
-    dependsOn = [":surpass.google.drive:jar", ":surpass.gui:jar", ":surpass.persist:jar", ":generateJre"]
+    dependsOn = [":surpass.google.drive:jar", ":surpass.gui.jfx:jar", ":surpass.persist:jar", ":generateJre"]
 
-    def surpassMods = ["surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]
+    def surpassMods = ["surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui.jfx"]
     def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
 
-    def allDependencies = fileTree(new File(project("surpass.google.drive").buildDir, "libs")) + fileTree(new File(project("surpass.gui").buildDir, "libs"))
+    def allDependencies = fileTree(new File(project("surpass.google.drive").buildDir, "libs")) + fileTree(new File(project("surpass.gui.jfx").buildDir, "libs"))
     allDependencies.visit { details ->
         modulePath << details.file.path
     }
@@ -87,21 +87,30 @@ task generateAppDist(type: Copy) {
     doLast {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             copy {
-                from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
+                from files("${projectDir}/bin/surpass_dist_jfx.bat", "${projectDir}/bin/surpass.exe")
                 into output
-                rename "surpass_dist.bat", "surpass.bat"
+                rename "surpass_dist_jfx.bat", "surpass.bat"
             }
         } else {
             copy {
-                from "${projectDir}/bin/surpass_dist"
+                from "${projectDir}/bin/surpass_dist_jfx"
                 into output
-                rename "surpass_dist", "surpass"
+                rename "surpass_dist_jfx", "surpass"
             }
         }
 
         copy {
             from jre
             into "${output}/jre"
+        }
+
+        def javafxHome = System.getenv("JAVAFX_HOME")
+        if (javafxHome) {
+            copy {
+                from "${javafxHome}/bin"
+                into "${output}/jfx"
+                include "*.dll", "*.so", "*.dylib"
+            }
         }
 
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
