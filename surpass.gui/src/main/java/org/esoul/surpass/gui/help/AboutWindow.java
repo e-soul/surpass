@@ -79,7 +79,7 @@ public class AboutWindow {
             }
         });
         panel.add(homepage);
-        panel.add(createLabel("\u00A9 2017-2025 e-soul.org"));
+        panel.add(createLabel("\u00A9 2017-2026 e-soul.org"));
         JDialog aboutDialog = new JDialog(parentFrame, "About Surpass", true);
         aboutDialog.add(panel);
         aboutDialog.pack();
