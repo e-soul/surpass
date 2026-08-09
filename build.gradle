@@ -34,7 +34,7 @@ def osName = System.properties["os.name"].toLowerCase().replaceAll("\\s+", "")
 def osArch = System.properties["os.arch"]
 def distDir = "${projectDir}/dist"
 def output = "${distDir}/surpass"
-def jre = "${distDir}/jre"
+def jre = "${output}/jre"
 def distArchive = "${distDir}/surpass-${version}-${osName}-${osArch}.zip"
 def distArchiveTar = "${distDir}/surpass-${version}-${osName}-${osArch}.tar"
 
@@ -82,53 +82,45 @@ task generateJre(type: Exec) {
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
     commandLine jlink, "--add-modules", "jdk.httpserver,java.desktop,java.logging,jdk.crypto.cryptoki,java.compiler",
-                "--output", jre, "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
+                "--output", jre, "--strip-debug", "--compress", "zip-6", "--no-header-files", "--no-man-pages"
 }
 
-task generateAppDist(type: Copy) {
+evaluationDependsOn(":surpass.gui")
+
+task generateAppDist(type: Sync) {
     doFirst {
-        delete output
         delete distArchive
         delete distArchiveTar
         delete "${distArchiveTar}.bz2"
     }
 
-    dependsOn = [":surpass.google.drive:jar", ":surpass.gui:jar", ":surpass.persist:jar", ":generateJre"]
+    dependsOn ":generateJre"
 
-    def surpassMods = ["surpass.app", "surpass.core", "surpass.persist", "surpass.google.drive", "surpass.gui"]
-    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
-
-    def allDependencies = fileTree(new File(project("surpass.google.drive").buildDir, "libs")) + fileTree(new File(project("surpass.gui").buildDir, "libs"))
-    allDependencies.visit { details ->
-        modulePath << details.file.path
-    }
+    def gui = project(":surpass.gui")
+    def isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    into "${output}"
 
-    from modulePath
-    into "${output}/mods"
+    into("mods") {
+        from gui.tasks.named("jar"), gui.configurations.runtimeClasspath
+    }
+    preserve {
+        include "jre/**"
+    }
+
+    if (isWindows) {
+        from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
+        rename "surpass_dist.bat", "surpass.bat"
+    } else {
+        from "${projectDir}/bin/surpass_dist"
+        rename "surpass_dist", "surpass"
+    }
+
+    outputs.file(isWindows ? distArchive : "${distArchiveTar}.bz2")
 
     doLast {
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            copy {
-                from files("${projectDir}/bin/surpass_dist.bat", "${projectDir}/bin/surpass.exe")
-                into output
-                rename "surpass_dist.bat", "surpass.bat"
-            }
-        } else {
-            copy {
-                from "${projectDir}/bin/surpass_dist"
-                into output
-                rename "surpass_dist", "surpass"
-            }
-        }
-
-        copy {
-            from jre
-            into "${output}/jre"
-        }
-
-        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        if (isWindows) {
             ant.zip(basedir: distDir, destfile: distArchive, includes: "surpass/**")
         } else {
             ant.chmod(file: "${output}/surpass", perm: "+x")
