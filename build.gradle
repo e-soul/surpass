@@ -1,7 +1,31 @@
+import org.gradle.plugins.ide.eclipse.model.AbstractLibrary
+import org.gradle.plugins.ide.eclipse.model.Container
+import org.gradle.plugins.ide.eclipse.model.ProjectDependency
+
 subprojects {
+    apply plugin: "eclipse"
+
     plugins.withType(JavaPlugin).configureEach {
         java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(26)
+            }
             modularity.inferModulePath = true
+        }
+
+        eclipse {
+            classpath {
+                containers "org.eclipse.buildship.core.gradleclasspathcontainer"
+                file {
+                    whenMerged { classpath ->
+                        classpath.entries.findAll {
+                            it instanceof Container || it instanceof AbstractLibrary || it instanceof ProjectDependency
+                        }.each {
+                            it.entryAttributes["module"] = "true"
+                        }
+                    }
+                }
+            }
         }
     }
 }

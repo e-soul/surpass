@@ -11,6 +11,9 @@ dependencies {
     implementation project(":surpass.core")
     implementation project(":surpass.app")
 
+    runtimeOnly project(":surpass.persist")
+    runtimeOnly project(":surpass.google.drive")
+
     implementation "com.formdev:flatlaf:3.7.2"
 }
 
