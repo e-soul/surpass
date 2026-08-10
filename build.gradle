@@ -37,18 +37,34 @@ def output = "${distDir}/surpass"
 def jre = "${output}/jre"
 def distArchive = "${distDir}/surpass-${version}-${osName}-${osArch}.zip"
 def distArchiveTar = "${distDir}/surpass-${version}-${osName}-${osArch}.tar"
+def javaFxHome = System.getenv("JAVAFX_HOME")
+def linkedSurpassModules = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui.jfx"]
+def googleRuntimeSystemModules = [
+        "java.compiler", "java.desktop", "java.logging", "java.naming", "java.security.jgss",
+        "java.sql", "jdk.crypto.cryptoki", "jdk.httpserver", "jdk.unsupported"]
+
+evaluationDependsOn(":surpass.gui.jfx")
+evaluationDependsOn(":surpass.google.drive")
 
 task generateAppImage(type: Exec) {
+    dependsOn linkedSurpassModules.collect { ":${it}:jar" }
+    dependsOn ":surpass.google.drive:jar"
+
     doFirst {
         delete distDir
     }
 
     def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
-    def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
-    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.properties["path.separator"])
-    commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
-                "--output", output, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
-                "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
+    if (!javaFxHome) {
+        throw new GradleException("JAVAFX_HOME must point to a JavaFX SDK")
+    }
+    def moduleFiles = linkedSurpassModules.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }
+    moduleFiles += fileTree("${javaFxHome}/lib") { include "javafx.base.jar", "javafx.graphics.jar", "javafx.controls.jar" }.files
+    def modulePath = moduleFiles.join(System.properties["path.separator"])
+    def linkedModules = (linkedSurpassModules + googleRuntimeSystemModules).unique()
+    commandLine jlink, "--module-path", modulePath, "--add-modules", linkedModules.join(","),
+                "--output", output, "--launcher", "surpass=surpass.gui.jfx/org.esoul.surpass.gui.jfx.SurpassApplication",
+                "--strip-debug", "--compress", "zip-6", "--no-header-files", "--no-man-pages"
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -57,13 +73,29 @@ generateAppImage.doLast {
     delete "${output}/bin/surpass.bat"
     delete "${output}/bin/surpass"
 
+    def googleDrive = project(":surpass.google.drive")
+    copy {
+        from googleDrive.tasks.named("jar")
+        from googleDrive.configurations.runtimeClasspath
+        exclude "surpass.api-*.jar"
+        into "${output}/mods"
+    }
+
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        copy {
+            from fileTree("${javaFxHome}/bin") { include "*.dll" }
+            into "${output}/bin"
+        }
         copy {
             from files("${projectDir}/bin/surpass_image.bat", "${projectDir}/bin/surpass.exe")
             into output
             rename "surpass_image.bat", "surpass.bat"
         }
     } else {
+        copy {
+            from fileTree("${javaFxHome}/lib") { include "*.so", "*.dylib" }
+            into "${output}/lib"
+        }
         copy {
             from "${projectDir}/bin/surpass_image"
             into output
@@ -85,8 +117,6 @@ task generateJre(type: Exec) {
                 "--output", jre, "--strip-debug", "--compress", "zip-6", "--no-header-files", "--no-man-pages"
 }
 
-evaluationDependsOn(":surpass.gui")
-
 task generateAppDist(type: Sync) {
     doFirst {
         delete distArchive
@@ -96,7 +126,7 @@ task generateAppDist(type: Sync) {
 
     dependsOn ":generateJre"
 
-    def gui = project(":surpass.gui")
+    def gui = project(":surpass.gui.jfx")
     def isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -104,6 +134,14 @@ task generateAppDist(type: Sync) {
 
     into("mods") {
         from gui.tasks.named("jar"), gui.configurations.runtimeClasspath
+    }
+    if (javaFxHome) {
+        into("jre/bin") {
+            from fileTree("${javaFxHome}/bin") { include "*.dll" }
+        }
+        into("jre/lib") {
+            from fileTree("${javaFxHome}/lib") { include "*.so", "*.dylib" }
+        }
     }
     preserve {
         include "jre/**"

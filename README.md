@@ -14,9 +14,16 @@ This is a simple, secure and easy to use password manager.
 See [Releases](https://github.com/e-soul/surpass/releases)
 
 ### Build instructions
- - Install JDK 26 and Gradle 9.7 or later.
+ - Install JDK 26, JavaFX SDK 26, and Gradle 9.7 or later.
+ - Set `JAVA_HOME`, `JAVAFX_HOME`, and `GRADLE_HOME`. On Windows, `D:\dev\tool\devenv_surpass.bat` configures the expected build environment.
  - Clone this repository.
  - Run `gradle build generateAppDist`
+
+The JavaFX desktop client lives in the `surpass.gui.jfx` module. Run it during development with:
+
+```powershell
+gradle :surpass.gui.jfx:run
+```
 
 #### Regenerate Eclipse project files
 

@@ -3,5 +3,4 @@
 set SCRIPT_DIR=%~dp0
 if %SCRIPT_DIR:~-1%==\ set SCRIPT_DIR=%SCRIPT_DIR:~0,-1%
 REM set VM_OPTIONS=-Dorg.esoul.surpass.persist.datadir="%SCRIPT_DIR%"
-REM set VM_OPTIONS=%VM_OPTIONS% -Dorg.esoul.surpass.laf=com.formdev.flatlaf.FlatLightLaf
-"%SCRIPT_DIR%\jre\bin\javaw" %VM_OPTIONS% --enable-native-access=com.formdev.flatlaf -p "%SCRIPT_DIR%\mods" --add-modules ALL-MODULE-PATH,ALL-SYSTEM -m surpass.gui/org.esoul.surpass.gui.Main %*
+"%SCRIPT_DIR%\jre\bin\javaw" %VM_OPTIONS% --enable-native-access=javafx.graphics -Djavafx.enablePreview=true -Djavafx.suppressPreviewWarning=true -p "%SCRIPT_DIR%\mods" --add-modules ALL-MODULE-PATH,ALL-SYSTEM -m surpass.gui.jfx/org.esoul.surpass.gui.jfx.SurpassApplication %*
