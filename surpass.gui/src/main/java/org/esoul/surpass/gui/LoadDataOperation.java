@@ -24,6 +24,7 @@ package org.esoul.surpass.gui;
 import java.awt.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 import javax.swing.table.AbstractTableModel;
@@ -39,10 +40,12 @@ class LoadDataOperation extends BaseDataOperationWorker {
     private Session session;
     private char[] password;
     private String serviceId;
+    private MainWindowComponents components;
 
     LoadDataOperation(Session session, MainWindowComponents components, char[] password, String serviceId) {
         super(components.frame, components.operationProgressBar);
         this.tableModel = components.tableModel;
+        this.components = components;
         this.session = session;
         this.password = password;
         this.serviceId = serviceId;
@@ -58,6 +61,8 @@ class LoadDataOperation extends BaseDataOperationWorker {
             return parent -> MessageDialog.DECRYPT_ERROR.show(parent, "Secrets cannot be decrypted! " + e.getMessage());
         } catch (InvalidPasswordException e) {
             return parent -> MessageDialog.EMPTY_PASS_ERROR.show(parent, "Password is empty! Provide password and try again.");
+        } finally {
+            Arrays.fill(password, '\0');
         }
         return _ -> {
         };
@@ -66,5 +71,6 @@ class LoadDataOperation extends BaseDataOperationWorker {
     @Override
     protected void doneSuccess() {
         tableModel.fireTableDataChanged();
+        components.setVaultUnlocked(session.isUnlocked());
     }
 }

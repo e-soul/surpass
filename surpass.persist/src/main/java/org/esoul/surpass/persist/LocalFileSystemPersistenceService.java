@@ -24,6 +24,10 @@ package org.esoul.surpass.persist;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.nio.channels.FileChannel;
 
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PrimaryPersistenceService;
@@ -39,7 +43,29 @@ public class LocalFileSystemPersistenceService implements PrimaryPersistenceServ
     @Override
     public void write(String name, byte[] data) throws IOException {
         Path path = getPath(name);
-        Files.write(path, data);
+        Path temporary = Files.createTempFile(path.getParent(), path.getFileName().toString(), ".tmp");
+        boolean moved = false;
+        try {
+            try (FileChannel channel = FileChannel.open(temporary, StandardOpenOption.WRITE,
+                    StandardOpenOption.TRUNCATE_EXISTING)) {
+                java.nio.ByteBuffer buffer = java.nio.ByteBuffer.wrap(data);
+                while (buffer.hasRemaining()) {
+                    channel.write(buffer);
+                }
+                channel.force(true);
+            }
+            try {
+                Files.move(temporary, path, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporary, path, StandardCopyOption.REPLACE_EXISTING);
+            }
+            moved = true;
+        } finally {
+            if (!moved) {
+                Files.deleteIfExists(temporary);
+            }
+        }
     }
 
     @Override

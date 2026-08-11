@@ -91,6 +91,8 @@ import org.esoul.surpass.gui.masterpass.ChangeMasterPassWindow;
 import org.esoul.surpass.gui.table.SimpleTableModel;
 import org.esoul.surpass.gui.table.TextAreaTableCellEditor;
 import org.esoul.surpass.gui.table.TextAreaTableCellRenderer;
+import org.esoul.surpass.hello.api.HelloCapability;
+import org.esoul.surpass.hello.api.HelloPromptOwner;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.util.SystemInfo;
@@ -175,14 +177,32 @@ public final class MainWindow {
         JMenuItem changeMasterPassItem = new JMenuItem(Labels.MENU_ITEM_CHANGE_MASTER_PASS, KeyEvent.VK_C);
         changeMasterPassItem.addActionListener(this::changeMasterPass);
 
+        components.enableHelloMenuItem = new JMenuItem("Enable Windows Hello");
+        components.enableHelloMenuItem.setEnabled(false);
+        components.enableHelloMenuItem.addActionListener(this::enableHello);
+
+        components.removeHelloMenuItem = new JMenuItem("Remove Windows Hello");
+        components.removeHelloMenuItem.setEnabled(false);
+        components.removeHelloMenuItem.addActionListener(this::removeHello);
+
+        components.lockVaultMenuItem = new JMenuItem("Lock vault");
+        components.lockVaultMenuItem.setEnabled(false);
+        components.lockVaultMenuItem.addActionListener(this::lockVault);
+
         JMenuItem exitMenuItem = new JMenuItem(Labels.MENU_ITEM_EXIT, KeyEvent.VK_X);
-        exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
+        exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components,
+                session::lock));
 
         JMenu programMenu = new JMenu("Programme");
         programMenu.setMnemonic(KeyEvent.VK_P);
         programMenu.add(loadMenuItem);
         programMenu.add(storeMenuItem);
         programMenu.add(changeMasterPassItem);
+        programMenu.addSeparator();
+        programMenu.add(components.enableHelloMenuItem);
+        programMenu.add(components.removeHelloMenuItem);
+        programMenu.add(components.lockVaultMenuItem);
+        programMenu.addSeparator();
         programMenu.add(exitMenuItem);
 
         return programMenu;
@@ -470,7 +490,8 @@ public final class MainWindow {
                 storeMenuItem.addActionListener(this::storeData);
 
                 MenuItem exitMenuItem = new MenuItem(Labels.MENU_ITEM_EXIT);
-                exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists, components));
+                exitMenuItem.addActionListener(new ExitProgrammeHandler(session::unsavedDataExists,
+                        components, session::lock));
 
                 PopupMenu popupMenu = new PopupMenu("Surpass");
                 popupMenu.add(loadMenuItem);
@@ -499,6 +520,21 @@ public final class MainWindow {
         if (null == serviceId) {
             return;
         }
+        if (session.helloCapability() == HelloCapability.AVAILABLE
+                && session.isHelloEnrolled(serviceId)) {
+            Object[] options = { "Windows Hello", "Master password", "Cancel" };
+            int choice = JOptionPane.showOptionDialog(components.frame, "Choose how to unlock the vault.",
+                    "Unlock secrets", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
+            if (choice == 0) {
+                HelloPromptOwner owner = session.captureHelloPromptOwner();
+                new HelloLoadDataOperation(session, components, owner, serviceId).execute();
+                return;
+            }
+            if (choice != 1) {
+                return;
+            }
+        }
         char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
         if (null != password) {
             new LoadDataOperation(session, components, password, serviceId).execute();
@@ -511,10 +547,50 @@ public final class MainWindow {
         if (null == selectedServicesIds || selectedServicesIds.isEmpty()) {
             return;
         }
-        char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
-        if (null != password) {
-            new StoreDataOperation(session, components, password, selectedServicesIds).execute();
+        if (session.isUnlocked()) {
+            new StoreDataOperation(session, components, null, selectedServicesIds).execute();
+        } else {
+            char[] password = Dialogs.showPasswordInputDialog(components.frame, "Enter Master Password");
+            if (null != password) {
+                new StoreDataOperation(session, components, password, selectedServicesIds).execute();
+            }
         }
+    }
+
+    private void enableHello(ActionEvent actionEvent) {
+        if (!session.isUnlocked()) {
+            MessageDialog.GENERIC_ERROR.show(components.frame, "Unlock the vault with the master password first.");
+            return;
+        }
+        if (session.helloCapability() != HelloCapability.AVAILABLE) {
+            MessageDialog.GENERIC_ERROR.show(components.frame,
+                    "Windows Hello is unavailable: " + session.helloCapability());
+            return;
+        }
+        HelloPromptOwner owner = session.captureHelloPromptOwner();
+        new HelloEnrollmentOperation(session, components, owner, false).execute();
+    }
+
+    private void removeHello(ActionEvent actionEvent) {
+        if (!session.isUnlocked()) {
+            return;
+        }
+        new HelloEnrollmentOperation(session, components, HelloPromptOwner.none(), true).execute();
+    }
+
+    private void lockVault(ActionEvent actionEvent) {
+        if (session.unsavedDataExists()) {
+            int choice = JOptionPane.showConfirmDialog(components.frame,
+                    "Unsaved changes will be discarded. Lock the vault?", "Lock vault",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+        session.lock();
+        components.tableModel.fireTableDataChanged();
+        components.setEnabledTableButtons(false);
+        components.setVaultUnlocked(false);
     }
 
     private void changeMasterPass(ActionEvent actionEvent) {
@@ -522,7 +598,8 @@ public final class MainWindow {
             MessageDialog.SAVE_DATA_INFO.show(components.frame, "You have unsaved data.\nSave your data before changing the Master Password.");
             return;
         }
-        ChangeMasterPassPolicy policy = new ChangeMasterPassPolicy(session);
+        ChangeMasterPassPolicy policy = new ChangeMasterPassPolicy(session,
+                session.captureHelloPromptOwner());
         ChangeMasterPassWindow.createAndShow(components.frame, components.operationProgressBar, policy);
     }
 }

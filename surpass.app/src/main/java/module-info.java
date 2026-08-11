@@ -22,6 +22,7 @@
 
 import org.esoul.surpass.crypto.api.ContextAwareCryptoServiceAbstractFactory;
 import org.esoul.surpass.crypto.api.CryptoService;
+import org.esoul.surpass.hello.api.VaultUnlockService;
 import org.esoul.surpass.persist.api.PersistenceService;
 import org.esoul.surpass.persist.api.PrimaryPersistenceService;
 import org.esoul.surpass.secgen.api.RandomSecretService;
@@ -30,6 +31,7 @@ import org.esoul.surpass.table.api.SecretTable;
 module surpass.app {
 
     requires transitive surpass.api;
+    requires surpass.hello;
 
     uses CryptoService;
     uses ContextAwareCryptoServiceAbstractFactory;
@@ -37,6 +39,7 @@ module surpass.app {
     uses PrimaryPersistenceService;
     uses SecretTable;
     uses RandomSecretService;
+    uses VaultUnlockService;
 
     exports org.esoul.surpass.app;
 }

@@ -24,15 +24,18 @@ package org.esoul.surpass.app;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.nio.file.NoSuchFileException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.esoul.surpass.crypto.api.ContextAwareCryptoService;
-import org.esoul.surpass.crypto.api.ContextAwareCryptoServiceAbstractFactory;
-import org.esoul.surpass.crypto.api.CryptoService;
+import org.esoul.surpass.hello.api.HelloCapability;
+import org.esoul.surpass.hello.api.HelloPromptOwner;
+import org.esoul.surpass.hello.api.UnlockedVault;
+import org.esoul.surpass.hello.api.UnlockException;
+import org.esoul.surpass.hello.api.VaultUnlockService;
 import org.esoul.surpass.persist.api.PersistenceDefaults;
 import org.esoul.surpass.persist.api.PersistenceService;
 import org.esoul.surpass.persist.api.PrimaryPersistenceService;
@@ -63,9 +66,9 @@ public class Session {
 
     private SecretTable secretTable = null;
 
-    private CryptoService cryptoService = null;
+    private VaultUnlockService vaultUnlockService = null;
 
-    private ContextAwareCryptoServiceAbstractFactory contextAwareCryptoAbstractFactory = null;
+    private UnlockedVault unlockedVault = null;
 
     private RandomSecretService randomSecretService = null;
 
@@ -87,8 +90,7 @@ public class Session {
     }
 
     private void createCollaborators() throws ServiceUnavailableException {
-        cryptoService = collaboratorFactory.obtainOne(CryptoService.class);
-        contextAwareCryptoAbstractFactory = collaboratorFactory.obtainOne(ContextAwareCryptoServiceAbstractFactory.class);
+        vaultUnlockService = collaboratorFactory.obtainOne(VaultUnlockService.class);
         primaryPersistenceService = collaboratorFactory.obtainOne(PrimaryPersistenceService.class);
         persistenceServiceMap = collaboratorFactory.obtainAll(PersistenceService.class).collect(Collectors.toMap(PersistenceService::getId, s -> s));
         secretTable = collaboratorFactory.obtainOne(SecretTable.class);
@@ -119,10 +121,19 @@ public class Session {
         if ((null == password) || (0 == password.length)) {
             throw new InvalidPasswordException("Password is null or empty!");
         }
-        char[] passwordHash = cryptoService.digest(password);
+        PersistenceService persistenceService = requirePersistenceService(serviceId);
+        UnlockedVault candidate = null;
         try {
-            byte[] clearText = readCipherTextAndDecrypt(passwordHash, password, serviceId);
-            secretTable.load(clearText);
+            candidate = vaultUnlockService.unlockWithPassword(password, persistenceService);
+            vaultUnlockService.commitMigration(candidate, persistenceService);
+            byte[] clearText = candidate.copyPlaintext();
+            try {
+                secretTable.load(clearText);
+            } finally {
+                Arrays.fill(clearText, (byte) 0);
+            }
+            replaceUnlockedVault(candidate);
+            candidate = null;
             state.dataFileLoaded = true;
         } catch (IOException e) {
             logger.log(Level.ERROR, () -> "Load secrets error!", e);
@@ -130,27 +141,55 @@ public class Session {
         } catch (GeneralSecurityException e) {
             logger.log(Level.ERROR, () -> "Decrypt secrets error!", e);
             throw e;
+        } catch (UnlockException e) {
+            if (e.reason() == UnlockException.Reason.INVALID_PASSWORD) {
+                throw new InvalidPasswordException(e);
+            }
+            throw new GeneralSecurityException(e.getMessage(), e);
+        } finally {
+            if (candidate != null) {
+                candidate.close();
+            }
+        }
+    }
+
+    public void loadDataWithHello(HelloPromptOwner promptOwner, String serviceId)
+            throws IOException, GeneralSecurityException, UnlockException {
+        PersistenceService persistenceService = requirePersistenceService(serviceId);
+        UnlockedVault candidate = vaultUnlockService.unlockWithHello(promptOwner, persistenceService);
+        try {
+            byte[] clearText = candidate.copyPlaintext();
+            try {
+                secretTable.load(clearText);
+            } finally {
+                Arrays.fill(clearText, (byte) 0);
+            }
+            replaceUnlockedVault(candidate);
+            candidate = null;
+            state.dataFileLoaded = true;
+        } finally {
+            if (candidate != null) {
+                candidate.close();
+            }
         }
     }
 
     public void changeMasterPassAndStoreData(char[] currentMasterPass, char[] newMasterPass, Collection<String> serviceIds)
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
+        changeMasterPassAndStoreData(HelloPromptOwner.none(), currentMasterPass, newMasterPass, serviceIds);
+    }
+
+    public void changeMasterPassAndStoreData(HelloPromptOwner promptOwner, char[] currentMasterPass,
+            char[] newMasterPass, Collection<String> serviceIds)
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != newMasterPass) {
-            char[] currentPasswordHash = cryptoService.digest(currentMasterPass);
-            char[] newPasswordHash = cryptoService.digest(newMasterPass);
             try {
-                checkCanDecryptPassword(currentPasswordHash, currentMasterPass, serviceIds);
-                byte[] clearText = secretTable.toOneDimension();
-                byte[] cipherText = cryptoService.encrypt(newMasterPass, clearText);
-                ContextAwareCryptoService currentContextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, currentPasswordHash);
-                ContextAwareCryptoService newContextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, newPasswordHash);
-                for (String serviceId : serviceIds) {
-                    PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
-                    persistenceService.authorize(currentContextAwareCrypto);
-                    persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
-                    persistenceService.regenerateSupprtingData(newContextAwareCrypto);
+                if (unlockedVault == null) {
+                    throw new ExistingDataNotLoadedException();
                 }
+                vaultUnlockService.changeMasterPassword(promptOwner, unlockedVault,
+                        currentMasterPass, newMasterPass, persistenceServices(serviceIds));
                 state.unsavedDataExist = false;
             } catch (IOException e) {
                 logger.log(Level.ERROR, () -> "Store secrets error!", e);
@@ -158,6 +197,11 @@ public class Session {
             } catch (GeneralSecurityException e) {
                 logger.log(Level.ERROR, () -> "Encrypt secrets error!", e);
                 throw e;
+            } catch (UnlockException e) {
+                if (e.reason() == UnlockException.Reason.INVALID_PASSWORD) {
+                    throw new InvalidPasswordException(e);
+                }
+                throw new GeneralSecurityException(e.getMessage(), e);
             }
         }
     }
@@ -177,18 +221,18 @@ public class Session {
             throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         checkDataLoaded();
         if (null != password) {
-            char[] passwordHash = cryptoService.digest(password);
             try {
-                checkCanDecryptPassword(passwordHash, password, serviceIds);
-                byte[] clearText = secretTable.toOneDimension();
-                byte[] cipherText = cryptoService.encrypt(password, clearText);
-                ContextAwareCryptoService contextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, passwordHash);
-                for (String serviceId : serviceIds) {
-                    PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
-                    persistenceService.authorize(contextAwareCrypto);
-                    persistenceService.write(PersistenceDefaults.DEFAULT_SECRETS, cipherText);
+                if (unlockedVault == null) {
+                    String unlockServiceId = selectUnlockService(serviceIds);
+                    unlockedVault = vaultUnlockService.unlockWithPassword(password,
+                            requirePersistenceService(unlockServiceId));
+                } else if (!vaultUnlockService.verifyPassword(unlockedVault, password)) {
+                    throw new InvalidPasswordException("Incorrect master password");
                 }
+                storeWithActiveVault(serviceIds);
                 state.unsavedDataExist = false;
+                state.dataFileExist = true;
+                state.dataFileLoaded = true;
             } catch (IOException e) {
                 logger.log(Level.ERROR, () -> "Store secrets error!", e);
                 throw e;
@@ -198,31 +242,66 @@ public class Session {
             } catch (InvalidPasswordException e) {
                 logger.log(Level.ERROR, () -> "Invalid password error!", e);
                 throw e;
+            } catch (UnlockException e) {
+                if (e.reason() == UnlockException.Reason.INVALID_PASSWORD) {
+                    throw new InvalidPasswordException(e);
+                }
+                throw new GeneralSecurityException(e.getMessage(), e);
             }
         }
     }
 
-    private void checkCanDecryptPassword(char[] passwordHash, char[] password, Collection<String> serviceIds) throws IOException, InvalidPasswordException {
+    public void storeData(Collection<String> serviceIds)
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException {
+        checkDataLoaded();
+        if (unlockedVault == null) {
+            throw new ExistingDataNotLoadedException();
+        }
+        storeWithActiveVault(serviceIds);
+        state.unsavedDataExist = false;
+        state.dataFileExist = true;
+        state.dataFileLoaded = true;
+    }
+
+    private void storeWithActiveVault(Collection<String> serviceIds)
+            throws IOException, GeneralSecurityException {
+        byte[] clearText = secretTable.toOneDimension();
         try {
-            for (var serviceId : serviceIds) {
-                readCipherTextAndDecrypt(passwordHash, password, serviceId);
-            }
-        } catch (GeneralSecurityException e) {
-            throw new InvalidPasswordException(e);
-        } catch (NoSuchFileException e) {
-            logger.log(Level.TRACE, () -> "Checking password on a nonexistent data file.", e);
+            vaultUnlockService.store(unlockedVault, clearText, persistenceServices(serviceIds));
+        } finally {
+            Arrays.fill(clearText, (byte) 0);
         }
     }
 
-    private byte[] readCipherTextAndDecrypt(char[] passwordHash, char[] password, String serviceId) throws IOException, GeneralSecurityException {
-        ContextAwareCryptoService contextAwareCrypto = contextAwareCryptoAbstractFactory.create(cryptoService, passwordHash);
-        PersistenceService persistenceService = persistenceServiceMap.get(serviceId);
-        persistenceService.authorize(contextAwareCrypto);
-        byte[] cipherText = persistenceService.read(PersistenceDefaults.DEFAULT_SECRETS);
-        if (cipherText.length == 0) {
-            return cipherText;
+    private Collection<PersistenceService> persistenceServices(Collection<String> serviceIds) {
+        Collection<PersistenceService> result = new ArrayList<>(serviceIds.size());
+        for (String serviceId : serviceIds) {
+            result.add(requirePersistenceService(serviceId));
         }
-        return cryptoService.decrypt(password, cipherText);
+        return result;
+    }
+
+    private PersistenceService requirePersistenceService(String serviceId) {
+        PersistenceService service = persistenceServiceMap.get(serviceId);
+        if (service == null) {
+            throw new IllegalArgumentException("Unknown persistence service: " + serviceId);
+        }
+        return service;
+    }
+
+    private String selectUnlockService(Collection<String> serviceIds) {
+        if (serviceIds.contains(primaryPersistenceService.getId())) {
+            return primaryPersistenceService.getId();
+        }
+        return serviceIds.stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No persistence service selected"));
+    }
+
+    private void replaceUnlockedVault(UnlockedVault replacement) {
+        if (unlockedVault != null) {
+            unlockedVault.close();
+        }
+        unlockedVault = replacement;
     }
 
     /**
@@ -305,6 +384,66 @@ public class Session {
      */
     public boolean unsavedDataExists() {
         return state.unsavedDataExist;
+    }
+
+    public boolean isUnlocked() {
+        return unlockedVault != null;
+    }
+
+    public HelloCapability helloCapability() {
+        return vaultUnlockService.helloCapability();
+    }
+
+    public boolean isHelloEnrolled(String persistenceServiceId) {
+        return vaultUnlockService.isHelloEnrolled(persistenceServiceId);
+    }
+
+    public HelloPromptOwner captureHelloPromptOwner() {
+        return vaultUnlockService.capturePromptOwner();
+    }
+
+    public void enrollHello(HelloPromptOwner promptOwner)
+            throws ExistingDataNotLoadedException, IOException, GeneralSecurityException, UnlockException {
+        if (unlockedVault == null) {
+            throw new ExistingDataNotLoadedException();
+        }
+        vaultUnlockService.enrollHello(promptOwner, unlockedVault);
+    }
+
+    public void removeHello()
+            throws ExistingDataNotLoadedException, IOException, UnlockException {
+        if (unlockedVault == null) {
+            throw new ExistingDataNotLoadedException();
+        }
+        vaultUnlockService.removeHello(unlockedVault);
+    }
+
+    public String activePersistenceServiceId() {
+        return unlockedVault == null ? null : unlockedVault.persistenceServiceId();
+    }
+
+    public void cancelHello() {
+        vaultUnlockService.cancelHello();
+    }
+
+    /** Erases the active unlock context and clears all decrypted table data. */
+    public void lock() {
+        if (unlockedVault != null) {
+            unlockedVault.close();
+            unlockedVault = null;
+        }
+        if (secretTable != null) {
+            byte[] clear = secretTable.toOneDimension();
+            try {
+                Arrays.fill(clear, (byte) 0);
+                secretTable.load(clear);
+            } finally {
+                Arrays.fill(clear, (byte) 0);
+            }
+        }
+        state.dataFileLoaded = false;
+        state.unsavedDataExist = false;
+        state.currentlyEditedRow = -1;
     }
 
     /**
