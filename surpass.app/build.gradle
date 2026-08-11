@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     implementation project(":surpass.api")
+    implementation project(":surpass.hello")
 }

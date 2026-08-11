@@ -30,31 +30,56 @@ import java.util.Map;
 import org.esoul.surpass.app.ExistingDataNotLoadedException;
 import org.esoul.surpass.app.InvalidPasswordException;
 import org.esoul.surpass.app.Session;
+import org.esoul.surpass.hello.api.HelloPromptOwner;
 
 public class ChangeMasterPassPolicy {
 
     private Session session = null;
+    private HelloPromptOwner promptOwner;
 
     public ChangeMasterPassPolicy(Session session) {
+        this(session, HelloPromptOwner.none());
+    }
+
+    public ChangeMasterPassPolicy(Session session, HelloPromptOwner promptOwner) {
         this.session = session;
+        this.promptOwner = promptOwner;
     }
 
     public void executeChange(ChangeMasterPassComponents components, Collection<String> selectedServices)
             throws NewMasterPassInputMismatchException, ExistingDataNotLoadedException, IOException, GeneralSecurityException, InvalidPasswordException {
         char[] currentMasterPass = components.currentMasterPasswordField.getPassword();
-        if (new String(components.currentMasterPasswordField.getPassword()).trim().isEmpty()) {
-            throw new InvalidPasswordException("Current Master Password cannot be empty!");
+        char[] newMasterPass = components.newMasterPasswordField.getPassword();
+        char[] repeatedNewMasterPass = components.repeatedNewMasterPasswordField.getPassword();
+        try {
+            if (isBlank(currentMasterPass)) {
+                throw new InvalidPasswordException("Current Master Password cannot be empty!");
+            }
+            if (!Arrays.equals(newMasterPass, repeatedNewMasterPass)) {
+                throw new NewMasterPassInputMismatchException();
+            }
+            if (Arrays.equals(currentMasterPass, newMasterPass)) {
+                return;
+            }
+            session.changeMasterPassAndStoreData(promptOwner, currentMasterPass, newMasterPass,
+                    selectedServices);
+        } finally {
+            Arrays.fill(currentMasterPass, '\0');
+            Arrays.fill(newMasterPass, '\0');
+            Arrays.fill(repeatedNewMasterPass, '\0');
         }
-        if (!Arrays.equals(components.newMasterPasswordField.getPassword(), components.repeatedNewMasterPasswordField.getPassword())) {
-            throw new NewMasterPassInputMismatchException();
+    }
+
+    private static boolean isBlank(char[] value) {
+        if (value.length == 0) {
+            return true;
         }
-        if (Arrays.equals(components.currentMasterPasswordField.getPassword(), components.newMasterPasswordField.getPassword())) {
-            return;
+        for (char character : value) {
+            if (!Character.isWhitespace(character)) {
+                return false;
+            }
         }
-        if (session.unsavedDataExists()) {
-            
-        }
-        session.changeMasterPassAndStoreData(currentMasterPass, components.newMasterPasswordField.getPassword(), selectedServices);
+        return true;
     }
 
     public Map<String, String> getSupportedPersistenceServices() {

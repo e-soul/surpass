@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -41,10 +42,12 @@ class StoreDataOperation extends BaseDataOperationWorker {
     private Session session = null;
     private char[] password = null;
     private Collection<String> selectedServicesIds;
+    private MainWindowComponents components;
 
     StoreDataOperation(Session session, MainWindowComponents components, char[] password, Collection<String> selectedServicesIds) {
         super(components.frame, components.operationProgressBar);
         this.tableModel = components.tableModel;
+        this.components = components;
         this.session = session;
         this.password = password;
         this.selectedServicesIds = new ArrayList<>(selectedServicesIds);
@@ -53,7 +56,11 @@ class StoreDataOperation extends BaseDataOperationWorker {
     @Override
     protected Consumer<Component> operation() {
         try {
-            session.storeData(password, selectedServicesIds);
+            if (password == null) {
+                session.storeData(selectedServicesIds);
+            } else {
+                session.storeData(password, selectedServicesIds);
+            }
         } catch (IOException e) {
             return parent -> MessageDialog.STORE_ERROR.show(parent, "Secrets cannot be stored! " + e.getMessage());
         } catch (GeneralSecurityException e) {
@@ -64,6 +71,10 @@ class StoreDataOperation extends BaseDataOperationWorker {
         } catch (InvalidPasswordException e) {
             return parent -> MessageDialog.INVALID_PASS_ERROR.show(parent,
                     "This password cannot be used to decrypt your secrets, therefore it cannot be used to encrypt them as well!");
+        } finally {
+            if (password != null) {
+                Arrays.fill(password, '\0');
+            }
         }
         return _ -> {
         };
@@ -72,5 +83,6 @@ class StoreDataOperation extends BaseDataOperationWorker {
     @Override
     protected void doneSuccess() {
         tableModel.fireTableDataChanged();
+        components.setVaultUnlocked(session.isUnlocked());
     }
 }

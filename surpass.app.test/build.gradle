@@ -9,6 +9,7 @@ repositories {
 dependencies {
     testImplementation project(":surpass.api")
     testImplementation project(":surpass.app")
+    testImplementation project(":surpass.hello")
     testImplementation project(":surpass.test")
     testRuntimeOnly project(":surpass.core")
     testRuntimeOnly project(":surpass.persist")

@@ -34,9 +34,18 @@ public class ExitProgrammeHandler implements ActionListener {
 
     private MainWindowComponents components = null;
 
+    private Runnable cleanup;
+
     public ExitProgrammeHandler(BooleanSupplier unsavedDataExistSupplier, MainWindowComponents components) {
+        this(unsavedDataExistSupplier, components, () -> {
+        });
+    }
+
+    public ExitProgrammeHandler(BooleanSupplier unsavedDataExistSupplier, MainWindowComponents components,
+            Runnable cleanup) {
         this.unsavedDataExistSupplier = unsavedDataExistSupplier;
         this.components = components;
+        this.cleanup = cleanup;
     }
 
     @Override
@@ -50,6 +59,7 @@ public class ExitProgrammeHandler implements ActionListener {
             selectedOption = JOptionPane.showConfirmDialog(components.frame, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
         }
         if (JOptionPane.YES_OPTION == selectedOption) {
+            cleanup.run();
             if (SystemTray.isSupported()) {
                 SystemTray.getSystemTray().remove(components.trayIcon);
             }

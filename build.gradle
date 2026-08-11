@@ -38,17 +38,26 @@ def jre = "${output}/jre"
 def distArchive = "${distDir}/surpass-${version}-${osName}-${osArch}.zip"
 def distArchiveTar = "${distDir}/surpass-${version}-${osName}-${osArch}.tar"
 
+evaluationDependsOn(":surpass.gui")
+
 task generateAppImage(type: Exec) {
+    def surpassMods = ["surpass.api", "surpass.hello", "surpass.app", "surpass.core",
+            "surpass.persist", "surpass.gui"]
+    dependsOn surpassMods.collect { ":${it}:jar" }
+
     doFirst {
         delete distDir
+        def gui = project(":surpass.gui")
+        def moduleFiles = gui.configurations.runtimeClasspath.files.findAll { file ->
+            file.name.startsWith("surpass.") || file.name.startsWith("flatlaf-")
+        } + [gui.tasks.named("jar").get().archiveFile.get().asFile]
+        def modulePath = moduleFiles.join(System.properties["path.separator"])
+        commandLine new File(System.getProperty("java.home"), "/bin/jlink"),
+                    "--module-path", modulePath, "--add-modules", surpassMods.join(","),
+                    "--output", output, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main",
+                    "--add-options=--enable-native-access=com.formdev.flatlaf,surpass.hello",
+                    "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
     }
-
-    def jlink = new File(System.getProperty("java.home"), "/bin/jlink")
-    def surpassMods = ["surpass.api", "surpass.app", "surpass.core", "surpass.persist", "surpass.gui"]
-    def modulePath = surpassMods.collect { new File(project(it).buildDir, "libs/${it}-${version}.jar") }.join(System.properties["path.separator"])
-    commandLine jlink, "--module-path", modulePath, "--add-modules", surpassMods.join(","), 
-                "--output", output, "--launcher", "surpass=surpass.gui/org.esoul.surpass.gui.Main", 
-                "--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -84,8 +93,6 @@ task generateJre(type: Exec) {
     commandLine jlink, "--add-modules", "jdk.httpserver,java.desktop,java.logging,jdk.crypto.cryptoki,java.compiler",
                 "--output", jre, "--strip-debug", "--compress", "zip-6", "--no-header-files", "--no-man-pages"
 }
-
-evaluationDependsOn(":surpass.gui")
 
 task generateAppDist(type: Sync) {
     doFirst {

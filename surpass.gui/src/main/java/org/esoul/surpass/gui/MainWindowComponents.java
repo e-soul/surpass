@@ -45,6 +45,12 @@ final class MainWindowComponents {
 
     JMenuItem removeSecretMenuItem = null;
 
+    JMenuItem enableHelloMenuItem = null;
+
+    JMenuItem removeHelloMenuItem = null;
+
+    JMenuItem lockVaultMenuItem = null;
+
     JTable table = null;
 
     AbstractTableModel tableModel = null;
@@ -69,5 +75,17 @@ final class MainWindowComponents {
         showSecretButton.setEnabled(enabled);
         editRowButton.setEnabled(enabled);
         removeRowButton.setEnabled(enabled);
+    }
+
+    void setVaultUnlocked(boolean unlocked) {
+        if (enableHelloMenuItem != null) {
+            enableHelloMenuItem.setEnabled(unlocked);
+        }
+        if (removeHelloMenuItem != null) {
+            removeHelloMenuItem.setEnabled(unlocked);
+        }
+        if (lockVaultMenuItem != null) {
+            lockVaultMenuItem.setEnabled(unlocked);
+        }
     }
 }

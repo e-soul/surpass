@@ -24,6 +24,7 @@ module surpass.gui {
     requires surpass.api;
     requires surpass.core;
     requires surpass.app;
+    requires surpass.hello;
 
     uses org.esoul.surpass.crypto.api.CryptoService;
     uses org.esoul.surpass.persist.api.PersistenceService;
