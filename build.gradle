@@ -36,7 +36,7 @@ interface ExecOps {
     ExecOperations getExecOperations()
 }
 
-def execOps = project.objects.newInstance(ExecOps)
+def execOps = project.objects.newInstance(ExecOps).execOperations
 
 def osName = (project.findProperty("osName") ?: System.properties["os.name"]).toLowerCase().replaceAll("\\s+", "")
 def osArch = project.findProperty("osArch") ?: System.properties["os.arch"]
