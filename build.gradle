@@ -1,6 +1,7 @@
 import org.gradle.plugins.ide.eclipse.model.AbstractLibrary
 import org.gradle.plugins.ide.eclipse.model.Container
 import org.gradle.plugins.ide.eclipse.model.ProjectDependency
+import javax.inject.Inject
 
 subprojects {
     apply plugin: "eclipse"
@@ -29,6 +30,13 @@ subprojects {
         }
     }
 }
+
+interface ExecOps {
+    @Inject
+    ExecOperations getExecOperations()
+}
+
+def execOps = project.objects.newInstance(ExecOps)
 
 def osName = (project.findProperty("osName") ?: System.properties["os.name"]).toLowerCase().replaceAll("\\s+", "")
 def osArch = project.findProperty("osArch") ?: System.properties["os.arch"]
@@ -125,13 +133,13 @@ task generateAppDist(type: Sync) {
         } else {
             ant.chmod(file: "${output}/surpass", perm: "+x")
             ant.chmod(file: "${output}/jre/bin/java", perm: "+x")
-            exec {
-                workingDir distDir
-                commandLine "tar", "-cf", distArchiveTar, "surpass"
+            execOps.exec { spec ->
+                spec.workingDir = distDir
+                spec.commandLine = ["tar", "-cf", distArchiveTar, "surpass"]
             }
-            exec {
-                workingDir distDir
-                commandLine "bzip2", distArchiveTar
+            execOps.exec { spec ->
+                spec.workingDir = distDir
+                spec.commandLine = ["bzip2", distArchiveTar]
             }
         }
     }
