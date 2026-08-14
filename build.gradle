@@ -30,8 +30,8 @@ subprojects {
     }
 }
 
-def osName = System.properties["os.name"].toLowerCase().replaceAll("\\s+", "")
-def osArch = System.properties["os.arch"]
+def osName = (project.findProperty("osName") ?: System.properties["os.name"]).toLowerCase().replaceAll("\\s+", "")
+def osArch = project.findProperty("osArch") ?: System.properties["os.arch"]
 def distDir = "${projectDir}/dist"
 def output = "${distDir}/surpass"
 def jre = "${output}/jre"

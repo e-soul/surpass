@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }} distribution
+    runs-on: ${{ matrix.runner }}
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            runner: windows-2025
+            os-name: windows11
+          - name: Linux
+            runner: ubuntu-24.04
+            os-name: linux
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 26
+        uses: actions/setup-java@v5
+        with:
+          java-version: "26"
+          distribution: "oracle"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: "9.7.0"
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build ${{ matrix.name }} distribution
+        run: gradle build generateAppDist "-Pversion=${{ steps.version.outputs.version }}" "-PosName=${{ matrix.os-name }}"
+
+      - name: Upload ${{ matrix.name }} distribution
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.os-name }}-dist
+          path: dist/surpass-*-*
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download distribution archives
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "*-dist"
+          path: release-assets
+          merge-multiple: true
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: Surpass ${{ needs.build.outputs.version }}
+          draft: true
+          generate_release_notes: true
+          files: release-assets/*
+          fail_on_unmatched_files: true
