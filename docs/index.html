@@ -1,259 +1,316 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7EVTCD88VS"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Surpass - simple, secure password manager</title>
+<meta name="description" content="Surpass is a free and open source, multi-platform password manager with focus on simplicity. AES-128 encryption, no installation, around 50MB, Windows and Linux.">
+<link rel="canonical" href="https://surpass.e-soul.org/">
+<meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f5f8fc" media="(prefers-color-scheme: light)">
 
-        gtag('config', 'G-7EVTCD88VS');
-    </script>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <meta charset="UTF-8">
-    <meta name="description" content="Surpass home page">
-    <meta name="keywords" content="surpass,password manager,security,encryption,vault,password,secret,gui">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/3ea9a29bf6.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="styles/default.css">
-    <link rel="stylesheet" type="text/css" href="styles/grid.css">
-    <link rel="icon" type="image/png" href="img/icon-32x32.png" sizes="32x32">
-    <title>Surpass</title>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://surpass.e-soul.org/">
+<meta property="og:title" content="Surpass - simple, secure password manager">
+<meta property="og:description" content="A free and open source, multi-platform password manager with focus on simplicity.">
+<meta property="og:image" content="https://surpass.e-soul.org/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" href="img/icon-32x32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-<div id="content" class="grid-container">
-    <div class="header">
-        <img id="logo-img" src="img/logo.png" alt="Surpass logo">
-        <article id="descr-short">Simple, secure and easy to use password manager.</article>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></symbol>
+    <symbol id="i-linux" viewBox="0 0 24 24"><path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.4v.019c.002.089.008.179.02.267-.193-.067-.438-.135-.607-.202a1.635 1.635 0 01-.018-.2v-.02a1.772 1.772 0 01.15-.768c.082-.22.232-.406.43-.533a.985.985 0 01.594-.2zm-2.962.059h.036c.142 0 .27.048.399.135.146.129.264.288.344.465.09.199.14.4.153.667v.004c.007.134.006.2-.002.266v.08c-.03.007-.056.018-.083.024-.152.055-.274.135-.393.2.012-.09.013-.18.003-.267v-.015c-.012-.133-.04-.2-.082-.333a.613.613 0 00-.166-.267.248.248 0 00-.183-.064h-.021c-.071.006-.13.04-.186.132a.552.552 0 00-.12.27.944.944 0 00-.023.33v.015c.012.135.037.2.08.334.046.134.098.2.166.268.01.009.02.018.034.024-.07.057-.117.07-.176.136a.304.304 0 01-.131.068 2.62 2.62 0 01-.275-.402 1.772 1.772 0 01-.155-.667 1.759 1.759 0 01.08-.668 1.43 1.43 0 01.283-.535c.128-.133.26-.2.418-.2zm1.37 1.706c.332 0 .733.065 1.216.399.293.2.523.269 1.052.468h.003c.255.136.405.266.478.399v-.131a.571.571 0 01.016.47c-.123.31-.516.643-1.063.842v.002c-.268.135-.501.333-.775.465-.276.135-.588.292-1.012.267a1.139 1.139 0 01-.448-.067 3.566 3.566 0 01-.322-.198c-.195-.135-.363-.332-.612-.465v-.005h-.005c-.4-.246-.616-.512-.686-.71-.07-.268-.005-.47.193-.6.224-.135.38-.271.483-.336.104-.074.143-.102.176-.131h.002v-.003c.169-.202.436-.47.839-.601.139-.036.294-.065.466-.065zm2.8 2.142c.358 1.417 1.196 3.475 1.735 4.473.286.534.855 1.659 1.102 3.024.156-.005.33.018.513.064.646-1.671-.546-3.467-1.089-3.966-.22-.2-.232-.335-.123-.335.59.534 1.365 1.572 1.646 2.757.13.535.16 1.104.021 1.67.067.028.135.06.205.067 1.032.534 1.413.938 1.23 1.537v-.043c-.06-.003-.12 0-.18 0h-.016c.151-.467-.182-.825-1.065-1.224-.915-.4-1.646-.336-1.77.465-.008.043-.013.066-.018.135-.068.023-.139.053-.209.064-.43.268-.662.669-.793 1.187-.13.533-.17 1.156-.205 1.869v.003c-.02.334-.17.838-.319 1.35-1.5 1.072-3.58 1.538-5.348.334a2.645 2.645 0 00-.402-.533 1.45 1.45 0 00-.275-.333c.182 0 .338-.03.465-.067a.615.615 0 00.314-.334c.108-.267 0-.697-.345-1.163-.345-.467-.931-.995-1.788-1.521-.63-.4-.986-.87-1.15-1.396-.165-.534-.143-1.085-.015-1.645.245-1.07.873-2.11 1.274-2.763.107-.065.037.135-.408.974-.396.751-1.14 2.497-.122 3.854a8.123 8.123 0 01.647-2.876c.564-1.278 1.743-3.504 1.836-5.268.048.036.217.135.289.202.218.133.38.333.59.465.21.201.477.335.876.335.039.003.075.006.11.006.412 0 .73-.134.997-.268.29-.134.52-.334.74-.4h.005c.467-.135.835-.402 1.044-.7zm2.185 8.958c.037.6.343 1.245.882 1.377.588.134 1.434-.333 1.791-.765l.211-.01c.315-.007.577.01.847.268l.003.003c.208.199.305.53.391.876.085.4.154.78.409 1.066.486.527.645.906.636 1.14l.003-.007v.018l-.003-.012c-.015.262-.185.396-.498.595-.63.401-1.746.712-2.457 1.57-.618.737-1.37 1.14-2.036 1.191-.664.053-1.237-.2-1.574-.898l-.005-.003c-.21-.4-.12-1.025.056-1.69.176-.668.428-1.344.463-1.897.037-.714.076-1.335.195-1.814.12-.465.308-.797.641-.984l.045-.022zm-10.814.049h.01c.053 0 .105.005.157.014.376.055.706.333 1.023.752l.91 1.664.003.003c.243.533.754 1.064 1.189 1.637.434.598.77 1.131.729 1.57v.006c-.057.744-.48 1.148-1.125 1.294-.645.135-1.52.002-2.395-.464-.968-.536-2.118-.469-2.857-.602-.369-.066-.61-.2-.723-.4-.11-.2-.113-.602.123-1.23v-.004l.002-.003c.117-.334.03-.752-.027-1.118-.055-.401-.083-.71.043-.94.16-.334.396-.4.69-.533.294-.135.64-.202.915-.47h.002v-.002c.256-.268.445-.601.668-.838.19-.201.38-.336.663-.336zm7.159-9.074c-.435.201-.945.535-1.488.535-.542 0-.97-.267-1.28-.466-.154-.134-.28-.268-.373-.335-.164-.134-.144-.333-.074-.333.109.016.129.134.199.2.096.066.215.2.36.333.292.2.68.467 1.167.467.485 0 1.053-.267 1.398-.466.195-.135.445-.334.648-.467.156-.136.149-.267.279-.267.128.016.034.134-.147.332a8.097 8.097 0 01-.69.468zm-1.082-1.583V5.64c-.006-.02.013-.042.029-.05.074-.043.18-.027.26.004.063 0 .16.067.15.135-.006.049-.085.066-.135.066-.055 0-.092-.043-.141-.068-.052-.018-.146-.008-.163-.065zm-.551 0c-.02.058-.113.049-.166.066-.047.025-.086.068-.14.068-.05 0-.13-.02-.136-.068-.01-.066.088-.133.15-.133.08-.031.184-.047.259-.005.019.009.036.03.03.05v.02h.003z"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M0,0H11.377V11.372H0ZM12.623,0H24V11.372H12.623ZM0,12.623H11.377V24H0Zm12.623,0H24V24H12.623"/></symbol>
+    <symbol id="i-sourceforge" viewBox="0 0 24 24"><path d="M9.998 1.4648c-.088 0-.1761.0395-.2402.1036L.1016 11.2148c-.1361.1281-.1361.3444 0 .4805l9.1523 9.1348c.064.072.1522.1054.2402.1054.0881 0 .1743-.0414.2383-.1054l1.3692-1.3848c.136-.128.136-.3444 0-.4805l-7.172-7.1738a.4682.4682 0 010-.664l9.0782-9.0782c.1201-.12.1123-.2728.0723-.377-.04-.096-.1444-.207-.3125-.207H9.998zm4.5313 1.5918c-.088 0-.1762.0415-.2402.1055l-1.3926 1.3926c-.1361.128-.1361.3444 0 .4805l7.1719 7.1816c.088.088.1367.208.1367.3281 0 .1201-.0487.24-.1367.3281l-9.0782 9.0782c-.12.12-.1123.2728-.0722.377.04.096.1443.207.3125.207v-.0079H14c.088 0 .1762-.0316.2402-.0957l9.6563-9.6543c.072-.064.1035-.1521.1035-.2402 0-.088-.0395-.1762-.1035-.2402l-9.127-9.1348c-.064-.072-.1521-.1055-.2402-.1055zM11.4336 6.213c-.1125.005-.2164.1007-.211.2383.1442 2.2176-2.6425 2.7635-2.6425 6.246v.0235c0 2.1216 1.6026 3.8418 3.58 3.8418 1.9775 0 3.5782-1.7202 3.5782-3.8418v-.0234c0-.9848-.3679-1.9225-.7442-2.627-.072-.136-.2896-.087-.2656.041.6725 2.9943-1.0156 4.8507-1.0156 2.545 0-3.931-1.3943-5.7162-2.1309-6.3887a.2072.2072 0 00-.1484-.0547Z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></symbol>
+    <symbol id="i-drive" viewBox="0 0 24 24"><path d="M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="12" r="3.75"/><path d="M11.25 12H21m-3 0v3m3-3v2.2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 5 6v5.6c0 4.2 2.9 7.5 7 9.2 4.1-1.7 7-5 7-9.2V6l-7-2.8Z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8.5 8-4 4 4 4m7-8 4 4-4 4"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4.3 7.4 7.7 4.3 7.7-4.3M12 11.7V21"/></symbol>
+    <symbol id="i-tray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 14.5h18M7 17.2h.01M10 17.2h.01"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="16" rx="2.5"/><rect x="9" y="2.5" width="6" height="4" rx="1.5"/><path d="M9 12h6m-6 4h4"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11m-4.5-4.5L12 14.5l4.5-4.5M4.5 19.5h15"/></symbol>
+    <symbol id="i-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7.5" width="16" height="12" rx="3.5"/><path d="M12 3.5v4M9 12.5h.01M15 12.5h.01M9.5 16.3h5"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5.5 6.5 6.5L9 18.5"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+    <div class="wrap">
+        <a class="brand" href="/">
+            <img src="img/logo.webp" alt="" width="26" height="26">
+            Surpass
+        </a>
+        <nav class="site-nav" aria-label="Main">
+            <a class="nav-section" href="#features">Features</a>
+            <a class="nav-section" href="#screenshots">Screenshots</a>
+            <a class="nav-section" href="#changelog">Changelog</a>
+            <a href="https://github.com/e-soul/surpass" aria-label="Surpass on GitHub">
+                <svg class="icon" aria-hidden="true"><use href="#i-github"></use></svg>
+            </a>
+        </nav>
     </div>
-    <div class="menu">
-        <p>
-            Latest release: 1.5
-            <div class="dropdown">
-                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-download fa-lg"></i> Downloads
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.5/surpass-1.5-windows11-amd64.zip"><i class="fab fa-windows"></i> Windows 11 x86_64</a></li>
-                    <li><a class="dropdown-item" href="https://github.com/e-soul/surpass/releases/download/v1.5/surpass-1.5-linux-amd64.tar.bz2"><i class="fab fa-linux"></i> Linux x86_64</a></li>
-                </ul>
-            </div>
-            <br>
-            <a class="btn btn-secondary" href="https://github.com/e-soul/surpass" role="button"><i class="fab fa-github fa-lg"></i> Sources</a>
-            <br><br>
-            <a class="btn btn-secondary" href="https://twitter.com/esoulorg" role="button"><i class="fab fa-twitter fa-lg"></i> e-soul</a>
-            <br><br>
-            <a class="btn btn-secondary" href="https://sourceforge.net/projects/surpass" role="button"><i class="fa-solid fa-fire-flame-curved"></i> SourceForge</a>
-            <br><br>
-            <a class="btn btn-secondary" href="https://alternativeto.net/software/surpass/about" role="button"><i class="fa-solid fa-robot"></i> Alternative</a>
-        </p>
-    </div>
-    <div class="main">
-        <article id="descr-full">Surpass is a multi-platform graphical password manager with focus on simplicity. The source code is free (as in "liberty") and is designed to be concise and simple.</article>
-        <br><br>
-        <article>
-            <ul>
-                <li><i class="fas fa-lock"></i> Securely store any secret e.g. passwords, pass phrases, PIN codes, etc.</li>
-                <li><i class="fa-brands fa-google-drive"></i> Store secrets in Google Drive</li>
-                <li><i class="fas fa-compress-alt"></i> Small footprint, around 50MB. Can fit on any memory device. Does not need installation or any third party library, completely self-contained.</li>
-                <li><i class="fas fa-comment-alt"></i> System tray support.</li>
-                <li><i class="far fa-clipboard"></i> Clipboard support. If a secret is copied to clipboard it's automatically cleared after 45 seconds.</li>
-                <li><i class="fas fa-dice"></i> Support for generating random secrets.</li>
-            </ul>
-        </article>
-        <div id="screenshot-carousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="6" aria-label="Slide 7"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="7" aria-label="Slide 8"></button>
-                <button type="button" data-bs-target="#screenshot-carousel" data-bs-slide-to="8" aria-label="Slide 9"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="img/gui-empty-1.5.png" class="mx-auto d-block" alt="gui empty">
-                    <div class="carousel-caption">
-                        <h5>Empty</h5>
-                        <p>Starting Surpass for the first time.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/load-secrets-1.4.png" class="mx-auto d-block" alt="load secrets">
-                    <div class="carousel-caption">
-                        <h5>Load secrets</h5>
-                        <p>Loading secrets, if any exist.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/select-persistence-local-1.4.png" class="mx-auto d-block" alt="select persistence">
-                    <div class="carousel-caption">
-                        <h5>Select persistence</h5>
-                        <p>Load secrets from local file system or Google Drive.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/enter-master-pass-1.4.png" class="mx-auto d-block" alt="enter master password">
-                    <div class="carousel-caption">
-                        <h5>Master password</h5>
-                        <p>Enter master password to decrypt existing secrets.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/loaded-1.4.png" class="mx-auto d-block" alt="loaded secrets">
-                    <div class="carousel-caption">
-                        <h5>Secrets</h5>
-                        <p>The full list of existing secrets.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/add-secret-1.4.png" class="mx-auto d-block" alt="add secret">
-                    <div class="carousel-caption">
-                        <h5>Add secret</h5>
-                        <p>Enter a new account details and, optionally, generate a secret.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/generate-secret-1.4.png" class="mx-auto d-block" alt="generate secrets">
-                    <div class="carousel-caption">
-                        <h5>Generate secrets</h5>
-                        <p>Generate a random secret based on parameters.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/change-master-password-1.4.png" class="mx-auto d-block" alt="change master password">
-                    <div class="carousel-caption">
-                        <h5>Change Master Password</h5>
-                        <p>Change Master Password and save locally and/or in Google Drive.</p>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="img/data-loss-protection-1.4.png" class="mx-auto d-block" alt="data loss protection">
-                    <div class="carousel-caption">
-                        <h5>Data loss protection</h5>
-                        <p>Exiting while there exist unsaved data.</p>
-                    </div>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#screenshot-carousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#screenshot-carousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+</header>
+
+<main id="main">
+
+    <section class="hero wrap">
+        <img class="hero-logo" src="img/logo.webp" alt="Surpass logo" width="116" height="116">
+        <h1>Surpass</h1>
+        <p class="tagline">Simple, secure and easy to use password manager.</p>
+        <p class="lede">A multi-platform graphical password manager with focus on simplicity. The source code is
+            free (as in "liberty") and is designed to be concise and simple.</p>
+
+        <!-- Release links: bump the version in the three places below when publishing. -->
+        <div class="actions">
+            <a class="btn btn-primary" href="https://github.com/e-soul/surpass/releases/download/v1.5/surpass-1.5-windows11-amd64.zip">
+                <svg class="icon" aria-hidden="true"><use href="#i-windows"></use></svg>
+                Download for Windows
+            </a>
+            <a class="btn btn-primary" href="https://github.com/e-soul/surpass/releases/download/v1.5/surpass-1.5-linux-amd64.tar.bz2">
+                <svg class="icon" aria-hidden="true"><use href="#i-linux"></use></svg>
+                Download for Linux
+            </a>
+            <a class="btn" href="https://github.com/e-soul/surpass/releases">
+                <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>
+                All releases
+            </a>
         </div>
-        <br><br>
-        <table class="table caption-top">
-            <caption>Change log</caption>
-            <thead>
-                <tr>
-                    <th scope="col">version</th>
-                    <th scope="col">features</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1.6 <span class="p-1 bg-warning"><i class="fas fa-clipboard-list fa-lg"></i> in progress</span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>1.5 <span class="p-1 bg-success"><i class="fas fa-clipboard-list fa-lg"></i> latest release</span></td>
-                    <td>
-                        <ul>
-                            <li>Add a simple indicator to show when there are unsaved data.</li>
-                            <li>Internal improvements.</li>
-                            <li>Build with Java 24</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1.4</td>
-                    <td>
-                        <ul>
-                            <li>Fix a bug that leaves the command buttons enabled after a selected<br />row has been filtered out.</li>
-                            <li>Build with Java 23</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1.3</td>
-                    <td>
-                        <ul>
-                            <li>Allow selecting an existing identifier when adding a new secret.</li>
-                            <li>Display the maximum number of secrets that can be added.</li>
-                            <li>Build with Java 21</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1.2</td>
-                    <td>
-                        <ul>
-                            <li>Integrate modern dark (default) and light themes based on FlatLaf.</li>
-                            <li>Add option to change Master Password</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1.1</td>
-                    <td>
-                        <ul>
-                            <li>Support Google Drive as backend for storing secrets</li>
-                            <li>Make window resizing work better</li>
-                            <li>Add progress bar when storing/loading secrets</li>
-                            <li>Build with Java 19</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>1.0</td>
-                    <td>
-                        <ul>
-                            <li>Add "About" dialog</li>
-                            <li>Add "Clear" button for the "Filter" field</li>
-                            <li>The clipboard is auto-cleared only if the secret is still there</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>0.9</td>
-                    <td>
-                        <ul>
-                            <li>Add support to generate random secrets</li>
-                            <li>Build with Java 17</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td>0.8</td>
-                    <td>
+        <p class="release-note">v1.5 &middot; x86_64 &middot; ~50 MB &middot; no installation required</p>
 
-                        <ul>
-                            <li>Custom native windows launcher (.exe)</li>
-                            <li>Fix view-model translation</li>
-                        </ul>
+        <ul class="chips">
+            <li><svg class="icon" aria-hidden="true"><use href="#i-key"></use></svg> AES-128</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-shield"></use></svg> HMAC-SHA-512</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-code"></use></svg> Open source</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-package"></use></svg> Self-contained</li>
+        </ul>
+    </section>
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>0.7</td>
-                    <td>
-                        <ul>
-                            <li>Add secret count</li>
-                            <li>Add tray icon</li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <section class="section wrap" id="features">
+        <div class="section-head">
+            <h2>Everything it does, and nothing more</h2>
+            <p>Password-based encryption with HMAC-SHA-512 and AES-128 via the Java Cryptography Architecture.</p>
+        </div>
+        <ul class="features">
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-lock"></use></svg></div>
+                <h3>Store any secret</h3>
+                <p>Passwords, pass phrases, PIN codes - anything you need to keep encrypted.</p>
+            </li>
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-drive"></use></svg></div>
+                <h3>Google Drive</h3>
+                <p>Keep your encrypted vault on the local file system, in Google Drive, or both.</p>
+            </li>
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-package"></use></svg></div>
+                <h3>Small footprint</h3>
+                <p>Around 50MB, fits on any memory device. No installation and no third party
+                    libraries - completely self-contained.</p>
+            </li>
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-tray"></use></svg></div>
+                <h3>System tray</h3>
+                <p>Stays out of the way in the tray until you need it.</p>
+            </li>
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-clipboard"></use></svg></div>
+                <h3>Safer clipboard</h3>
+                <p>A copied secret is cleared from the clipboard automatically after 45 seconds.</p>
+            </li>
+            <li class="feature">
+                <div class="feature-icon"><svg class="icon" aria-hidden="true"><use href="#i-dice"></use></svg></div>
+                <h3>Secret generator</h3>
+                <p>Generate strong random secrets with the parameters you choose.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section class="section section-gallery" id="screenshots" data-gallery>
+        <div class="wrap gallery-head">
+            <div class="section-head">
+                <h2>Screenshots</h2>
+                <p>A very simple and clean interface, in a dark or light theme.</p>
+            </div>
+            <div class="gallery-nav" hidden>
+                <button class="btn" type="button" data-dir="prev" aria-label="Previous screenshot">
+                    <svg class="icon" aria-hidden="true"><use href="#i-left"></use></svg>
+                </button>
+                <button class="btn" type="button" data-dir="next" aria-label="Next screenshot">
+                    <svg class="icon" aria-hidden="true"><use href="#i-right"></use></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="shots" tabindex="0" role="group" aria-label="Screenshots, scroll horizontally">
+            <figure class="shot">
+                <img src="img/gui-empty-1.5.webp" alt="An empty Surpass window on first start" width="731" height="581">
+                <figcaption><strong>Empty</strong><span>Starting Surpass for the first time.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/load-secrets-1.4.webp" alt="The load secrets dialog" width="731" height="581" loading="lazy">
+                <figcaption><strong>Load secrets</strong><span>Loading secrets, if any exist.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/select-persistence-local-1.4.webp" alt="Choosing between local and Google Drive storage" width="731" height="581" loading="lazy">
+                <figcaption><strong>Select persistence</strong><span>Load secrets from the local file system or Google Drive.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/enter-master-pass-1.4.webp" alt="The master password prompt" width="731" height="581" loading="lazy">
+                <figcaption><strong>Master password</strong><span>Enter the master password to decrypt existing secrets.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/loaded-1.4.webp" alt="A list of stored secrets with notes" width="731" height="581" loading="lazy">
+                <figcaption><strong>Secrets</strong><span>The full list of existing secrets.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/add-secret-1.4.webp" alt="The add secret dialog" width="731" height="581" loading="lazy">
+                <figcaption><strong>Add secret</strong><span>Enter new account details and, optionally, generate a secret.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/generate-secret-1.4.webp" alt="The random secret generator" width="731" height="581" loading="lazy">
+                <figcaption><strong>Generate secrets</strong><span>Generate a random secret based on parameters.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/change-master-password-1.4.webp" alt="The change master password dialog" width="731" height="581" loading="lazy">
+                <figcaption><strong>Change master password</strong><span>Change it and save locally and/or in Google Drive.</span></figcaption>
+            </figure>
+            <figure class="shot">
+                <img src="img/data-loss-protection-1.4.webp" alt="A warning shown when exiting with unsaved data" width="731" height="581" loading="lazy">
+                <figcaption><strong>Data loss protection</strong><span>Exiting while there is unsaved data.</span></figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <section class="section wrap" id="changelog">
+        <div class="section-head">
+            <h2>Changelog</h2>
+        </div>
+        <ol class="changelog">
+            <li>
+                <div class="version">1.6 <span class="tag tag-wip">In progress</span></div>
+                <p class="empty">Nothing announced yet.</p>
+            </li>
+            <li>
+                <div class="version">1.5 <span class="tag tag-latest">Latest</span></div>
+                <ul>
+                    <li>Add a simple indicator to show when there is unsaved data.</li>
+                    <li>Internal improvements.</li>
+                    <li>Build with Java 24.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">1.4</div>
+                <ul>
+                    <li>Fix a bug that leaves the command buttons enabled after a selected row has been filtered out.</li>
+                    <li>Build with Java 23.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">1.3</div>
+                <ul>
+                    <li>Allow selecting an existing identifier when adding a new secret.</li>
+                    <li>Display the maximum number of secrets that can be added.</li>
+                    <li>Build with Java 21.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">1.2</div>
+                <ul>
+                    <li>Integrate modern dark (default) and light themes based on FlatLaf.</li>
+                    <li>Add option to change the master password.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">1.1</div>
+                <ul>
+                    <li>Support Google Drive as a backend for storing secrets.</li>
+                    <li>Make window resizing work better.</li>
+                    <li>Add a progress bar when storing/loading secrets.</li>
+                    <li>Build with Java 19.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">1.0</div>
+                <ul>
+                    <li>Add "About" dialog.</li>
+                    <li>Add "Clear" button for the "Filter" field.</li>
+                    <li>The clipboard is auto-cleared only if the secret is still there.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">0.9</div>
+                <ul>
+                    <li>Add support to generate random secrets.</li>
+                    <li>Build with Java 17.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">0.8</div>
+                <ul>
+                    <li>Custom native Windows launcher (.exe).</li>
+                    <li>Fix view-model translation.</li>
+                </ul>
+            </li>
+            <li>
+                <div class="version">0.7</div>
+                <ul>
+                    <li>Add secret count.</li>
+                    <li>Add tray icon.</li>
+                </ul>
+            </li>
+        </ol>
+    </section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <div>Copyright 2016-2026 <a href="https://e-soul.org">e-soul.org</a></div>
+        <ul class="footer-links">
+            <li><a href="https://github.com/e-soul/surpass">
+                <svg class="icon" aria-hidden="true"><use href="#i-github"></use></svg> Sources</a></li>
+            <li><a href="https://sourceforge.net/projects/surpass">
+                <svg class="icon" aria-hidden="true"><use href="#i-sourceforge"></use></svg> SourceForge</a></li>
+            <li><a href="https://alternativeto.net/software/surpass/about">
+                <svg class="icon" aria-hidden="true"><use href="#i-robot"></use></svg> AlternativeTo</a></li>
+            <li><a href="https://x.com/esoulorg">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg> e-soul</a></li>
+        </ul>
     </div>
-    <div class="footer">Copyright 2016-2026 <a href="https://e-soul.org">e-soul.org</a></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-</body></html>
+</footer>
+
+<script>
+    document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
+        var strip = gallery.querySelector(".shots");
+        var nav = gallery.querySelector(".gallery-nav");
+        nav.hidden = false;
+        nav.addEventListener("click", function (event) {
+            var button = event.target.closest("button[data-dir]");
+            if (!button) return;
+            var slide = strip.querySelector(".shot");
+            var step = slide.getBoundingClientRect().width + parseFloat(getComputedStyle(strip).columnGap);
+            strip.scrollBy({ left: button.dataset.dir === "next" ? step : -step, behavior: "smooth" });
+        });
+    });
+</script>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7EVTCD88VS"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag("js", new Date());
+    gtag("config", "G-7EVTCD88VS");
+</script>
+</body>
+</html>

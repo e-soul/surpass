@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://surpass.e-soul.org/sitemap.xml
