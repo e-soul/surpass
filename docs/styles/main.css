@@ -216,19 +216,24 @@ img {
     margin: 1rem auto 0;
 }
 
+/* An intrinsically sized grid resolves equal 1fr tracks to the widest item's
+   max-content width, so the buttons match each other and nothing more.
+   fit-content sizes it the same way inline-grid would, while staying a block
+   so it keeps its own line. */
 .actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    width: fit-content;
     gap: 0.75rem;
-    margin-top: 2rem;
+    margin: 2rem auto 0;
 }
 
-.release-note {
-    margin-top: 1rem;
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    color: var(--muted);
+/* two full-width buttons no longer fit side by side */
+@media (max-width: 34rem) {
+    .actions {
+        grid-auto-flow: row;
+    }
 }
 
 /* ---------- buttons ---------- */
@@ -236,6 +241,7 @@ img {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.55rem;
     padding: 0.7rem 1.15rem;
     border-radius: var(--radius-sm);
@@ -273,11 +279,12 @@ img {
 /* ---------- trust chips ---------- */
 
 .chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    width: fit-content;
     gap: 0.5rem;
-    margin: 2.5rem 0 0;
+    margin: 2.5rem auto 0;
     padding: 0;
     list-style: none;
 }
@@ -285,6 +292,7 @@ img {
 .chips li {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.45rem;
     padding: 0.35rem 0.75rem;
     border: 1px solid var(--border);
@@ -299,6 +307,15 @@ img {
     color: var(--accent);
     width: 0.95rem;
     height: 0.95rem;
+}
+
+/* one row of four stops fitting here; minmax lets the last of them shrink and
+   wrap on very narrow phones instead of pushing the page sideways */
+@media (max-width: 42rem) {
+    .chips {
+        grid-auto-flow: row;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* ---------- sections ---------- */
@@ -320,6 +337,16 @@ img {
     color: var(--muted);
     margin: 0.5rem 0 0;
     max-width: 60ch;
+}
+
+/* the 60ch cap has to re-centre itself, or the text centres inside a
+   left-aligned box and reads off to one side */
+.section-head-center {
+    text-align: center;
+}
+
+.section-head-center p {
+    margin-inline: auto;
 }
 
 /* ---------- features ---------- */
@@ -369,9 +396,12 @@ img {
 
 /* ---------- screenshots ---------- */
 
+/* the heading centres over the gallery, so the nav stacks beneath it instead
+   of being pushed out to one side */
 .gallery-head {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: center;
     gap: 1rem;
     margin-bottom: 2.25rem;
 }
@@ -380,14 +410,13 @@ img {
     margin-bottom: 0;
 }
 
-.gallery-nav[hidden] {
-    display: none;
-}
-
 .gallery-nav {
     display: flex;
     gap: 0.5rem;
-    margin-left: auto;
+}
+
+.gallery-nav[hidden] {
+    display: none;
 }
 
 .gallery-nav .btn {
@@ -405,6 +434,7 @@ img {
     display: flex;
     gap: 1rem;
     overflow-x: auto;
+    scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     padding-bottom: 1rem;
     /* full-bleed, but the first and last slide line up with the page gutter */
@@ -422,7 +452,8 @@ img {
     scroll-snap-align: start;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    /* the card shrinks with the viewport, so the corners shrink with it */
+    border-radius: clamp(var(--radius-sm), 2.2vw, var(--radius));
     overflow: hidden;
 }
 
@@ -450,14 +481,14 @@ img {
 
 .changelog {
     list-style: none;
-    margin: 0;
+    /* narrower than the page, so on wide screens the entries sit under the
+       centred heading instead of trailing off to the left */
+    max-width: 46rem;
+    margin: 0 auto;
     padding: 0;
 }
 
 .changelog > li {
-    display: grid;
-    grid-template-columns: 10rem 1fr;
-    gap: 0 1.5rem;
     padding: 1.5rem 0;
     border-top: 1px solid var(--border);
 }
@@ -468,16 +499,22 @@ img {
 }
 
 .version {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
     font-family: var(--mono);
     font-size: 1.0625rem;
     font-weight: 600;
 }
 
 .tag {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    width: fit-content;
-    margin-top: 0.4rem;
+    justify-content: center;
+    /* the two tags are in separate rows, so no grid can match them up; this is a
+       floor wide enough for the longest label, in em so it tracks the font size */
+    min-width: 9em;
     padding: 0.1rem 0.55rem;
     border-radius: 999px;
     font-family: var(--sans);
@@ -514,23 +551,6 @@ img {
     margin: 0;
     color: var(--muted);
     font-style: italic;
-}
-
-@media (max-width: 40rem) {
-    .changelog > li {
-        grid-template-columns: 1fr;
-        gap: 0.6rem;
-    }
-
-    .version {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-    }
-
-    .tag {
-        margin-top: 0;
-    }
 }
 
 /* ---------- footer ---------- */
@@ -589,7 +609,8 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html {
+    html,
+    .shots {
         scroll-behavior: auto;
     }
 
