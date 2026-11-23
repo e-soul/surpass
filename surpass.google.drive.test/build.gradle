@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.google.api-client:google-api-client:2.7.2"
+    implementation "com.google.api-client:google-api-client:2.9.2"
 
     testImplementation project(":surpass.api")
     testImplementation project(":surpass.core")

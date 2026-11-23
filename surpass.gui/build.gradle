@@ -14,7 +14,7 @@ dependencies {
     runtimeOnly project(":surpass.persist")
     runtimeOnly project(":surpass.google.drive")
 
-    implementation "com.formdev:flatlaf:3.7.2"
+    implementation "com.formdev:flatlaf:3.8"
 }
 
 build.doLast {

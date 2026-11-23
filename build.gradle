@@ -9,7 +9,7 @@ subprojects {
     plugins.withType(JavaPlugin).configureEach {
         java {
             toolchain {
-                languageVersion = JavaLanguageVersion.of(26)
+                languageVersion = JavaLanguageVersion.of(27)
             }
             modularity.inferModulePath = true
         }

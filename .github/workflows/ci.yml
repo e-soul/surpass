@@ -14,14 +14,14 @@ jobs:
       uses: actions/checkout@v7
       with:
         persist-credentials: false
-    - name: Set up JDK 26
-      uses: actions/setup-java@v5
+    - name: Set up JDK 27
+      uses: actions/setup-java@v6
       with:
-        java-version: "26"
+        java-version: "27"
         distribution: "oracle"
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v6
       with:
-        gradle-version: "9.7.0"
+        gradle-version: "9.9.2"
     - name: Build with Gradle
       run: gradle build
